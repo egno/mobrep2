@@ -1,23 +1,50 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-    <router-view></router-view>
+    <div class="container">
+        <router-view></router-view>
+    </div>
   </div>
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
-  name: 'app'
+  name: 'app',
+  watch: {
+    '$route': 'checkRoute',
+    'checkLogIn': 'checkRoute'
+  },
+  computed: {
+    ...mapGetters([
+      'checkLogIn',
+      'backRoute'
+    ])
+  },
+  methods: {
+    ...mapActions([
+      'setBackRoute'
+    ]),
+    checkRoute () {
+      if (!this.checkLogIn) {
+        if (this.$route.path !== this.backRoute) {
+          this.setBackRoute(this.$route.path)
+        }
+        this.$router.push('/login')
+      } else {
+        if (this.backRoute) {
+          this.$router.push(this.backRoute)
+          this.setBackRoute(false)
+        }
+      }
+    }
+  },
+  mounted () {
+    this.checkRoute()
+  }
 }
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>
