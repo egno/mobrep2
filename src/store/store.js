@@ -7,12 +7,12 @@ Vue.use(Vuex)
 export const store = new Vuex.Store({
   state: {
     tokenName: 'jwt-token',
-    loggedIn: false,
+    loggedIn: true,
     backRoute: false
   },
   getters: {
     checkLogIn: (state) => {
-      state.loggedIn = (ls.get(state.tokenName))
+      // state.loggedIn = (ls.get(state.tokenName))
       return (state.loggedIn)
     },
     backRoute: (state) => {
@@ -28,7 +28,7 @@ export const store = new Vuex.Store({
       state.loggedIn = true
     },
     logOut: (state) => {
-      ls.remove(state.tokenName)
+      // ls.remove(state.tokenName)
       state.loggedIn = false
     },
     setBackRoute: (state, payload) => {

@@ -10,7 +10,8 @@ Vue.config.productionTip = false
 
 Vue.use(VueResource)
 
-Vue.http.options.root = 'http://nsk-test-docker:3003'
+// Vue.http.options.root = 'http://nsk-test-docker:3003'
+Vue.http.options.root = 'http://nsk-test-docker:3002'
 
 /* eslint-disable no-new */
 new Vue({
