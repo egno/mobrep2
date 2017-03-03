@@ -25,6 +25,7 @@
       </div>
       <div v-if="checkLogIn">
         <button type="submit" class="btn btn-primary" @click="logOut">Выйти</button>
+        <button type="submit" class="btn" @click="goHome">Не выходить</button>
       </div>
     </div>
   </div>
@@ -58,6 +59,9 @@ export default {
       'logIn',
       'logOut'
     ]),
+    goHome () {
+      this.$router.push('/')
+    },
     gotoPassword () {
       this.$refs.password.focus()
       this.$refs.password.select()
