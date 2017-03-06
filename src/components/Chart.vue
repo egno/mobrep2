@@ -71,5 +71,6 @@
 }
 .small {
   font-size: 65%;
+  margin-top: 0.5em;
 }
 </style>

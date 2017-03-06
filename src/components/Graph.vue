@@ -1,12 +1,6 @@
 <template>
   <div>
     <div ref="headers">
-      <chart-control
-        :graphs="{list: graph_list, selected: current_graph}"
-        :months="{list: month_list, selected: current_month}"
-        @isChanged="graphIsChanged"
-        >
-      </chart-control>
       <chart-header
         :headers="{caption: caption,
           columns: headers}"
@@ -18,6 +12,19 @@
       :data="curr_data"
       :height="chart_height">
     </chart>
+    <div ref="footers">
+      <chart-totals
+        :headers="{caption: caption,
+          columns: headers}"
+        >
+      </chart-totals>
+      <chart-control
+        :graphs="{list: graph_list, selected: current_graph}"
+        :months="{list: month_list, selected: current_month}"
+        @isChanged="graphIsChanged"
+        >
+      </chart-control>
+    </div>
   </div>
 </template>
 
@@ -179,7 +186,7 @@ export default {
       'logOut'
     ]),
     calcHeight () {
-      this.chart_height = document.documentElement.clientHeight - this.$refs.headers.offsetHeight
+      this.chart_height = document.documentElement.clientHeight - this.$refs.headers.offsetHeight - this.$refs.footers.offsetHeight
     },
     fetchData () {
       const options = {
