@@ -1,16 +1,18 @@
 <template>
   <div>
-    <chart-control
-      :graphs="{list: graph_list, selected: current_graph}"
-      :months="{list: month_list, selected: current_month}"
-      @isChanged="graphIsChanged"
-      >
-    </chart-control>
-    <chart-header
-      :headers="{caption: caption,
-        columns: headers}"
-      >
-    </chart-header>
+    <div ref="headers">
+      <chart-control
+        :graphs="{list: graph_list, selected: current_graph}"
+        :months="{list: month_list, selected: current_month}"
+        @isChanged="graphIsChanged"
+        >
+      </chart-control>
+      <chart-header
+        :headers="{caption: caption,
+          columns: headers}"
+        >
+      </chart-header>
+    </div>
     <chart
       :captions="captions"
       :data="curr_data"
@@ -87,7 +89,7 @@ export default {
       caption: 'Филиал',
       current_graph: 0,
       current_month: 0,
-      chart_height: 300,
+      chart_height: 350,
       graph: {
         minheight: 0,
         transitiontime: 1000,
@@ -176,6 +178,9 @@ export default {
     ...mapActions([
       'logOut'
     ]),
+    calcHeight (windowHeight) {
+      this.chart_height = windowHeight - this.$refs.headers.offsetHeight
+    },
     fetchData () {
       const options = {
         headers: {}
@@ -197,6 +202,9 @@ export default {
         }
       )
     },
+    getWindowHeight (event) {
+      this.calcHeight(document.documentElement.clientHeight)
+    },
     graphIsChanged (event) {
       this.current_graph = event.graph
       this.current_month = event.month
@@ -204,6 +212,15 @@ export default {
   },
   created () {
     this.fetchData()
+  },
+  mounted () {
+    this.$nextTick(function () {
+      window.addEventListener('resize', this.getWindowHeight)
+      this.getWindowHeight()
+    })
+  },
+  beforeDestroy () {
+    window.removeEventListener('resize', this.getWindowHeight)
   }
 }
 </script>

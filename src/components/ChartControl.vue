@@ -1,14 +1,14 @@
 <template>
   <div class="row navbar navbar-inverse bg-faded">
-    <div class="btn-toolbar">
-      <div class="btn-group">
-        <button class="btn btn-secondary" @click="graphInc(-1)"> < </button>
-        <button class="btn btn-secondary" @click="graphInc(1)"> > </button>
+    <div class="btn-toolbar ">
+      <div class="btn-group ">
+        <button class="btn btn-secondary " @click="graphInc(-1)"> < </button>
+        <button class="btn btn-secondary " @click="graphInc(1)"> > </button>
       </div>
-      <select class="custom-select" v-model="selected.graph">
+      <select class="custom-select custom-select-sm" v-model="selected.graph">
         <option v-for="(graph, i) in graphs.list" v-bind:value="i">{{ graph }}</option>
       </select>
-      <select class="custom-select" v-model="selected.month">
+      <select class="custom-select custom-select-sm" v-model="selected.month">
         <option v-for="(month, i) in months.list" v-bind:value="i">{{ month }}</option>
       </select>
     </div>

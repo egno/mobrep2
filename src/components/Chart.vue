@@ -1,6 +1,6 @@
 <template>
   <div class="row">
-    <div class="col scrolled">
+    <div ref="chart" class="col scrolled">
       <div class="row" v-for="row in data">
         <div class="col-3 text-left small table-sm">
           {{ row.caption }}
@@ -37,6 +37,9 @@
         }
       }
     },
+    watch: {
+      'height': 'setHeight'
+    },
     filters: {
       beautyNumber: function (value) {
         const nullSign = '-'
@@ -50,6 +53,14 @@
           return value
         }
       }
+    },
+    methods: {
+      setHeight () {
+        this.$refs.chart.style.height = this.height + 'px'
+      }
+    },
+    mounted () {
+      this.setHeight()
     }
   }
 </script>
@@ -57,7 +68,6 @@
 <style scoped>
 .scrolled {
   overflow: auto;
-  height: 450px;
 }
 .small {
   font-size: 65%;
