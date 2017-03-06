@@ -178,8 +178,8 @@ export default {
     ...mapActions([
       'logOut'
     ]),
-    calcHeight (windowHeight) {
-      this.chart_height = windowHeight - this.$refs.headers.offsetHeight
+    calcHeight () {
+      this.chart_height = document.documentElement.clientHeight - this.$refs.headers.offsetHeight
     },
     fetchData () {
       const options = {
@@ -203,11 +203,12 @@ export default {
       )
     },
     getWindowHeight (event) {
-      this.calcHeight(document.documentElement.clientHeight)
+      this.calcHeight()
     },
     graphIsChanged (event) {
       this.current_graph = event.graph
       this.current_month = event.month
+      this.calcHeight()
     }
   },
   created () {

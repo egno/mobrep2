@@ -3,7 +3,7 @@
       <div class="col-3 text-left small table-sm">
         {{ headers.caption }}
       </div>
-      <div class="text-right small table-sm" :class="'col-' + colIndex" v-for="(column, i) in headers.columns">
+      <div class="text-right small table-sm nowrap" :class="'col-' + colIndex" v-for="(column, i) in headers.columns">
         {{ column }}
       </div>
   </div>
@@ -32,6 +32,7 @@ export default {
 </script>
 
 <style scoped>
-.small {
+.nowrap {
+  white-space: nowrap;
 }
 </style>
