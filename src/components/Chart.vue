@@ -2,7 +2,7 @@
   <div class="row">
     <div ref="chart" class="col scrolled">
       <div class="row" v-for="row in data">
-        <div class="col-3 text-left small table-sm">
+        <div class="col-3 text-left small table-sm nowrap">
           {{ row.caption }}
         </div>
         <div class="text-right table-sm" :class="'col-' + colIndex" v-for="value in row.values">
@@ -71,6 +71,5 @@
 }
 .small {
   font-size: 65%;
-  white-space: nowrap;
 }
 </style>

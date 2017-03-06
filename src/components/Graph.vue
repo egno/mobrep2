@@ -235,4 +235,7 @@ export default {
   bottom: 0;
   right: 0;
 }
+.nowrap {
+  white-space: nowrap;
+}
 </style>

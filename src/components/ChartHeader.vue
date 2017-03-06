@@ -32,7 +32,4 @@ export default {
 </script>
 
 <style scoped>
-.nowrap {
-  white-space: nowrap;
-}
 </style>
