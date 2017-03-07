@@ -1,16 +1,19 @@
 <template>
   <div class="row navbar navbar-inverse bg-inverse">
-    <div class="btn-toolbar-sm ">
-      <div class="btn-group btn-group-sm">
-        <button class="btn btn-secondary btn-sm " @click="graphInc(-1)"> < </button>
-        <button class="btn btn-secondary btn-sm" @click="graphInc(1)"> > </button>
+    <div class="btn-toolbar">
+      <div class="btn-group">
+        <button class="btn btn-secondary " @click="graphInc(-1)"> < </button>
+        <button class="btn btn-secondary " @click="graphInc(1)"> > </button>
       </div>
-      <select class="custom-select custom-select-sm form-control-sm" v-model="selected.graph">
+      <select class="custom-select custom-select-sm form-control" v-model="selected.graph">
         <option v-for="(graph, i) in graphs.list" v-bind:value="i">{{ graph }}</option>
       </select>
-      <select class="custom-select custom-select-sm form-control-sm" v-model="selected.month">
+      <select class="custom-select custom-select-sm form-control" v-model="selected.month">
         <option v-for="(month, i) in months.list" v-bind:value="i">{{ month }}</option>
       </select>
+      <div class="btn-group btn-group-sm">
+        <button class="btn btn-secondary btn-sm " @click="goHome">≡</button>
+      </div>
     </div>
   </div>
 </template>
@@ -34,6 +37,9 @@ export default {
     'selected.month': 'isChanged'
   },
   methods: {
+    goHome () {
+      this.$router.push('/')
+    },
     graphInc (payload) {
       this.selected.graph = (this.selected.graph + this.graphs.list.length + payload) % this.graphs.list.length
     },
@@ -51,5 +57,6 @@ export default {
 <style scoped>
 .navbar {
   overflow-y: auto;
+  padding: 5px;
 }
 </style>

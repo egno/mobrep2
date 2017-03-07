@@ -10,7 +10,8 @@
     <chart
       :captions="captions"
       :data="curr_data"
-      :height="chart_height">
+      :height="chart_height"
+      :base="base">
     </chart>
     <div ref="footers">
       <chart-totals
@@ -104,21 +105,7 @@ export default {
       totlalCaption: 'ИТОГО',
       current_graph: 0,
       current_month: 0,
-      chart_height: 350,
-      graph: {
-        minheight: 0,
-        transitiontime: 1000,
-        intensity1: 30,
-        intensity2: 20,
-        colors: 360,
-        colorshift: 60,
-        chart: {},
-        column: {},
-        data: {},
-        rowcaptions: [],
-        ordercol: 0,
-        asc: true
-      }
+      chart_height: 0
     }
   },
   computed: {
@@ -126,6 +113,9 @@ export default {
       'checkLogIn',
       'tokenName'
     ]),
+    base () {
+      return (this.graphs[this.current_graph].columns[1] && this.graphs[this.current_graph].columns[1].type === 'base')
+    },
     captions () {
       if (this.data[this.current_month]) {
         return this.data[this.current_month].data
@@ -242,6 +232,9 @@ export default {
       this.current_graph = event.graph
       this.current_month = event.month
       this.calcHeight()
+    },
+    test () {
+      console.log('swipe')
     }
   },
   created () {
