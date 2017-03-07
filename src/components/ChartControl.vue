@@ -1,5 +1,5 @@
 <template>
-  <div class="row navbar navbar-inverse bg-faded">
+  <div class="row navbar navbar-inverse bg-inverse">
     <div class="btn-toolbar-sm ">
       <div class="btn-group btn-group-sm">
         <button class="btn btn-secondary btn-sm " @click="graphInc(-1)"> < </button>

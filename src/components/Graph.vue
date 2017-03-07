@@ -14,8 +14,8 @@
     </chart>
     <div ref="footers">
       <chart-totals
-        :headers="{caption: caption,
-          columns: headers}"
+        :totals="{caption: totlalCaption,
+          columns: totals}"
         >
       </chart-totals>
       <chart-control
@@ -34,6 +34,7 @@ import { ls } from './../services/localStore'
 import Chart from '@/components/Chart'
 import ChartControl from '@/components/ChartControl'
 import ChartHeader from '@/components/ChartHeader'
+import ChartTotals from '@/components/ChartTotals'
 
 export default {
   data () {
@@ -43,57 +44,64 @@ export default {
       graphs: [
         { caption: '! Факт',
           columns: [
-            { name: 'Факт,млн.р', caption: 'Факт' },
-            { name: 'План,млн.р', type: 'base' }
+            { name: 'Факт,млн.р', caption: 'Факт', total: 'sum' },
+            { name: 'План,млн.р', type: 'base', total: 'sum' }
           ]
         },
         {
           columns: [
-            { name: 'Выполн.%' },
-            { name: 'Выпол. Год, %', type: 'base' }
+            { name: 'Выполн.%', total: 'avg' },
+            { name: 'Выпол. Год, %', type: 'base', total: 'avg' }
           ]
         },
         {
           columns: [
-            { name: '%РН' },
-            { name: 'РН.млн.р', type: 'saturation' }
+            { name: '%РН', total: 'avg' },
+            { name: 'РН.млн.р', type: 'saturation', total: 'sum' }
           ]
         },
         {
-          columns: [ { name: 'РН.млн.р' }, { name: 'РН на душу нас.' } ]
+          columns: [
+            { name: 'РН.млн.р', total: 'sum' },
+            { name: 'РН на душу нас.', total: 'avg' } ]
         },
         {
-          columns: [ { name: 'ДЗ,млн.р' }, { name: 'ДЗ,%проср' } ]
+          columns: [
+            { name: 'ДЗ,млн.р', total: 'sum' },
+            { name: 'ДЗ,%проср', total: 'avg' } ]
         },
         {
-          columns: [ { name: 'Оборот ДЗ' }, { name: 'ДЗ,%проср' } ]
+          columns: [
+            { name: 'Оборот ДЗ', total: 'sum' },
+            { name: 'ДЗ,%проср', total: 'avg' } ]
         },
         {
-          columns: [ { name: '%ЭСП' } ]
+          columns: [ { name: '%ЭСП', total: 'avg' } ]
         },
         {
-          columns: [ { name: 'Скл.наимен.' }, { name: 'На скл,млн.р' } ]
+          columns: [ { name: 'Скл.наимен.', total: 'avg' }, { name: 'На скл,млн.р', total: 'sum' } ]
         },
         {
-          columns: [ { name: 'В пути,мл.р' }, { name: 'В пути,дн' } ]
+          columns: [ { name: 'В пути,мл.р', total: 'sum' }, { name: 'В пути,дн' } ]
         },
         {
-          columns: [ { name: 'Резерв,дн' }, { name: 'В пути,дн' } ]
+          columns: [ { name: 'Резерв,дн' }, { name: 'В пути,дн', total: 'avg' } ]
         },
         {
-          columns: [ { name: 'На скл,млн.р' }, { name: 'На скл,дн' } ]
+          columns: [ { name: 'На скл,млн.р', total: 'sum' }, { name: 'На скл,дн', total: 'avg' } ]
         },
         {
-          columns: [ { name: 'Фин.цикл,дн' } ]
+          columns: [ { name: 'Фин.цикл,дн', total: 'avg' } ]
         },
         {
-          columns: [ { name: 'Прибыль,млн.р' }, { name: 'ТС,млн.р' } ]
+          columns: [ { name: 'Прибыль,млн.р', total: 'sum' }, { name: 'ТС,млн.р' } ]
         },
         {
           columns: [ { name: 'УП(1000ч.)' }, { name: 'Доля филиала' } ]
         }
       ],
       caption: 'Филиал',
+      totlalCaption: 'ИТОГО',
       current_graph: 0,
       current_month: 0,
       chart_height: 350,
@@ -174,12 +182,30 @@ export default {
         : (this.graphs[this.current_graph].columns.length > 1)
           ? '(%)'
           : undefined
+    },
+    totals () {
+      if (this.curr_data) {
+        return this.curr_data
+          .reduce((r, x) => x.values.map((xx, i) => (r[i] || 0) + (+xx || 0)),
+          [])
+          .map((x, i) => {
+            switch ((this.graphs[this.current_graph].columns[i]) ? this.graphs[this.current_graph].columns[i].total : 'avg') {
+              case 'sum':
+                return x.toFixed(1)
+              case 'avg':
+                return (x / this.curr_data.length).toFixed(1)
+              default:
+                return null
+            }
+          })
+      }
     }
   },
   components: {
     Chart,
     ChartControl,
-    ChartHeader
+    ChartHeader,
+    ChartTotals
   },
   methods: {
     ...mapActions([
