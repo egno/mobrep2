@@ -1,10 +1,10 @@
 <template>
   <div class="row bg-faded">
-      <div class="col-3 text-left small table-sm">
-        {{ headers.caption }}
+      <div class="col-3 text-left small table-sm" :class="(headers.caption.ordered) ? 'mark' : ''" @click="setOrder(0)">
+        {{ headers.caption.name }}
       </div>
-      <div class="text-right small table-sm nowrap" :class="'col-' + colIndex" v-for="(column, i) in headers.columns">
-        {{ column }}
+      <div class="text-right small table-sm nowrap" :class="['col-' + colIndex, (column.ordered) ? 'mark' : '']" v-for="(column, i) in headers.columns" @click="setOrder(i + 1)">
+        {{ column.name }}
       </div>
   </div>
 </template>
@@ -27,9 +27,17 @@ export default {
         }
       }
     }
+  },
+  methods: {
+    setOrder (payload) {
+      this.$emit('reorder', payload)
+    }
   }
 }
 </script>
 
 <style scoped>
+.mark {
+  font-weight: bold;
+}
 </style>

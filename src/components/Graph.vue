@@ -2,16 +2,18 @@
   <div>
     <div ref="headers">
       <chart-header
-        :headers="{caption: caption,
+        :headers="{caption: {name: caption, ordered: (currentOrder === 0)},
           columns: headers}"
+        @reorder="reorder"
         >
       </chart-header>
     </div>
     <chart
+      :base="base"
       :captions="captions"
       :data="curr_data"
       :height="chart_height"
-      :base="base">
+      @reorder="reorder">
     </chart>
     <div ref="footers">
       <chart-totals
@@ -105,7 +107,8 @@ export default {
       totlalCaption: 'ИТОГО',
       current_graph: 0,
       current_month: 0,
-      chart_height: 0
+      chart_height: 0,
+      currentOrder: 0
     }
   },
   computed: {
@@ -116,15 +119,26 @@ export default {
     base () {
       return (this.graphs[this.current_graph].columns[1] && this.graphs[this.current_graph].columns[1].type === 'base')
     },
+    // captions () {
+    //   if (this.data[this.current_month]) {
+    //     return this.data[this.current_month].data
+    //       .map(x => x[this.caption])
+    //   }
     captions () {
-      if (this.data[this.current_month]) {
-        return this.data[this.current_month].data
-          .map(x => x[this.caption])
+      if (this.current_data) {
+        return this.current_data.map(x => x.caption)
       }
     },
     curr_data () {
+      let order = function (a, b, currentOrder) {
+        if (currentOrder > 0) {
+          return a.values[currentOrder - 1] - b.values[currentOrder - 1]
+        } else {
+          return (a.caption > b.caption) ? 1 : -1
+        }
+      }
       if (this.data[this.current_month] && this.graphs[this.current_graph].columns) {
-        return this.data[this.current_month].data
+        let result = this.data[this.current_month].data
           .map(x => {
             let values = []
             values = this.graphs[this.current_graph].columns
@@ -139,6 +153,8 @@ export default {
               values: values
             }
           })
+        this.checkOrder(result[0].values.length + 1)
+        return result.sort((a, b) => order(a, b, this.currentOrder))
       }
     },
     graph_list () {
@@ -153,13 +169,17 @@ export default {
       const percentCaption = '(%)'
       let result = this.graphs[this.current_graph].columns
         .filter(x => !x.hidden)
-        .map(x =>
-          (x.caption) ? x.caption : x.name
+        .map((x, i) => {
+          return {
+            name: (x.caption) ? x.caption : x.name,
+            ordered: (i === this.currentOrder - 1)
+          }
+        }
         )
       if (this.graphs[this.current_graph].columns
         .reduce((r, x) => r || x.type === 'base', false)
       ) {
-        result.push(percentCaption)
+        result.push({name: percentCaption, ordered: (result.length === this.currentOrder - 1)})
       }
       return result
     },
@@ -204,6 +224,10 @@ export default {
     calcHeight () {
       this.chart_height = document.documentElement.clientHeight - this.$refs.headers.offsetHeight - this.$refs.footers.offsetHeight
     },
+    checkOrder (currentDataLength) {
+      this.currentOrder = (this.currentOrder < currentDataLength) ? this.currentOrder : 0
+      return this.currentOrder
+    },
     fetchData () {
       const options = {
         headers: {}
@@ -232,6 +256,9 @@ export default {
       this.current_graph = event.graph
       this.current_month = event.month
       this.calcHeight()
+    },
+    reorder (event) {
+      this.currentOrder = event
     },
     test () {
       console.log('swipe')
