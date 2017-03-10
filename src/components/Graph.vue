@@ -8,13 +8,17 @@
         >
       </chart-header>
     </div>
-    <chart
-      :base="base"
-      :captions="captions"
-      :data="curr_data"
-      :height="chart_height"
-      @reorder="reorder">
-    </chart>
+    <v-touch
+      @swipeleft="nextGraph(1)"
+      @swiperight="nextGraph(-1)">
+      <chart
+        :base="base"
+        :captions="captions"
+        :data="curr_data"
+        :height="chart_height"
+        @reorder="reorder">
+      </chart>
+    </v-touch>
     <div ref="footers">
       <chart-totals
         :totals="{caption: totlalCaption,
@@ -232,7 +236,7 @@ export default {
       const options = {
         headers: {}
       }
-      if (this.checkLogIn & ls.get(this.tokenName) !== null) {
+      if ((this.checkLogIn) && ls.get(this.tokenName) !== null) {
         options.headers.Authorization = 'Bearer ' + ls.get(this.tokenName)
       }
       this.$http.get(this.uri, options)
@@ -257,11 +261,11 @@ export default {
       this.current_month = event.month
       this.calcHeight()
     },
+    nextGraph (step) {
+      this.current_graph = (this.graphs.length + this.current_graph + step) % this.graphs.length
+    },
     reorder (event) {
       this.currentOrder = event
-    },
-    test () {
-      console.log('swipe')
     }
   },
   created () {

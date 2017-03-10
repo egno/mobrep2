@@ -39,5 +39,6 @@ export default {
 <style scoped>
 .mark {
   font-weight: bold;
+  background-color: inherit;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="col">
     <div class="row">
       <h1>
           Вход

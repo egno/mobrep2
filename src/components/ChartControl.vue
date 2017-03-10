@@ -5,10 +5,10 @@
         <button class="btn btn-secondary " @click="graphInc(-1)"> < </button>
         <button class="btn btn-secondary " @click="graphInc(1)"> > </button>
       </div>
-      <select class="custom-select custom-select-sm form-control" v-model="selected.graph">
+      <select class="custom-select custom-select-sm form-control" v-model="selected_graph">
         <option v-for="(graph, i) in graphs.list" v-bind:value="i">{{ graph }}</option>
       </select>
-      <select class="custom-select custom-select-sm form-control" v-model="selected.month">
+      <select class="custom-select custom-select-sm form-control" v-model="selected_month">
         <option v-for="(month, i) in months.list" v-bind:value="i">{{ month }}</option>
       </select>
       <div class="btn-group btn-group-sm">
@@ -26,30 +26,33 @@ export default {
   ],
   data () {
     return {
-      selected: {
-        graph: 0,
-        month: 0
-      }
+      selected_graph: 0,
+      selected_month: 0
     }
   },
   watch: {
-    'selected.graph': 'isChanged',
-    'selected.month': 'isChanged'
+    'selected_graph': 'isChanged',
+    'selected_month': 'isChanged'
   },
   methods: {
     goHome () {
       this.$router.push('/')
     },
     graphInc (payload) {
-      this.selected.graph = (this.selected.graph + this.graphs.list.length + payload) % this.graphs.list.length
+      this.selected_graph = (this.selected_graph + this.graphs.list.length + payload) % this.graphs.list.length
     },
     isChanged () {
-      this.$emit('isChanged', this.selected)
+      let sendData = {graph: this.selected_graph, month: this.selected_month}
+      this.$emit('isChanged', sendData)
     }
   },
-  created () {
-    this.selected.graph = this.graphs.selected
-    this.selected.month = this.months.selected
+  mounted () {
+    this.selected_graph = this.graphs.selected
+    this.selected_month = this.months.selected
+  },
+  beforeUpdate () {
+    this.selected_graph = this.graphs.selected
+    this.selected_month = this.months.selected
   }
 }
 </script>
@@ -58,5 +61,8 @@ export default {
 .navbar {
   overflow-y: auto;
   padding: 5px;
+}
+.custom-select {
+  max-width: 20em;
 }
 </style>

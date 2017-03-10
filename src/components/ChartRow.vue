@@ -1,14 +1,18 @@
 <template>
-  <div ref="row" class="row chart-row">
-    <svg ref="bar2" class="basebar" width="0" height="0"></svg>
-    <svg ref="bar" width="0" height="0"></svg>
-    <div class="col-3 text-left small table-sm nowrap" @click="setOrder(0)">
-      {{ row.caption }}
+  <v-touch
+    @swipeleft
+    @swiperight>
+    <div ref="row" class="row chart-row">
+      <svg ref="bar2" class="basebar" width="0" height="0"></svg>
+      <svg ref="bar" width="0" height="0"></svg>
+      <div class="col-3 text-left small table-sm nowrap" @click="setOrder(0)">
+        {{ row.caption }}
+      </div>
+      <div class="text-right table-sm" :class="'col-' + colIndex" v-for="(value, i) in row.values" @click="setOrder(i + 1)">
+        {{ value | beautyNumber }}
+      </div>
     </div>
-    <div class="text-right table-sm" :class="'col-' + colIndex" v-for="(value, i) in row.values" @click="setOrder(i + 1)">
-      {{ value | beautyNumber }}
-    </div>
-  </div>
+  </v-touch>
 </template>
 
 <script>
