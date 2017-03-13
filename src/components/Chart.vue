@@ -82,7 +82,11 @@ export default {
   },
   methods: {
     getWindowHeight (event) {
-      this.setHeight()
+      // console.log(event)
+      let self = this
+      setTimeout(function () {
+        self.setHeight()
+      }, 10)
     },
     reorder (event) {
       this.$emit('reorder', event)
@@ -98,7 +102,6 @@ export default {
       window.addEventListener('resize', this.getWindowHeight)
       this.getWindowHeight()
     })
-    this.setHeight()
   },
   updated () {
     this.setHeight()
