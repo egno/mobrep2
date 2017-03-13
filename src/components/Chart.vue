@@ -12,7 +12,7 @@
       @reorder="reorder">
       </chart-header>
       <chart-main ref="chart"
-      :data="data"
+      :data="current_data"
       :order="order"
       @reorder="reorder">
       </chart-main>
@@ -51,6 +51,13 @@ export default {
     'height': 'setHeight'
   },
   computed: {
+    current_data () {
+      let result = this.data
+      result.base = (this.page && this.page.columns
+        .reduce((r, x) => r || x.type === 'base', false)
+      )
+      return result
+    },
     headers () {
       let result = {caption: {name: this.fixedHeaderCaption, ordered: false},
         columns: this.page.columns.map(x => {
@@ -113,17 +120,6 @@ export default {
 </script>
 
 <style>
-.chart-row {
-  border:  lightgray;
-  border-width: 0 0 1px 0;
-  height: 1.3em;
-}
-.chart-row .table-sm {
-  margin-top: -0.1em;
-}
-.chart-row .small {
-    margin-top: 0.2em;
-}
 .scrolled {
   overflow: auto;
 }
