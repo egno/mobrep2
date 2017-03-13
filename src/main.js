@@ -12,7 +12,7 @@ Vue.config.productionTip = false
 Vue.use(VueResource)
 Vue.use(VueTouch)
 
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV !== 'production') {
   // Vue.http.options.root = 'http://172.16.202.42:3002'
   Vue.http.options.root = 'http://172.16.202.42:3003'
 } else {

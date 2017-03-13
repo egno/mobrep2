@@ -1,33 +1,20 @@
 <template>
   <div>
-    <div ref="headers">
-      <chart-header
-        :headers="{caption: {name: caption, ordered: (currentOrder === 0)},
-          columns: headers}"
-        @reorder="reorder"
+    <div ref="main" class="row">
+      <chart-swiper
+        :activePage="current_graph"
+        :fixedHeaderCaption="caption"
+        :pages="graphs"
+        :data="chartData"
+        @isChanged="graphIsChanged"
         >
-      </chart-header>
+      </chart-swiper>
     </div>
-    <v-touch
-      @swipeleft="nextGraph(1)"
-      @swiperight="nextGraph(-1)">
-      <chart
-        :base="base"
-        :captions="captions"
-        :data="curr_data"
-        :height="chart_height"
-        @reorder="reorder">
-      </chart>
-    </v-touch>
-    <div ref="footers">
-      <chart-totals
-        :totals="{caption: totlalCaption,
-          columns: totals}"
-        >
-      </chart-totals>
+    <div ref="navigation">
       <chart-control
         :graphs="{list: graph_list, selected: current_graph}"
         :months="{list: month_list, selected: current_month}"
+        :small="true"
         @isChanged="graphIsChanged"
         >
       </chart-control>
@@ -37,16 +24,18 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { ls } from './../services/localStore'
-import Chart from '@/components/Chart1'
+import { ls } from '@/services/localStore'
 import ChartControl from '@/components/ChartControl'
-import ChartHeader from '@/components/ChartHeader'
-import ChartTotals from '@/components/ChartTotals'
+import ChartSwiper from '@/components/ChartSwiper'
 
 export default {
+  components: {
+    ChartControl,
+    ChartSwiper
+  },
   data () {
     return {
-      uri: 'gdlivescreen',
+      uri: 'gdlivescreen2',
       data: {},
       graphs: [
         { caption: '! Факт',
@@ -123,42 +112,31 @@ export default {
     base () {
       return (this.graphs[this.current_graph].columns[1] && this.graphs[this.current_graph].columns[1].type === 'base')
     },
-    // captions () {
-    //   if (this.data[this.current_month]) {
-    //     return this.data[this.current_month].data
-    //       .map(x => x[this.caption])
-    //   }
     captions () {
       if (this.current_data) {
         return this.current_data.map(x => x.caption)
       }
     },
-    curr_data () {
-      let order = function (a, b, currentOrder) {
-        if (currentOrder > 0) {
-          return a.values[currentOrder - 1] - b.values[currentOrder - 1]
-        } else {
-          return (a.caption > b.caption) ? 1 : -1
-        }
-      }
-      if (this.data[this.current_month] && this.graphs[this.current_graph].columns) {
-        let result = this.data[this.current_month].data
-          .map(x => {
-            let values = []
-            values = this.graphs[this.current_graph].columns
-              .map(c => x[c.name])
-            if (this.graphs[this.current_graph].columns
-              .reduce((r, x) => r || x.type === 'base', false)
-            ) {
-              values.push((x[this.graphs[this.current_graph].columns[0].name] / x[this.graphs[this.current_graph].columns[1].name] * 100).toFixed(1))
-            }
-            return {
-              caption: x[this.caption],
-              values: values
-            }
-          })
-        this.checkOrder(result[0].values.length + 1)
-        return result.sort((a, b) => order(a, b, this.currentOrder))
+    chartData () {
+      if (this.data[this.current_month]) {
+        return this.graphs.map(x => {
+          return { caption: (x.caption)
+            ? x.caption
+            : (x.columns[0].caption)
+              ? x.columns[0].caption
+              : x.columns[0].name,
+            data: this.data[this.current_month].data.map(row => {
+              let values = x.columns.map(col => row[col.name])
+              if (x.columns.reduce((r, xx) => r || xx.type === 'base', false)) {
+                values.push((row[x.columns[0].name] / row[x.columns[1].name] * 100))
+              }
+              return {
+                caption: row[this.caption],
+                values: values
+              }
+            })
+          }
+        })
       }
     },
     graph_list () {
@@ -169,26 +147,8 @@ export default {
           ? x.columns[0].caption
           : x.columns[0].name)
     },
-    headers () {
-      const percentCaption = '(%)'
-      let result = this.graphs[this.current_graph].columns
-        .filter(x => !x.hidden)
-        .map((x, i) => {
-          return {
-            name: (x.caption) ? x.caption : x.name,
-            ordered: (i === this.currentOrder - 1)
-          }
-        }
-        )
-      if (this.graphs[this.current_graph].columns
-        .reduce((r, x) => r || x.type === 'base', false)
-      ) {
-        result.push({name: percentCaption, ordered: (result.length === this.currentOrder - 1)})
-      }
-      return result
-    },
     month_list () {
-      return (this.data.length > 0) ? this.data.map(x => x.month) : {}
+      return (this.data.length > 0) ? this.data.map(x => x.data[0].tdate) : {}
     },
     saturation_caption () {
       return (this.graphs[this.current_graph].saturation)
@@ -215,18 +175,12 @@ export default {
       }
     }
   },
-  components: {
-    Chart,
-    ChartControl,
-    ChartHeader,
-    ChartTotals
-  },
   methods: {
     ...mapActions([
       'logOut'
     ]),
     calcHeight () {
-      this.chart_height = document.documentElement.clientHeight - this.$refs.headers.offsetHeight - this.$refs.footers.offsetHeight
+      this.$refs.main.style.height = (document.documentElement.clientHeight - this.$refs.navigation.offsetHeight) + 'px'
     },
     checkOrder (currentDataLength) {
       this.currentOrder = (this.currentOrder < currentDataLength) ? this.currentOrder : 0
@@ -257,12 +211,9 @@ export default {
       this.calcHeight()
     },
     graphIsChanged (event) {
-      this.current_graph = event.graph
-      this.current_month = event.month
+      this.current_graph = (typeof (event.graph) !== 'undefined') ? event.graph : this.current_graph
+      this.current_month = (typeof (event.month) !== 'undefined') ? event.month : this.current_month
       this.calcHeight()
-    },
-    nextGraph (step) {
-      this.current_graph = (this.graphs.length + this.current_graph + step) % this.graphs.length
     },
     reorder (event) {
       this.currentOrder = event
@@ -282,17 +233,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.table-sm {
-  padding: 0 5px 0 5px
-}
-.bottom-align-text {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-}
-.nowrap {
-  white-space: nowrap;
-}
-</style>

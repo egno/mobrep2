@@ -3,7 +3,7 @@
       <div class="col-3 text-left small table-sm">
         {{ totals.caption }}
       </div>
-      <div class="text-right small table-sm nowrap" :class="'col-' + colIndex" v-for="(column, i) in totals.columns">
+      <div class="text-right small table-sm nowrap" :class="'col-' + colIndex" v-for="(column, i) in columns">
         {{ column }}
       </div>
   </div>
@@ -15,6 +15,9 @@ export default {
     'totals'
   ],
   computed: {
+    columns () {
+      return this.totals.columns
+    },
     colIndex () {
       if (this.totals) {
         switch (this.totals.columns.length) {

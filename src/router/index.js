@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import ReportsList from '@/components/ReportsList'
 import Graph from '@/components/Graph'
+import Report from '@/components/Report'
 import Login from '@/components/Login'
 
 Vue.use(Router)
@@ -20,6 +21,10 @@ export default new Router({
     {
       path: '/graph',
       component: Graph
+    },
+    {
+      path: '/report',
+      component: Report
     }
   ]
 })

@@ -1,78 +1,108 @@
 <template>
-  <div ref="chart">
-    <div v-if="data" class="max">
-      <div class="row max">
-        <div class="col scrolled">
-          <section v-for="row in data" >
-            <chart-row :row="row" :scalebase="baseValues">
-            </chart-row>
-          </section>
-        </div>
-      </div>
-    </div>
-    <div v-if="!data" class="max">
-      <p>
-         Подождите, данные загружаются...
-      </p>
-    </div>
+  <div class="col max">
+    <chart-header ref="header"
+    :headers="headers">
+    </chart-header>
+    <chart-main ref="chart"
+    :data="data"
+    :height="chartHeight">
+    </chart-main>
+    <chart-totals ref="foother"
+    :totals="{caption: totlalCaption,
+      columns: totals}">
+    </chart-totals>
   </div>
 </template>
 
 <script>
-  import ChartRow from '@/components/ChartRow'
+import ChartMain from '@/components/ChartMain'
+import ChartHeader from '@/components/ChartHeader'
+import ChartTotals from '@/components/ChartTotals'
 
-  export default {
-    props: [
-      'base',
-      'captions',
-      'data',
-      'height'
-    ],
-    computed: {
-      baseValues () {
-        return {
-          max: this.data.reduce((r, x) => x.values.map((xx, i) => Math.max(r[i] || 0, xx)), []),
-          min: this.data.reduce((r, x) => x.values.map((xx, i) => Math.min(r[i] || 0, xx)), []),
-          base: this.base
-        }
-      },
-      curr_data () {
-        return this.data
-      },
-      colIndex () {
-        if (this.data) {
-          switch (this.data[0].values.length) {
-            case 3:
-              return 3
-            case 2:
-              return 4
-            default:
-              return 8
+export default {
+  data () {
+    return {
+      totlalCaption: 'ИТОГО',
+      percentCaption: '(%)'
+    }
+  },
+  props: [
+    'data',
+    'fixedHeaderCaption',
+    'page'
+  ],
+  components: {
+    ChartMain,
+    ChartHeader,
+    ChartTotals
+  },
+  watch: {
+    'height': 'setHeight'
+  },
+  computed: {
+    chartHeight () {
+    },
+    headers () {
+      let result = {caption: {name: this.fixedHeaderCaption, ordered: false},
+        columns: this.page.columns.map(x => {
+          return {name: x.name}
+        })}
+      if (this.page.columns
+        .reduce((r, x) => r || x.type === 'base', false)
+      ) {
+        result.columns.push({name: this.percentCaption, ordered: false})
+      }
+      return result
+    },
+    totals () {
+      if (this.data) {
+        return this.data.data
+          .reduce((r, x) => x.values.map((xx, i) => (r[i] || 0) + (+xx || 0)), [])
+          .map((x, i) => {
+            switch ((this.page.columns[i]) ? this.page.columns[i].total : 'avg') {
+              case 'sum':
+                return x.toFixed(1)
+              case 'avg':
+                return (x / this.data.data.length).toFixed(1)
+              default:
+                return null
+            }
+          })
+      }
+    }
+  },
+  methods: {
+    headers () {
+      const percentCaption = '(%)'
+      let result = this.page.columns
+        .filter(x => !x.hidden)
+        .map((x, i) => {
+          return {
+            name: (x.caption) ? x.caption : x.name,
+            ordered: (i === this.currentOrder - 1)
           }
         }
+        )
+      if (this.page.columns
+        .reduce((r, x) => r || x.type === 'base', false)
+      ) {
+        result.push({name: percentCaption, ordered: (result.length === this.currentOrder - 1)})
       }
+      return result
     },
-    components: {
-      ChartRow
-    },
-    watch: {
-      'height': 'setHeight'
-    },
-    methods: {
-      calcBars () {
-        return 0
-      },
-      setHeight () {
-        this.$refs.chart.style.height = this.height + 'px'
+    setHeight () {
+      if (this.$refs.chart) {
+        this.$refs.chart.$el.style.height = (this.$refs.chart.$parent.$el.offsetHeight - this.$refs.header.$el.offsetHeight - this.$refs.foother.$el.offsetHeight) + 'px'
       }
-    },
-    mounted () {
-      this.setHeight()
-    },
-    updated () {
-      this.calcBars()
     }
+  },
+  mounted () {
+    this.setHeight()
+  },
+  updated () {
+    this.setHeight()
   }
+}
 </script>
 
 <style>

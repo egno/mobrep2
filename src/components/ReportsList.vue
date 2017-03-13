@@ -20,6 +20,10 @@ export default {
       reports: [{
         'name': 'graph',
         'caption': 'Отчёт руководителя'
+      },
+      {
+        'name': 'report',
+        'caption': '(тест)'
       }]
     }
   }

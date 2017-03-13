@@ -1,7 +1,7 @@
 <template>
   <div class="row navbar navbar-inverse bg-inverse">
     <div class="btn-toolbar">
-      <div class="btn-group">
+      <div  v-if="!small" class="btn-group">
         <button class="btn btn-secondary " @click="graphInc(-1)"> < </button>
         <button class="btn btn-secondary " @click="graphInc(1)"> > </button>
       </div>
@@ -22,7 +22,8 @@
 export default {
   props: [
     'graphs',
-    'months'
+    'months',
+    'small'
   ],
   data () {
     return {

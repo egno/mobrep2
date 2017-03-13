@@ -3,8 +3,8 @@
     @swipeleft
     @swiperight>
     <div ref="row" class="row chart-row">
-      <!-- <svg ref="bar2" class="basebar" width="0" height="0"></svg>
-      <svg ref="bar" width="0" height="0"></svg> -->
+      <svg ref="bar2" class="basebar" width="0" height="0"></svg>
+      <svg ref="bar" width="0" height="0"></svg>
       <div class="col-3 text-left small table-sm nowrap" @click="setOrder(0)">
         {{ row.caption }}
       </div>
@@ -37,15 +37,15 @@
     },
     methods: {
       setBar () {
-        // let maxValue = this.scalebase.max[0]
-        // if (this.scalebase.base) {
-        //   maxValue = Math.max(maxValue, this.scalebase.max[1])
-        //   this.$refs.bar.setAttribute('width', Math.min(this.row.values[0] / maxValue, 1) * 100 + '%')
-        //   this.$refs.bar2.setAttribute('width', Math.min(this.row.values[1] / maxValue, 1) * 100 + '%')
-        // } else {
-        //   this.$refs.bar.setAttribute('width', Math.min(this.row.values[0] / maxValue, 1) * 100 + '%')
-        //   this.$refs.bar2.setAttribute('width', '0')
-        // }
+        let maxValue = this.scalebase.max[0]
+        if (this.scalebase.base) {
+          maxValue = Math.max(maxValue, this.scalebase.max[1])
+          this.$refs.bar.setAttribute('width', Math.min(this.row.values[0] / maxValue, 1) * 100 + '%')
+          this.$refs.bar2.setAttribute('width', Math.min(this.row.values[1] / maxValue, 1) * 100 + '%')
+        } else {
+          this.$refs.bar.setAttribute('width', Math.min(this.row.values[0] / maxValue, 1) * 100 + '%')
+          this.$refs.bar2.setAttribute('width', '0')
+        }
       },
       setOrder (payload) {
         this.$emit('reorder', payload)
