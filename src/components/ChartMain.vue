@@ -10,11 +10,6 @@
         </div>
       </div>
     </div>
-    <div v-if="!data" class="max">
-      <p>
-         Подождите, данные загружаются...
-      </p>
-    </div>
   </div>
 </template>
 

@@ -9,8 +9,10 @@
     >
       <chart
         :fixedHeaderCaption="fixedHeaderCaption"
+        :order="order"
         :page="page"
-        :data="data[i]"
+        :data="chartData(i)"
+        @reorder="reorder"
       >
       </chart>
     </div>
@@ -25,6 +27,10 @@ export default {
   props: {
     data: {},
     fixedHeaderCaption: '',
+    order: {
+      type: Number,
+      default: 0
+    },
     pages: {},
     activePage: {
       type: Number,
@@ -35,12 +41,15 @@ export default {
     Swiper,
     Chart
   },
-  computed: {
-    chartData () {
-      return
-    }
-  },
   methods: {
+    chartData (i) {
+      if (this.data) {
+        return this.data[i]
+      }
+    },
+    reorder (event) {
+      this.$emit('reorder', event)
+    },
     setIndex (index) {
       if (index) {
         let sendData = {graph: index - 1}

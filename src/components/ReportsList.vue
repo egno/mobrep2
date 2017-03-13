@@ -18,12 +18,8 @@ export default {
   data () {
     return {
       reports: [{
-        'name': 'graph',
-        'caption': 'Отчёт руководителя'
-      },
-      {
         'name': 'report',
-        'caption': '(тест)'
+        'caption': 'Отчёт руководителя'
       }]
     }
   }

@@ -1,16 +1,24 @@
 <template>
   <div class="col max">
-    <chart-header ref="header"
-    :headers="headers">
-    </chart-header>
-    <chart-main ref="chart"
-    :data="data"
-    :height="chartHeight">
-    </chart-main>
-    <chart-totals ref="foother"
-    :totals="{caption: totlalCaption,
-      columns: totals}">
-    </chart-totals>
+    <div v-if="!data" class="max">
+      <p>
+         Подождите, данные загружаются...
+      </p>
+    </div>
+    <div v-if="data" class="max">
+      <chart-header ref="header"
+      :headers="headers"
+      :order="order"
+      @reorder="reorder">
+      </chart-header>
+      <chart-main ref="chart"
+      :data="data">
+      </chart-main>
+      <chart-totals ref="foother"
+      :totals="{caption: totlalCaption,
+        columns: totals}">
+      </chart-totals>
+    </div>
   </div>
 </template>
 
@@ -29,7 +37,8 @@ export default {
   props: [
     'data',
     'fixedHeaderCaption',
-    'page'
+    'page',
+    'order'
   ],
   components: {
     ChartMain,
@@ -40,14 +49,12 @@ export default {
     'height': 'setHeight'
   },
   computed: {
-    chartHeight () {
-    },
     headers () {
       let result = {caption: {name: this.fixedHeaderCaption, ordered: false},
         columns: this.page.columns.map(x => {
           return {name: x.name}
         })}
-      if (this.page.columns
+      if (this.page && this.page.columns
         .reduce((r, x) => r || x.type === 'base', false)
       ) {
         result.columns.push({name: this.percentCaption, ordered: false})
@@ -55,7 +62,7 @@ export default {
       return result
     },
     totals () {
-      if (this.data) {
+      if (this.page && this.page.columns && this.data && this.data.data) {
         return this.data.data
           .reduce((r, x) => x.values.map((xx, i) => (r[i] || 0) + (+xx || 0)), [])
           .map((x, i) => {
@@ -89,6 +96,9 @@ export default {
         result.push({name: percentCaption, ordered: (result.length === this.currentOrder - 1)})
       }
       return result
+    },
+    reorder (event) {
+      this.$emit('reorder', event)
     },
     setHeight () {
       if (this.$refs.chart) {

@@ -6,7 +6,9 @@
         :fixedHeaderCaption="caption"
         :pages="graphs"
         :data="chartData"
+        :order="currentOrder"
         @isChanged="graphIsChanged"
+        @reorder="reorder"
         >
       </chart-swiper>
     </div>
@@ -101,7 +103,7 @@ export default {
       current_graph: 0,
       current_month: 0,
       chart_height: 0,
-      currentOrder: 0
+      currentOrder: 3
     }
   },
   computed: {
@@ -111,11 +113,6 @@ export default {
     ]),
     base () {
       return (this.graphs[this.current_graph].columns[1] && this.graphs[this.current_graph].columns[1].type === 'base')
-    },
-    captions () {
-      if (this.current_data) {
-        return this.current_data.map(x => x.caption)
-      }
     },
     chartData () {
       if (this.data[this.current_month]) {
@@ -137,6 +134,14 @@ export default {
             })
           }
         })
+        .map(x => {
+          x.data = x.data.sort((a, b) =>
+          (this.currentOrder && a.values.length >= this.currentOrder)
+          ? (a.values[this.currentOrder - 1] - b.values[this.currentOrder - 1])
+          : (a.caption > b.caption) ? 1 : -1)
+          return x
+        }
+        )
       }
     },
     graph_list () {
