@@ -137,7 +137,7 @@ export default {
         .map(x => {
           x.data = x.data.sort((a, b) =>
           (this.currentOrder && a.values.length >= this.currentOrder)
-          ? (a.values[this.currentOrder - 1] - b.values[this.currentOrder - 1])
+          ? (((a.values[this.currentOrder - 1]) ? a.values[this.currentOrder - 1] : 0) - ((b.values[this.currentOrder - 1]) ? b.values[this.currentOrder - 1] : 0))
           : (a.caption > b.caption) ? 1 : -1)
           return x
         }

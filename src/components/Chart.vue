@@ -12,7 +12,9 @@
       @reorder="reorder">
       </chart-header>
       <chart-main ref="chart"
-      :data="data">
+      :data="data"
+      :order="order"
+      @reorder="reorder">
       </chart-main>
       <chart-totals ref="foother"
       :totals="{caption: totlalCaption,
@@ -68,7 +70,7 @@ export default {
           .map((x, i) => {
             switch ((this.page.columns[i]) ? this.page.columns[i].total : 'avg') {
               case 'sum':
-                return x.toFixed(1)
+                return '∑ ' + x.toFixed(1)
               case 'avg':
                 return (x / this.data.data.length).toFixed(1)
               default:
@@ -79,23 +81,8 @@ export default {
     }
   },
   methods: {
-    headers () {
-      const percentCaption = '(%)'
-      let result = this.page.columns
-        .filter(x => !x.hidden)
-        .map((x, i) => {
-          return {
-            name: (x.caption) ? x.caption : x.name,
-            ordered: (i === this.currentOrder - 1)
-          }
-        }
-        )
-      if (this.page.columns
-        .reduce((r, x) => r || x.type === 'base', false)
-      ) {
-        result.push({name: percentCaption, ordered: (result.length === this.currentOrder - 1)})
-      }
-      return result
+    getWindowHeight (event) {
+      this.setHeight()
     },
     reorder (event) {
       this.$emit('reorder', event)
@@ -107,10 +94,17 @@ export default {
     }
   },
   mounted () {
+    this.$nextTick(function () {
+      window.addEventListener('resize', this.getWindowHeight)
+      this.getWindowHeight()
+    })
     this.setHeight()
   },
   updated () {
     this.setHeight()
+  },
+  beforeDestroy () {
+    window.removeEventListener('resize', this.getWindowHeight)
   }
 }
 </script>

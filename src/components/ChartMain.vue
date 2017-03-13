@@ -4,7 +4,10 @@
       <div class="row max">
         <div class="col scrolled">
           <section v-for="row in curr_data" >
-            <chart-row :row="row" :scalebase="baseValues">
+            <chart-row
+            :row="row"
+            :scalebase="baseValues"
+            @reorder="reorder">
             </chart-row>
           </section>
         </div>
@@ -18,7 +21,8 @@
 
   export default {
     props: [
-      'data'
+      'data',
+      'order'
     ],
     computed: {
       baseValues () {
@@ -58,6 +62,9 @@
     methods: {
       calcBars () {
         return 0
+      },
+      reorder (event) {
+        this.$emit('reorder', event)
       }
     },
     mounted () {
