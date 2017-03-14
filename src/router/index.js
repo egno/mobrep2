@@ -23,8 +23,10 @@ export default new Router({
       component: Graph
     },
     {
-      path: '/report',
-      component: Report
+      path: '/report/:name',
+      name: 'report',
+      component: Report,
+      props: true
     }
   ]
 })

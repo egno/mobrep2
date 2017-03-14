@@ -5,7 +5,7 @@
     <div class="columns">
       <ul class="list-group">
         <li v-for="report in reports" class="list-group-item">
-          <router-link :to="report.name">{{ report.caption }}</router-link>
+          <router-link :to="{ name: report.path, params: { name: report.name }}">{{ report.caption }}</router-link>
         </li>
       </ul>
     </div>
@@ -14,13 +14,12 @@
 </template>
 
 <script>
+import { reports } from '@/reports'
+
 export default {
-  data () {
-    return {
-      reports: [{
-        'name': 'report',
-        'caption': 'Отчёт руководителя'
-      }]
+  computed: {
+    reports () {
+      return reports
     }
   }
 }

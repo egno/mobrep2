@@ -89,7 +89,7 @@
       },
       _onTouchMove (e) {
         this.delta = this._getTouchPos(e) - this.startPos
-        this.$refs.scrolled.scrollTop = this.scrollPos + this.delta
+        this.$refs.scrolled.scrollTop = this.scrollPos - this.delta
       },
       _onTouchEnd (e) {
         // this.$refs.scrolled.scrollTop -= this.delta
