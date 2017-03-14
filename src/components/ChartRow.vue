@@ -97,8 +97,10 @@ svg {
   /*background-color: #eee;*/
   height: 1.3em;
   x: 0;
+  opacity: 0.7;
 }
 .basebar {
-  background-color: #ddd;
+  background-color: #d5d5d5;
+  opacity: 1;
 }
 </style>
