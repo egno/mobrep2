@@ -60,12 +60,15 @@ export default {
       translateY: 0,
       startTranslate: 0,
       delta: 0,
+      deltaX: 0,
+      deltaY: 0,
       dragging: false,
       startPos: null,
       transitioning: false,
       slideEls: [],
       translateOffset: 0,
-      transitionDuration: 0
+      transitionDuration: 0,
+      scrollStart: 0
     }
   },
   watch: {
@@ -142,8 +145,8 @@ export default {
       this.dragging = true
       this.transitionDuration = 0
 
-      document.addEventListener('touchmove', this._onTouchMove, false)
-      document.addEventListener('touchend', this._onTouchEnd, false)
+      document.addEventListener('touchmove', this._onTouchMove)
+      document.addEventListener('touchend', this._onTouchEnd)
       document.addEventListener('mousemove', this._onTouchMove, false)
       document.addEventListener('mouseup', this._onTouchEnd, false)
     },
@@ -163,9 +166,9 @@ export default {
       this.dragging = false
       this.transitionDuration = this.speed
       var isQuickAction = new Date().getTime() - this.startTime < 1000
-      if (this.delta < -100 || (isQuickAction && this.delta < -15)) {
+      if (this.delta < -200 || (isQuickAction && this.delta < -100)) {
         this.next()
-      } else if (this.delta > 100 || (isQuickAction && this.delta > 15)) {
+      } else if (this.delta > 200 || (isQuickAction && this.delta > 100)) {
         this.prev()
       } else {
         this._revert()

@@ -2,7 +2,7 @@
   <div ref="chart">
     <div v-if="data" class="max">
       <div class="row max">
-        <div class="col scrolled max">
+        <div ref="scrolled" class="col scrolled max" @touchstart="_onTouchStart">
           <section v-for="row in curr_data" >
             <chart-row
             :row="row"
@@ -21,6 +21,13 @@
   import math from 'mathjs'
 
   export default {
+    data () {
+      return {
+        startPos: 0,
+        delta: 0,
+        scrollPos: 0
+      }
+    },
     props: [
       'data',
       'order'
@@ -72,6 +79,28 @@
       'height': 'setHeight'
     },
     methods: {
+      _onTouchStart (e) {
+        this.startPos = this._getTouchPos(e)
+        this.scrollPos = this.$refs.scrolled.scrollTop
+        this.delta = 0
+
+        document.addEventListener('touchmove', this._onTouchMove, false)
+        document.addEventListener('touchend', this._onTouchEnd, false)
+      },
+      _onTouchMove (e) {
+        this.delta = this._getTouchPos(e) - this.startPos
+        this.$refs.scrolled.scrollTop = this.scrollPos + this.delta
+      },
+      _onTouchEnd (e) {
+        // this.$refs.scrolled.scrollTop -= this.delta
+
+        document.removeEventListener('touchmove', this._onTouchMove)
+        document.removeEventListener('touchend', this._onTouchEnd)
+      },
+      _getTouchPos (e) {
+        var key = 'pageY'
+        return e.changedTouches ? e.changedTouches[0][key] : e[key]
+      },
       calcBars () {
         return 0
       },
@@ -80,6 +109,8 @@
       }
     },
     mounted () {
+      this._onTouchMove = this._onTouchMove.bind(this)
+      this._onTouchEnd = this._onTouchEnd.bind(this)
     },
     updated () {
       this.calcBars()
