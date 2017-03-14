@@ -77,9 +77,9 @@ export default {
           .map((x, i) => {
             switch ((this.page.columns[i]) ? this.page.columns[i].total : 'avg') {
               case 'sum':
-                return '∑ ' + x.toFixed(1)
+                return '∑ ' + x.toFixed(0)
               case 'avg':
-                return (x / this.data.data.length).toFixed(1)
+                return (x / this.data.data.length).toFixed(0)
               default:
                 return null
             }
@@ -124,9 +124,17 @@ export default {
   overflow: auto;
 }
 .small {
-  font-size: 65%;
+  padding-top: 0.3em;
+  font-size: 60%;
 }
 .max {
   height: 100%
+}
+.nowrap {
+  white-space: nowrap
+}
+.col {
+  padding-left: 0.7em;
+  padding-right: 0.7em;
 }
 </style>

@@ -18,7 +18,6 @@
 
 <script>
   import ChartRow from '@/components/ChartRow'
-  import math from 'mathjs'
 
   export default {
     data () {
@@ -35,20 +34,9 @@
     computed: {
       baseValues () {
         if (this.curr_data) {
-          let arr = this.curr_data.reduce((r, x) =>
-            x.values.map((xx, i) => {
-              if (!r[i]) {
-                r[i] = []
-              }
-              r[i].push(xx)
-              return r[i]
-            })
-            , [])
           return {
             max: this.curr_data.reduce((r, x) => x.values.map((xx, i) => Math.max(r[i] || 0, xx)), []),
             min: this.curr_data.reduce((r, x) => x.values.map((xx, i) => Math.min(r[i] || 0, xx)), []),
-            std: arr.map(x => math.std(x)),
-            mean: arr.map(x => math.mean(x)),
             base: this.data.base
           }
         }

@@ -1,18 +1,14 @@
 <template>
-  <v-touch
-    @swipeleft
-    @swiperight>
-    <div ref="row" class="row chart-row">
-      <svg ref="bar2" class="basebar" width="0" height="0"></svg>
-      <svg ref="bar" width="0" height="0"></svg>
-      <div class="col-3 text-left small table-sm nowrap" @click="setOrder(0)">
-        {{ row.caption }}
-      </div>
-      <div class="text-right table-sm" :class="'col-' + colIndex" v-for="(value, i) in row.values" @click="setOrder(i + 1)">
-        {{ value | beautyNumber }}
-      </div>
+  <div ref="row" class="row chart-row">
+    <svg ref="bar2" class="basebar" width="0" height="0"></svg>
+    <svg ref="bar" width="0" height="0"></svg>
+    <div class="col-3 text-left small table-sm nowrap" @click="setOrder(0)">
+      {{ row.caption }}
     </div>
-  </v-touch>
+    <div class="text-right table-sm" :class="'col-' + colIndex" v-for="(value, i) in row.values" @click="setOrder(i + 1)">
+      {{ value | beautyNumber }}
+    </div>
+  </div>
 </template>
 
 <script>
@@ -42,7 +38,7 @@
           x = Math.max(Math.min(x, 1), 0)
           return ('0' + parseInt(min + (x * (255 - min))).toString(16)).slice(-2)
         }
-        let maxValue = this.scalebase.mean[0] + 3 * this.scalebase.std[0] // this.scalebase.max[0]
+        let maxValue = this.scalebase.max[0]
         if (this.scalebase.base && this.row) {
           maxValue = Math.max(maxValue, this.scalebase.max[1])
           if (maxValue) {
@@ -77,7 +73,7 @@
           value === '') {
           return nullSign
         } else {
-          return value.toFixed(1)
+          return value.toFixed(0)
         }
       }
     },
@@ -102,5 +98,8 @@ svg {
 .basebar {
   background-color: #d5d5d5;
   opacity: 1;
+}
+.chart-row {
+  height: 1.3em;
 }
 </style>
