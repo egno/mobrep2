@@ -39,9 +39,10 @@
       setBar () {
         const min = 220
         function percent2hex (x) {
+          x = Math.max(Math.min(x, 1), 0)
           return ('0' + parseInt(min + (x * (255 - min))).toString(16)).slice(-2)
         }
-        let maxValue = this.scalebase.max[0]
+        let maxValue = this.scalebase.mean[0] + 3 * this.scalebase.std[0] // this.scalebase.max[0]
         if (this.scalebase.base && this.row) {
           maxValue = Math.max(maxValue, this.scalebase.max[1])
           if (maxValue) {
