@@ -134,7 +134,7 @@ export default {
   white-space: nowrap
 }
 .col {
-  padding-left: 0.7em;
-  padding-right: 0.7em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
 }
 </style>

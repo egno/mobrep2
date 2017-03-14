@@ -106,5 +106,9 @@
   }
 </script>
 
-<style>
+<style scoped>
+.row {
+  margin-left: -0.8em;
+  margin-right: -0.8em;
+}
 </style>

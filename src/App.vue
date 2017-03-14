@@ -50,5 +50,6 @@ export default {
   position: fixed;
   height: 100%;
   width: 100%;
+  max-width: 40em;
 }
 </style>
