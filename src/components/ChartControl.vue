@@ -1,19 +1,19 @@
 <template>
   <div class="row navbar navbar-inverse bg-inverse">
     <div class="btn-toolbar">
-      <div  v-if="!small" class="btn-group">
+      <div class="btn-group btn-group-sm">
+        <button class="btn btn-secondary btn-sm " @click="goHome">≡</button>
+      </div>
+      <div  v-if="!isTouchDevice" class="btn-group">
         <button class="btn btn-secondary " @click="graphInc(-1)"> < </button>
         <button class="btn btn-secondary " @click="graphInc(1)"> > </button>
       </div>
       <select class="custom-select custom-select-sm form-control" v-model="selected_graph">
         <option v-for="(graph, i) in graphs.list" v-bind:value="i">{{ graph }}</option>
       </select>
-      <select class="custom-select custom-select-sm form-control" v-model="selected_month">
+      <select v-if="haveMonths" class="custom-select custom-select-sm form-control" v-model="selected_month">
         <option v-for="(month, i) in months.list" v-bind:value="i">{{ month }}</option>
       </select>
-      <div class="btn-group btn-group-sm">
-        <button class="btn btn-secondary btn-sm " @click="goHome">≡</button>
-      </div>
     </div>
   </div>
 </template>
@@ -29,6 +29,14 @@ export default {
     return {
       selected_graph: 0,
       selected_month: 0
+    }
+  },
+  computed: {
+    haveMonths () {
+      return (this.months && this.months.list && this.months.list.length > 0 && this.months.list[0] !== undefined)
+    },
+    isTouchDevice () {
+      return !!('ontouchstart' in window)
     }
   },
   watch: {

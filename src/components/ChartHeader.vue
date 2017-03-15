@@ -42,4 +42,7 @@ export default {
   font-weight: bold;
   background-color: inherit;
 }
+.small {
+  white-space: nowrap
+}
 </style>
