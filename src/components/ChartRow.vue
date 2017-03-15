@@ -1,8 +1,8 @@
 <template>
   <div ref="row" class="row chart-row">
     <svg :height="barHeight">
-      <rect v-if="hasBase" :width="barWidth[1]" fill="#ccc"></rect>
-      <rect :width="barWidth[0]" :fill="color" :x="barStart"></rect>
+      <rect v-if="hasBase" :width="barWidth[1]" fill="#ccc" :height="barHeight"></rect>
+      <rect :width="barWidth[0]" :fill="color" :x="barStart" :height="barHeight"></rect>
       <line :x1="barStart" :x2="barStart" y1="0" y2="100%"></line>
     </svg>
     <div class="col-3 text-left small table-sm nowrap" @click="setOrder(0)">
