@@ -1,9 +1,14 @@
 <template>
   <div class="col max">
-    <div v-if="!data" class="max">
-      <p>
-         Подождите, данные загружаются...
-      </p>
+    <div v-if="!data" class="max align-middle">
+      <div class="col">
+        <p>
+           Подождите, данные загружаются...
+        </p>
+      </div>
+      <div class="progress">
+        <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+      </div>
     </div>
     <div v-if="data" class="max">
       <chart-header ref="header"
