@@ -42,7 +42,7 @@
         if (this.scalebase.base && this.row) {
           maxValue = Math.max(maxValue, this.scalebase.max[1])
           if (maxValue) {
-            this.$refs.bar2.setAttribute('width', Math.min(((this.row.values[1]) ? this.row.values[1] : 0) / maxValue, 1) * 100 + '%')
+            this.$refs.bar2.setAttribute('width', Math.min((this.row.values[1] || 0) / maxValue, 1) * 100 + '%')
           }
         } else {
           if (maxValue) {
@@ -50,7 +50,7 @@
           }
         }
         if (maxValue) {
-          this.$refs.bar.setAttribute('width', Math.min(((this.row.values[0]) ? this.row.values[0] : 0) / maxValue, 1) * 100 + '%')
+          this.$refs.bar.setAttribute('width', Math.min((this.row.values[0] || 0) / maxValue, 1) * 100 + '%')
           if (this.row.values[2]) {
             this.$refs.bar.setAttribute('style', 'background-color: #' + percent2hex(1 - (this.row.values[2] / this.scalebase.max[2])) + percent2hex(this.row.values[2] / this.scalebase.max[2]) + 'ee')
           }
@@ -69,11 +69,15 @@
         if (!value ||
           value === undefined ||
           value === null ||
-          isNaN(value) ||
+          ((typeof (value) !== 'string') && isNaN(value)) ||
           value === '') {
           return nullSign
         } else {
-          return value.toFixed(0)
+          if (typeof (value) === 'string') {
+            return value
+          } else {
+            return value.toFixed(0)
+          }
         }
       }
     },
@@ -86,12 +90,12 @@
   }
 </script>
 
-<style>
+<style scoped>
 svg {
   position: absolute;
   border: 0;
-  /*background-color: #eee;*/
-  height: 1.3em;
+  background-color: #eee;
+  height: 1.2em;
   x: 0;
   opacity: 0.7;
 }
@@ -101,5 +105,8 @@ svg {
 }
 .chart-row {
   height: 1.3em;
+  border-style: dotted;
+  border-width: 0 0 1px 0;
+  border-color: lightgray;
 }
 </style>

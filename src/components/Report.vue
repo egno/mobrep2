@@ -85,6 +85,13 @@ export default {
       return (this.graphs[this.current_graph].columns[1] && this.graphs[this.current_graph].columns[1].type === 'base')
     },
     chartData () {
+      function order (a, b) {
+        if (typeof (a) !== 'string') {
+          return (a || 0) - (b || 0)
+        } else {
+          return (a > b) ? 1 : -1
+        }
+      }
       if (this.data[this.current_month]) {
         return this.graphs.map(x => {
           return { caption: (x.caption)
@@ -107,8 +114,8 @@ export default {
         .map(x => {
           x.data = x.data.sort((a, b) =>
           (this.currentOrder && a.values.length >= this.currentOrder)
-          ? (((a.values[this.currentOrder - 1]) ? a.values[this.currentOrder - 1] : 0) - ((b.values[this.currentOrder - 1]) ? b.values[this.currentOrder - 1] : 0))
-          : (a.caption > b.caption) ? 1 : -1)
+          ? order(a.values[this.currentOrder - 1], b.values[this.currentOrder - 1])
+          : order(a.caption, b.caption))
           return x
         }
         )
