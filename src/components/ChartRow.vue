@@ -87,14 +87,13 @@
         return 'rgb(' + red + ',' + green + ',' + blue + ')'
       },
       hslaColor (i) {
-        const min = 0.2
+        const min = 0
         const max = 1
         let h = (this.row.values[i] < 0) ? 0 : 90
-        let s = 80
+        let s = ((Math.abs(this.row.values[i] || 0) / ((this.row.values[i] > 0) ? this.scalebase.max[i] : -this.scalebase.min[i]) || 0) * (max - min) + min) *
+          80
         let l = 50
-        let a = (this.isDefined(this.scalebase.max[i]))
-        ? ((Math.abs(this.row.values[i] || 0) / ((this.row.values[i] > 0) ? this.scalebase.max[i] : -this.scalebase.min[i]) || 0) * (max - min) + min)
-        : max
+        let a = 1
         return 'hsla(' + h + ',' + s + '%,' + l + '%,' + a + ')'
       },
       setOrder (payload) {
