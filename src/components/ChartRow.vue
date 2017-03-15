@@ -70,6 +70,14 @@
         }
         return '#' + percent2hex(1 - (this.row.values[1] / this.scalebase.min[1])) + percent2hex(this.row.values[1] / this.scalebase.max[1]) + 'ee'
       },
+      isDefined (value) {
+        return !(!value ||
+          value === undefined ||
+          value === Infinity ||
+          value === null ||
+          ((typeof (value) !== 'string') && isNaN(value)) ||
+          value === '')
+      },
       rgbColor (i) {
         const maxColor = 254
         let red = ((Math.max(-this.row.values[0], 0)) / this.maxValue * maxColor).toFixed(0)
@@ -84,7 +92,9 @@
         let h = (this.row.values[i] < 0) ? 0 : 90
         let s = 80
         let l = 50
-        let a = ((Math.abs(this.row.values[i] || 0) / ((this.row.values[i] > 0) ? this.scalebase.max[i] : -this.scalebase.min[i]) || 0) * (max - min) + min)
+        let a = (this.isDefined(this.scalebase.max[i]))
+        ? ((Math.abs(this.row.values[i] || 0) / ((this.row.values[i] > 0) ? this.scalebase.max[i] : -this.scalebase.min[i]) || 0) * (max - min) + min)
+        : max
         return 'hsla(' + h + ',' + s + '%,' + l + '%,' + a + ')'
       },
       setOrder (payload) {
