@@ -184,7 +184,7 @@ export const reports = [
       ]},
       { columns: [
         { name: 'Приб.апт,тыс.р.', total: 'sum' },
-        { name: 'Продаж,тыс.р.', type: 'part', total: 'sum' }
+        { name: 'Продаж,тыс.р.', type: 'percent', total: 'sum' }
       ]},
       { columns: [
         { name: 'Заказов', total: 'sum' },
