@@ -58,7 +58,7 @@ export default {
   computed: {
     current_data () {
       let result = this.data
-      result.base = this.page.columns[1].type
+      result.base = this.page.columns[1] && this.page.columns[1].type
       return result
     },
     headers () {

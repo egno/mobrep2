@@ -82,7 +82,7 @@ export default {
       }
     },
     base () {
-      return (this.graphs[this.current_graph].columns[1] && this.graphs[this.current_graph].columns[1].type === 'base')
+      return (this.graphs[this.current_graph].columns[1] && this.graphs[this.current_graph].columns[1].type)
     },
     chartData () {
       function order (a, b) {
@@ -101,12 +101,14 @@ export default {
               : x.columns[0].name,
             data: this.data[this.current_month].data.map(row => {
               let values = x.columns.map(col => row[col.name])
-              switch (x.columns[1].type) {
-                case 'percent':
-                  values.push((row[x.columns[0].name] / row[x.columns[1].name] * 100))
-                  break
-                case 'part':
-                  values.push((row[x.columns[0].name] / row[x.columns[1].name]))
+              if (x.columns[1]) {
+                switch (x.columns[1].type) {
+                  case 'percent':
+                    values.push((row[x.columns[0].name] / row[x.columns[1].name] * 100))
+                    break
+                  case 'part':
+                    values.push((row[x.columns[0].name] / row[x.columns[1].name]))
+                }
               }
               return {
                 caption: row[this.caption],
