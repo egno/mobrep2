@@ -58,9 +58,7 @@ export default {
   computed: {
     current_data () {
       let result = this.data
-      result.base = (this.page && this.page.columns
-        .reduce((r, x) => r || x.type === 'base', false)
-      )
+      result.base = this.page.columns[1].type
       return result
     },
     headers () {
@@ -68,12 +66,19 @@ export default {
         columns: this.page.columns.map(x => {
           return {name: x.name}
         })}
-      if (this.page && this.page.columns
-        .reduce((r, x) => r || x.type === 'base', false)
-      ) {
-        result.columns.push({name: this.percentCaption, ordered: false})
+      if (this.page && this.page.columns && this.page.columns[1]) {
+        switch (this.page.columns[1].type) {
+          case 'percent':
+            result.columns.push({name: this.percentCaption, ordered: false})
+            break
+          case 'part':
+            result.columns.push({name: this.partCaption, ordered: false})
+        }
       }
       return result
+    },
+    partCaption () {
+      return '(' + this.page.columns[0].name[0] + '/' + this.page.columns[1].name[0] + ')'
     },
     totals () {
       if (this.page && this.page.columns && this.data && this.data.data) {

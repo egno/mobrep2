@@ -19,11 +19,12 @@ export const reports = [
           },
           {
             name: 'План,млн.р',
-            type: 'base', // Тип столбца (необязательный)
-              // Если указан тип = 'base', то автоматически добавляется третий столбец,
-              // в котором отображается процентное отношение значений первого столбца ко второму
+            type: 'percent', // Тип столбца (необязательный)
+              // Если указан тип = 'percent' или 'part', то автоматически добавляется третий столбец,
+              // в котором отображается:
+              // для 'percent' - процентное отношение значения первого столбца к значению второго
+              // для 'part' - отношение значения первого столбца к значению второго (доля)
               // это отношение используется для определения цвета строки.
-              // Если указан тип = 'base', то на график добавляется ещё один столбец
               // Если тип не указан, то для определения цвета строки
               // используется значение второго столбца
             total: 'sum'
@@ -33,7 +34,7 @@ export const reports = [
       {
         columns: [
           { name: 'Выполн.%', total: 'avg' },
-          { name: 'Выпол. Год, %', type: 'base', total: 'avg' }
+          { name: 'Выпол. Год, %', type: 'percent', total: 'avg' }
         ]
       },
       {
@@ -134,7 +135,7 @@ export const reports = [
     screens: [
       { columns: [
           { name: 'Факт (млн.руб.)', total: 'sum' },
-          { name: 'План (млн.руб.)', type: 'base', total: 'sum' }
+          { name: 'План (млн.руб.)', type: 'percent', total: 'sum' }
       ]},
       { columns: [
           { name: '% вып.плана', total: 'avg' },
@@ -153,6 +154,50 @@ export const reports = [
   {
     caption: 'Продажи по Apteka.ru',
     path: 'report',
-    name: 'apteka24'
+    name: 'apteka24',
+    uri: 'sgd_inetapteka',
+    fixedColumn: 'Филиал',
+    screens: [
+      { columns: [
+        { name: 'Апт.с заказ', total: 'sum' },
+        { name: 'Подкл.апт', type: 'percent', total: 'sum' }
+      ]},
+      { columns: [
+        { name: 'Возвраты', total: 'sum' },
+        { name: 'Заказов', type: 'percent', total: 'sum' }
+      ]},
+      { columns: [
+        { name: 'Заказов на апт. в день', total: 'avg' },
+        { name: 'Заказов', total: 'sum' }
+      ]},
+      { columns: [
+        { name: 'Повторн.заказ', total: 'sum' },
+        { name: 'Заказов', type: 'percent', total: 'sum' }
+      ]},
+      { columns: [
+        { name: 'Сред.чек', total: 'avg' },
+        { name: 'Продаж,тыс.р.', total: 'sum' }
+      ]},
+      { columns: [
+        { name: 'РН,тыс.р.', total: 'sum' },
+        { name: '%РН', total: 'avg' }
+      ]},
+      { columns: [
+        { name: 'Приб.апт,тыс.р.', total: 'sum' },
+        { name: 'Продаж,тыс.р.', type: 'part', total: 'sum' }
+      ]},
+      { columns: [
+        { name: 'Заказов', total: 'sum' },
+        { name: 'Насел.млн.ч.', type: 'part', total: 'sum' }
+      ]},
+      { columns: [
+        { name: 'Подкл.апт', total: 'sum' },
+        { name: 'Насел.млн.ч.', type: 'part', total: 'sum' }
+      ]},
+      { columns: [
+        { name: 'РН,тыс.р.', total: 'sum' },
+        { name: 'Насел.млн.ч.', type: 'part', total: 'sum' }
+      ]}
+    ]
   }
 ]

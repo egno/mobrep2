@@ -101,8 +101,12 @@ export default {
               : x.columns[0].name,
             data: this.data[this.current_month].data.map(row => {
               let values = x.columns.map(col => row[col.name])
-              if (x.columns.reduce((r, xx) => r || xx.type === 'base', false)) {
-                values.push((row[x.columns[0].name] / row[x.columns[1].name] * 100))
+              switch (x.columns[1].type) {
+                case 'percent':
+                  values.push((row[x.columns[0].name] / row[x.columns[1].name] * 100))
+                  break
+                case 'part':
+                  values.push((row[x.columns[0].name] / row[x.columns[1].name]))
               }
               return {
                 caption: row[this.caption],
