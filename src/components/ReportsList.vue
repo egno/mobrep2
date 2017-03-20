@@ -10,17 +10,71 @@
       </ul>
     </div>
   </section>
+  <div class="col" v-if="noReportsFound">
+    <div class="row">
+      Нет доступных отчётов
+    </div>
+    <div class="row">
+      <button type="submit" class="btn btn-primary" @click="logOut">Выйти</button>
+    </div>
+  </div>
 </div>
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 import { reports } from '@/reports'
+import { ls } from '@/services/localStore'
 
 export default {
-  computed: {
-    reports () {
-      return reports
+  data () {
+    return {
+      uri: '',
+      data: [],
+      loaded: false
     }
+  },
+  computed: {
+    ...mapGetters([
+      'checkLogIn',
+      'tokenName'
+    ]),
+    reports () {
+      return reports.filter(x => this.data.reduce((r, xx) => r || (xx.name === x.uri), false))
+    },
+    noReportsFound () {
+      return (reports.length === 0) && this.loaded
+    }
+  },
+  methods: {
+    ...mapActions([
+      'logOut'
+    ]),
+    fetchData () {
+      const options = {
+        headers: {}
+      }
+      if ((this.checkLogIn) && ls.get(this.tokenName) !== null) {
+        options.headers.Authorization = 'Bearer ' + ls.get(this.tokenName)
+      }
+      this.$http.get(this.uri, options)
+        .then(
+          (response) => {
+            return response.json()
+          },
+          (response) => {
+            this.logOut()
+          }
+        )
+        .then((data) => {
+          this.loaded = true
+          this.data = data
+        }
+      )
+    }
+  },
+  mounted () {
+    this.fetchData()
   }
 }
 </script>
