@@ -81,19 +81,23 @@ export default {
       return '(' + this.page.columns[0].name[0] + '/' + this.page.columns[1].name[0] + ')'
     },
     totals () {
-      if (this.page && this.page.columns && this.data && this.data.data) {
-        return this.data.data
-          .reduce((r, x) => x.values.map((xx, i) => (r[i] || 0) + (+xx || 0)), [])
-          .map((x, i) => {
-            switch ((this.page.columns[i]) ? this.page.columns[i].total : 'avg') {
-              case 'sum':
-                return '∑ ' + x.toFixed(0)
-              case 'avg':
-                return (x / this.data.data.length).toFixed(0)
-              default:
-                return null
-            }
-          })
+      if (this.data.totals) {
+        return this.data.totals.map(x => (x || 0).toFixed(0))
+      } else {
+        if (this.page && this.page.columns && this.data && this.data.data) {
+          return this.data.data
+            .reduce((r, x) => x.values.map((xx, i) => (r[i] || 0) + (+xx || 0)), [])
+            .map((x, i) => {
+              switch ((this.page.columns[i]) ? this.page.columns[i].total : 'avg') {
+                case 'sum':
+                  return '∑ ' + x.toFixed(0)
+                case 'avg':
+                  return (x / this.data.data.length).toFixed(0)
+                default:
+                  return null
+              }
+            })
+        }
       }
     }
   },

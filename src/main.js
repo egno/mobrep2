@@ -12,9 +12,9 @@ Vue.use(VueResource)
 
 if (process.env.NODE_ENV !== 'production') {
   // Vue.http.options.root = 'http://172.16.202.42:3002'
-  Vue.http.options.root = 'http://172.16.202.42:3003'
+  Vue.http.options.root = 'http://172.16.202.42:3004'
 } else {
-  Vue.http.options.root = '/api'
+  Vue.http.options.root = '/api/v2'
 }
 
 /* eslint-disable no-new */

@@ -101,20 +101,15 @@ export default {
               : x.columns[0].name,
             data: this.data[this.current_month].data.map(row => {
               let values = x.columns.map(col => row[col.name])
-              if (x.columns[1]) {
-                switch (x.columns[1].type) {
-                  case 'percent':
-                    values.push((row[x.columns[0].name] / row[x.columns[1].name] * 100))
-                    break
-                  case 'part':
-                    values.push((row[x.columns[0].name] / row[x.columns[1].name]))
-                }
+              if (this.base) {
+                values.push(this.calcAutoColumn(row[x.columns[0].name], row[x.columns[1].name], x.columns[1].type))
               }
               return {
                 caption: row[this.caption],
                 values: values
               }
-            })
+            }),
+            totals: (this.data[this.current_month].totals) ? x.columns.map(col => this.data[this.current_month].totals[col.name]) : ''
           }
         })
         .map(x => {
@@ -138,7 +133,7 @@ export default {
       }
     },
     month_list () {
-      return (this.data.length > 0) ? this.data.map(x => x.data[0].tdate) : {}
+      return (this.data.length > 0) ? this.data.map(x => x.month.name) : {}
     },
     saturation_caption () {
       return (this.graphs[this.current_graph].saturation)
@@ -146,29 +141,22 @@ export default {
         : (this.graphs[this.current_graph].columns.length > 1)
           ? '(%)'
           : undefined
-    },
-    totals () {
-      if (this.curr_data) {
-        return this.curr_data
-          .reduce((r, x) => x.values.map((xx, i) => (r[i] || 0) + (+xx || 0)),
-          [])
-          .map((x, i) => {
-            switch ((this.graphs[this.current_graph].columns[i]) ? this.graphs[this.current_graph].columns[i].total : 'avg') {
-              case 'sum':
-                return x.toFixed(1)
-              case 'avg':
-                return (x / this.curr_data.length).toFixed(1)
-              default:
-                return null
-            }
-          })
-      }
     }
   },
   methods: {
     ...mapActions([
       'logOut'
     ]),
+    calcAutoColumn (a, b, type) {
+      if (type) {
+        switch (type) {
+          case 'percent':
+            return 100 * a / b
+          case 'part':
+            return a / b
+        }
+      }
+    },
     calcHeight () {
       if (this.report) {
         this.$refs.main.style.height = (document.documentElement.clientHeight - this.$refs.navigation.offsetHeight) + 'px'
