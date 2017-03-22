@@ -1,6 +1,7 @@
 <template>
 <div class="container">
-  <h1>Отчёты</h1>
+  <h1 v-if="!smallScreen">Отчёты</h1>
+  <h1 v-if="smallScreen">Графики</h1>
   <section class="row" v-if="reports.length > 0">
     <div class="columns">
       <ul class="list-group">
@@ -32,7 +33,8 @@ export default {
       uri: '',
       data: [],
       loaded: false,
-      maxWidth: 500
+      maxWidth: 500,
+      smallScreen: false
     }
   },
   computed: {
@@ -42,7 +44,7 @@ export default {
     ]),
     reports () {
       return reports.filter(x => this.data.reduce((r, xx) => r || (xx.name === x.uri), false))
-        .map(x => {
+        .map((x, i) => {
           x.path = (this.smallScreen) ? 'report' : 'table'
           return x
         }
@@ -50,15 +52,15 @@ export default {
     },
     noReportsFound () {
       return (reports.length === 0) && this.loaded
-    },
-    smallScreen () {
-      return document.documentElement.clientWidth < this.maxWidth
     }
   },
   methods: {
     ...mapActions([
       'logOut'
     ]),
+    checkWidth () {
+      this.smallScreen = document.documentElement.clientWidth < this.maxWidth
+    },
     fetchData () {
       const options = {
         headers: {}
@@ -84,6 +86,16 @@ export default {
   },
   mounted () {
     this.fetchData()
+    this.$nextTick(function () {
+      window.addEventListener('resize', this.checkWidth)
+      this.checkWidth()
+    })
+  },
+  updated () {
+    this.checkWidth()
+  },
+  beforeDestroy () {
+    window.removeEventListener('resize', this.checkWidth)
   }
 }
 </script>
