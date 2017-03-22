@@ -82,7 +82,7 @@ export default {
     },
     totals () {
       if (this.data.totals) {
-        return this.data.totals.map(x => (x || 0).toFixed(0))
+        return this.data.totals.map(x => (x || 0).toFixed(1))
       } else {
         if (this.page && this.page.columns && this.data && this.data.data) {
           return this.data.data
@@ -90,9 +90,9 @@ export default {
             .map((x, i) => {
               switch ((this.page.columns[i]) ? this.page.columns[i].total : 'avg') {
                 case 'sum':
-                  return '∑ ' + x.toFixed(0)
+                  return '∑ ' + x.toFixed(1)
                 case 'avg':
-                  return (x / this.data.data.length).toFixed(0)
+                  return (x / this.data.data.length).toFixed(1)
                 default:
                   return null
               }

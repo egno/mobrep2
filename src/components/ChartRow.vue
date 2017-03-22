@@ -114,7 +114,7 @@
           if (typeof (value) === 'string') {
             return value
           } else {
-            return value.toFixed(0)
+            return value.toFixed(1)
           }
         }
       }

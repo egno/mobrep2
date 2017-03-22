@@ -31,7 +31,8 @@ export default {
     return {
       uri: '',
       data: [],
-      loaded: false
+      loaded: false,
+      maxWidth: 500
     }
   },
   computed: {
@@ -41,9 +42,17 @@ export default {
     ]),
     reports () {
       return reports.filter(x => this.data.reduce((r, xx) => r || (xx.name === x.uri), false))
+        .map(x => {
+          x.path = (this.smallScreen) ? 'report' : 'table'
+          return x
+        }
+      )
     },
     noReportsFound () {
       return (reports.length === 0) && this.loaded
+    },
+    smallScreen () {
+      return document.documentElement.clientWidth < this.maxWidth
     }
   },
   methods: {
