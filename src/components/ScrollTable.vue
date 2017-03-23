@@ -5,6 +5,8 @@
         <div class="fixed-column">
            <table-cell
            :value="fixedColumn"
+           :i="0"
+           @reorder="reorder"
            ></table-cell>
         </div>
         <div
@@ -14,7 +16,8 @@
           v-scroll="onScroll">
           <scroll-header
           :data="headers"
-          :width="columnWidth">
+          :width="columnWidth"
+          @reorder="reorder">
         </scroll-header>
         </div>
       </div>
@@ -125,13 +128,17 @@ export default {
       }, 10)
     },
     onScroll (e, position) {
-      switch (e.target.id) {
-        case 'mainarea':
-          this.$refs.colheader.scrollTop = position.scrollTop
-          this.$refs.header.scrollLeft = position.scrollLeft
-          this.$refs.foother.scrollLeft = position.scrollLeft
-          break
+      if (!e) {
+        position = this.$refs.mainarea
       }
+      if (!e || e.target.id === 'mainarea') {
+        this.$refs.colheader.scrollTop = position.scrollTop
+        this.$refs.header.scrollLeft = position.scrollLeft
+        this.$refs.foother.scrollLeft = position.scrollLeft
+      }
+    },
+    reorder (event) {
+      this.$emit('reorder', event)
     },
     setHeight () {
       if (this.$refs.mainrow) {
@@ -150,6 +157,7 @@ export default {
   },
   updated () {
     this.setHeight()
+    this.onScroll()
   },
   beforeDestroy () {
     window.removeEventListener('resize', this.getWindowHeight)

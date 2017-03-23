@@ -5,11 +5,13 @@
     v-if="(data)">
     <div class="row ">
       <table-cell
-      v-for="value in headers"
+      v-for="(value, i) in headers"
       :key="value"
       class="col center fixed-width"
       align="center"
       :value="value"
+      :i="i + 1"
+      @reorder="reorder"
       ></table-cell>
     </div>
   </div>
@@ -38,6 +40,9 @@ export default {
     }
   },
   methods: {
+    reorder (event) {
+      this.$emit('reorder', event)
+    },
     setWidth () {
       if (this.data && this.width) {
         this.$refs.main.style.width = (this.width * this.data.length) + 'px'

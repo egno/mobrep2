@@ -1,5 +1,6 @@
 <template>
-  <div class="cell">
+  <div class="cell"
+  @click="setOrder(i)">
     <svg>
       <text v-if="showBar" :x="x" y="17" >{{ value | beautyNumber }}</text>
       <text v-if="!showBar" :x="x" y="12" >{{ value | beautyNumber }}</text>
@@ -12,6 +13,7 @@
 export default {
   props: {
     value: '',
+    i: 0,
     bar: {},
     align: ''
   },
@@ -28,6 +30,13 @@ export default {
     },
     x () {
       return (this.align === 'center') ? '50%' : '5'
+    }
+  },
+  methods: {
+    setOrder (payload) {
+      if (payload === 0 || payload) {
+        this.$emit('reorder', payload)
+      }
     }
   },
   filters: {

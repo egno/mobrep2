@@ -6,6 +6,7 @@
       :headers="headers"
       :data="currentData"
       :totals="totals"
+      @reorder="reorder"
       >
       </scroll-table>
     </div>
@@ -70,6 +71,13 @@ export default {
       }
     },
     currentData () {
+      function order (a, b) {
+        if (typeof (a) !== 'string') {
+          return (a || 0) - (b || 0)
+        } else {
+          return (a > b) ? 1 : -1
+        }
+      }
       if (this.data && this.data[this.current_month]) {
         return this.data[this.current_month].data.map((x) => {
           return {
@@ -77,6 +85,10 @@ export default {
             values: this.headers.map((h) => x[h])
           }
         })
+        .sort((a, b) =>
+          (this.currentOrder && a.values.length >= this.currentOrder)
+          ? order(a.values[this.currentOrder - 1], b.values[this.currentOrder - 1])
+          : order(a.caption, b.caption))
       }
     },
     graphs () {

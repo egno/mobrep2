@@ -75,10 +75,8 @@ export default {
   },
   mounted () {
     this.checkRoute()
-    this.$nextTick(function () {
-      window.addEventListener('touchmove', this.eventListener)
-      window.addEventListener('touchstart', this.eventListener)
-    })
+    window.addEventListener('touchmove', this.eventListener)
+    window.addEventListener('touchstart', this.eventListener)
   },
   beforeDestroy () {
     window.removeEventListener('touchmove', this.eventListener)
