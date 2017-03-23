@@ -1,5 +1,6 @@
 <template>
-  <div id="app">
+  <div id="app"
+  v-touch:doubletap="toggleFullScreen">
     <div class="container">
         <router-view></router-view>
     </div>
@@ -37,10 +38,51 @@ export default {
           this.setBackRoute(false)
         }
       }
+    },
+    exitFullScreen () {
+      if (document.exitFullscreen) {
+        document.exitFullscreen()
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen()
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen()
+      } else if (document.webkitCancelFullScreen) {
+        document.webkitCancelFullScreen()
+      }
+    },
+    eventListener (e) {
+      e.stopPropagation()
+      // e.preventDefault()
+    },
+    setFullScreen (el) {
+      if (el.requestFullscreen) {
+        el.requestFullscreen()
+      } else if (el.msRequestFullscreen) {
+        el.msRequestFullscreen()
+      } else if (el.mozRequestFullScreen) {
+        el.mozRequestFullScreen()
+      } else if (el.webkitRequestFullscreen) {
+        el.webkitRequestFullscreen()
+      }
+    },
+    toggleFullScreen () {
+      if (!document.fullscreenElement && !document.msFullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement) {
+        this.setFullScreen(document.documentElement)
+      } else {
+        this.exitFullScreen()
+      }
     }
   },
   mounted () {
     this.checkRoute()
+    this.$nextTick(function () {
+      window.addEventListener('touchmove', this.eventListener)
+      window.addEventListener('touchstart', this.eventListener)
+    })
+  },
+  beforeDestroy () {
+    window.removeEventListener('touchmove', this.eventListener)
+    window.removeEventListener('touchstart', this.eventListener)
   }
 }
 </script>

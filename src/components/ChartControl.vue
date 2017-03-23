@@ -14,9 +14,6 @@
       <select v-if="haveMonths" class="custom-select custom-select-sm form-control" v-model="selected_month">
         <option v-for="(month, i) in months.list" v-bind:value="i">{{ month }}</option>
       </select>
-      <div class="btn-group btn-group-sm">
-        <button class="btn btn-secondary btn-sm " @click="toggleFullScreen">□</button>
-      </div>
     </div>
   </div>
 </template>
@@ -53,17 +50,6 @@ export default {
     'selected_month': 'isChanged'
   },
   methods: {
-    exitFullScreen () {
-      if (document.exitFullscreen) {
-        document.exitFullscreen()
-      } else if (document.msExitFullscreen) {
-        document.msExitFullscreen()
-      } else if (document.mozCancelFullScreen) {
-        document.mozCancelFullScreen()
-      } else if (document.webkitCancelFullScreen) {
-        document.webkitCancelFullScreen()
-      }
-    },
     goHome () {
       this.$router.push('/')
     },
@@ -76,30 +62,12 @@ export default {
       let sendData = {graph: this.selected_graph, month: this.selected_month}
       this.$emit('isChanged', sendData)
     },
-    setFullScreen (el) {
-      if (el.requestFullscreen) {
-        el.requestFullscreen()
-      } else if (el.msRequestFullscreen) {
-        el.msRequestFullscreen()
-      } else if (el.mozRequestFullScreen) {
-        el.mozRequestFullScreen()
-      } else if (el.webkitRequestFullscreen) {
-        el.webkitRequestFullscreen()
-      }
-    },
     updateSelected () {
       if (this.graphs) {
         this.selected_graph = this.graphs.selected
       }
       if (this.months) {
         this.selected_month = this.months.selected
-      }
-    },
-    toggleFullScreen () {
-      if (!document.fullscreenElement && !document.msFullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement) {
-        this.setFullScreen(document.documentElement)
-      } else {
-        this.exitFullScreen()
       }
     }
   },
