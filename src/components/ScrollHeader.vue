@@ -1,14 +1,17 @@
 <template>
   <div
     ref="main"
-    class="row scrollarea"
+    class="scrollarea"
     v-if="(data)">
-    <table-cell
-    v-for="value in headers"
-    :key="value"
-    class="col fixed-width"
-    :value="value"
-    ></table-cell>
+    <div class="row ">
+      <table-cell
+      v-for="value in headers"
+      :key="value"
+      class="col center fixed-width"
+      align="center"
+      :value="value"
+      ></table-cell>
+    </div>
   </div>
 </template>
 

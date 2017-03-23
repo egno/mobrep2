@@ -1,17 +1,19 @@
 <template>
   <div
     ref="main"
-    class="scrollarea"
+    class="align-items-start scrollarea"
     v-if="(data)"
     >
-    <div v-for="(row, i) in data"
+    <div v-for="(row, i) in currentData"
     :key="i"
     class="row">
       <table-cell
-      v-for="(value, ii) of row"
+      v-for="(cell, ii) of row"
       :key="ii"
-      class="col fixed-width"
-      :value="value"
+      class="col center fixed-width"
+      align="center"
+      :value="cell.value"
+      :bar="cell.bar"
       ></table-cell>
     </div>
   </div>
@@ -23,6 +25,7 @@ import TableCell from '@/components/TableCell'
 export default {
   props: {
     data: {},
+    totals: {},
     width: 0
   },
   components: {
@@ -32,7 +35,50 @@ export default {
     'width': 'setWidth',
     'data': 'setWidth'
   },
+  computed: {
+    currentData () {
+      return this.data.map((x) => {
+        x = x.map((xx, ii) => {
+          return {
+            value: xx,
+            bar: {
+              width: this.barWidth(xx, this.currentTotals[ii].min, this.currentTotals[ii].max) || 0,
+              x: this.barStart(xx, this.currentTotals[ii].min, this.currentTotals[ii].max) || 0
+            }
+          }
+        })
+        return x
+      })
+    },
+    currentTotals () {
+      return this.data.reduce((r, x, i) => {
+        return x.map((xx, ii) => {
+          r[ii] = r[ii] || {min: 0, max: 0}
+          return {
+            max: Math.max(r[ii].max || 0, xx),
+            min: Math.min(r[ii].min || 0, xx)
+          }
+        })
+      }, [])
+    }
+  },
   methods: {
+    barWidth (value, min, max) {
+      return 100 * (
+        (value > 0)
+        ? value / (max - Math.min(min, 0))
+        : value / (min - Math.max(max, 0))
+      )
+    },
+    barStart (value, min, max) {
+      const start = -Math.min(min, 0)
+      const width = Math.max(max, 0) + start
+      return 100 * (
+        (value > 0)
+        ? start / width
+        : (start + value) / width
+      )
+    },
     setWidth () {
       if (this.data && this.width) {
         this.$refs.main.style.width = (this.width * Object.keys(this.data[0]).length) + 'px'

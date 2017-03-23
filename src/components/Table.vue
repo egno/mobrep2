@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="">
     <div ref="main" class="" v-if="name">
       <scroll-table
       :fixedColumn="caption"
@@ -105,7 +105,11 @@ export default {
     },
     totals () {
       if (this.data && this.data[this.current_month]) {
-        return this.headers.map((h) => this.data[this.current_month].totals[h])
+        if (this.data[this.current_month].totals) {
+          return this.headers.map((h) => this.data[this.current_month].totals[h])
+        } else {
+          return {}
+        }
       }
     },
     uri () {

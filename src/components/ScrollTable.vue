@@ -1,5 +1,5 @@
 <template>
-  <div class="max">
+  <div class="row max">
     <div v-if="(data)" class="col max">
       <div class="row header">
         <div class="fixed-column">
@@ -10,7 +10,7 @@
         <div
           id="header"
           ref="header"
-          class="header"
+          class="col header"
           v-scroll="onScroll">
           <scroll-header
           :data="headers"
@@ -33,10 +33,11 @@
         <div
           id="mainarea"
           ref="mainarea"
-          class="max scrollbox"
+          class="max col scrollbox"
           v-scroll="onScroll">
            <scroll-main
            :data="mainData"
+           :totals="totalsData"
            :width="columnWidth">
            </scroll-main>
         </div>
@@ -50,7 +51,7 @@
         <div
           id="foother"
           ref="foother"
-          class="header"
+          class="col header"
           v-scroll="onScroll">
           <scroll-header
           :data="totalsData"
@@ -59,7 +60,7 @@
         </div>
       </div>
     </div>
-    <div v-if="!(data)" class="max align-middle">
+    <div v-if="!(data)" class="max col align-middle">
       <div class="col">
         <p>
            Подождите, данные загружаются...
