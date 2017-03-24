@@ -82,6 +82,7 @@ export default {
       this.$http.post(this.uri, this.form)
         .then(
           (response) => {
+            this.message = 'Получаю ответ от сервера...'
             return response.json()
           },
           (response) => {
@@ -92,6 +93,7 @@ export default {
         )
         .then((data) => {
           if ((data) && (data.token)) {
+            this.message = 'Доступ разрешён'
             this.token = data.token
           } else {
             this.message = 'Доступ запрещён'
