@@ -83,7 +83,12 @@ export default {
         .then(
           (response) => {
             this.message = 'Получаю ответ от сервера...'
-            return response.json()
+            if (response.json()) {
+              this.message = response
+              return response.json()
+            } else {
+              this.message = 'Ответ не удалось распознать'
+            }
           },
           (response) => {
             this.message = 'Ошибка авторизации'
@@ -92,6 +97,7 @@ export default {
           }
         )
         .then((data) => {
+          this.message = 'Ответ получен'
           if ((data) && (data.token)) {
             this.message = 'Доступ разрешён'
             this.token = data.token
@@ -100,6 +106,9 @@ export default {
             this.logOut()
             this.waitStatus = false
           }
+        },
+        (data) => {
+          this.message = 'Не удалось запросить права доступа'
         }
       )
     }

@@ -3,7 +3,7 @@
 import Vue from 'vue'
 import VueResource from 'vue-resource'
 import VueScroll from 'vue-scroll'
-import VueTouch from 'vue-touchjs'
+// import VueTouch from 'vue-touchjs'
 import App from './App'
 import router from './router'
 import { store } from './store/store'
@@ -12,7 +12,7 @@ Vue.config.productionTip = false
 
 Vue.use(VueResource)
 Vue.use(VueScroll)
-Vue.use(VueTouch)
+// Vue.use(VueTouch)
 
 if (process.env.NODE_ENV !== 'production') {
   Vue.http.options.root = 'http://172.16.202.42:3004'

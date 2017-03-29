@@ -11,9 +11,9 @@
       </ul>
     </div>
   </section>
-  <div class="col" v-if="noReportsFound">
+  <div class="col" v-if="(reports.length === 0) && loaded">
     <div class="row">
-      Нет доступных отчётов
+      Нет доступных отчётов. Обратитесь в службу поддержки
     </div>
     <div class="row">
       <button type="submit" class="btn btn-primary" @click="logOut">Выйти</button>
@@ -51,7 +51,7 @@ export default {
       )
     },
     noReportsFound () {
-      return (reports.length === 0) && this.loaded
+      return (reports.length === 0)
     }
   },
   methods: {

@@ -1,6 +1,7 @@
 <template>
   <div id="app"
-  v-touch:doubletap="toggleFullScreen">
+  <!-- v-touch:doubletap="toggleFullScreen" -->
+  >
     <div class="container">
         <router-view></router-view>
     </div>
@@ -75,12 +76,12 @@ export default {
   },
   mounted () {
     this.checkRoute()
-    window.addEventListener('touchmove', this.eventListener)
-    window.addEventListener('touchstart', this.eventListener)
+    // window.addEventListener('touchmove', this.eventListener)
+    // window.addEventListener('touchstart', this.eventListener)
   },
   beforeDestroy () {
-    window.removeEventListener('touchmove', this.eventListener)
-    window.removeEventListener('touchstart', this.eventListener)
+    // window.removeEventListener('touchmove', this.eventListener)
+    // window.removeEventListener('touchstart', this.eventListener)
   }
 }
 </script>
