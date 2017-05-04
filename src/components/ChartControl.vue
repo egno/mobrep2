@@ -1,12 +1,12 @@
 <template>
-  <div class="row navbar navbar-inverse bg-inverse">
+  <div :class="['row', 'navbar', 'navbar-inverse', enableDB ? 'ok' : 'attention']">
     <div class="btn-toolbar">
       <div class="btn-group btn-group-sm">
         <button class="btn btn-secondary btn-sm " @click="goHome">≡</button>
       </div>
       <div  v-if="showArrows" class="btn-group">
-        <button class="btn btn-secondary " @click="graphInc(-1)"> < </button>
-        <button class="btn btn-secondary " @click="graphInc(1)"> > </button>
+        <button class="btn btn-secondary btn-sm" @click="graphInc(-1)"> < </button>
+        <button class="btn btn-secondary btn-sm" @click="graphInc(1)"> > </button>
       </div>
       <select v-if="haveGraphs" class="custom-select custom-select-sm form-control" v-model="selected_graph">
         <option v-for="(graph, i) in graphs.list" v-bind:value="i">{{ graph }}</option>
@@ -15,7 +15,7 @@
         <option v-for="(month, i) in months.list" v-bind:value="i">{{ month }}</option>
       </select>
       <div v-if="cache > 0" class="btn-group">
-        <button class="btn btn-secondary" @click="getData"> {{ cache }} ч. </button>
+        <button class="btn btn-secondary btn-sm" @click="getData"> {{ cache }} ч. </button>
       </div>
     </div>
   </div>
@@ -27,6 +27,7 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   props: [
     'cache',
+    'enableDB',
     'graphs',
     'months',
     'small',
@@ -105,5 +106,11 @@ export default {
 }
 .custom-select {
   max-width: 20em;
+}
+.attention {
+  background-color: red;
+}
+.ok {
+  background-color: green;
 }
 </style>

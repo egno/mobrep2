@@ -15,6 +15,7 @@
       :months="month_list"
       :small="true"
       :cache="cacheAgo"
+      :enableDB="checkDB"
       :report="report.name"
       @isChanged="isChanged"
       ></chart-control>
@@ -33,6 +34,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import { ls } from '@/services/localStore'
+import { idb } from '@/services/indexDB'
 import { reports } from '@/reports'
 import ChartControl from '@/components/ChartControl'
 import ScrollTable from '@/components/ScrollTable'
@@ -82,6 +84,9 @@ export default {
         return this.report.fixedColumn
       }
     },
+    checkDB () {
+      return idb.check()
+    },
     currentData () {
       function order (a, b) {
         if (typeof (a) !== 'string') {
@@ -90,7 +95,7 @@ export default {
           return (a > b) ? 1 : -1
         }
       }
-      if (this.data && this.data[this.current_month]) {
+      if (this.data && (Object.keys(this.data).length > 0) && this.data[this.current_month]) {
         return this.data[this.current_month].data.map((x) => {
           return {
             caption: x[this.caption],
