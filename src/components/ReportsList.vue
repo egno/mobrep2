@@ -33,7 +33,7 @@ export default {
       uri: '',
       data: [],
       loaded: false,
-      maxWidth: 500,
+      maxWidth: 100,
       smallScreen: false
     }
   },
