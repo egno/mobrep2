@@ -14,6 +14,8 @@
       <chart-control
       :months="month_list"
       :small="true"
+      :cache="cacheAgo"
+      :report="report.name"
       @isChanged="isChanged"
       ></chart-control>
     </div>
@@ -55,15 +57,25 @@ export default {
     }
   },
   watch: {
-    'name': 'fetchData'
+    'name': 'fetchData',
+    'dataCache': 'fetchData'
   },
   computed: {
     ...mapGetters([
       'checkLogIn',
+      'dataCache',
       'tokenName'
     ]),
     base () {
       return (this.graphs[this.current_graph].columns[1] && this.graphs[this.current_graph].columns[1].type)
+    },
+    cacheAgo () {
+      const period = 60 * 60 * 1000
+      const currentdate = new Date()
+      const cache = this.dataCache[this.report.name]
+      if ((cache) && (cache.ts)) {
+        return Math.round(Math.abs((currentdate.getTime() - cache.ts.getTime()) / (period)))
+      }
     },
     caption () {
       if (this.report) {
@@ -108,6 +120,9 @@ export default {
         selected: this.current_month
       }
     },
+    needToRead () {
+      return !(this.dataCache[this.report.name] && this.dataCache[this.report.name].ts) || (this.cacheAgo > 0)
+    },
     saturation_caption () {
       return (this.graphs[this.current_graph].saturation)
         ? this.graphs[this.current_graph].saturation
@@ -132,7 +147,8 @@ export default {
   },
   methods: {
     ...mapActions([
-      'logOut'
+      'logOut',
+      'setDataCache'
     ]),
     calcAutoColumn (a, b, type) {
       if (type) {
@@ -153,28 +169,38 @@ export default {
       this.currentOrder = (this.currentOrder < currentDataLength) ? this.currentOrder : 0
       return this.currentOrder
     },
-    fetchData () {
+    fetchData (force) {
       this.report = reports.filter(x => x.name === this.name)[0]
       if (this.report) {
         const options = {
           headers: {}
         }
-        if ((this.checkLogIn) && ls.get(this.tokenName) !== null) {
-          options.headers.Authorization = 'Bearer ' + ls.get(this.tokenName)
-        }
-        this.$http.get(this.uri, options)
-          .then(
-            (response) => {
-              return response.json()
-            },
-            (response) => {
-              this.logOut()
+        this.data = (this.dataCache[this.report.name] && this.dataCache[this.report.name].ts) ? this.dataCache[this.report.name].data : {}
+        if (force || this.needToRead) {
+          if ((this.checkLogIn) && ls.get(this.tokenName) !== null) {
+            options.headers.Authorization = 'Bearer ' + ls.get(this.tokenName)
+          }
+          this.$http.get(this.uri, options)
+            .then(
+              (response) => {
+                return response.json()
+              },
+              (response) => {
+                this.logOut()
+              }
+            )
+            .then((data) => {
+              const currentdate = new Date()
+              const newDataCache = {}
+              newDataCache[this.report.name] = {
+                ts: currentdate,
+                data: data
+              }
+              this.setDataCache(newDataCache)
+              this.data = data
             }
           )
-          .then((data) => {
-            this.data = data
-          }
-        )
+        }
       }
     },
     getWindowHeight (event) {

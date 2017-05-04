@@ -14,16 +14,23 @@
       <select v-if="haveMonths" class="custom-select custom-select-sm form-control" v-model="selected_month">
         <option v-for="(month, i) in months.list" v-bind:value="i">{{ month }}</option>
       </select>
+      <div v-if="cache > 0" class="btn-group">
+        <button class="btn btn-secondary" @click="getData"> {{ cache }} ч. </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
   props: [
+    'cache',
     'graphs',
     'months',
-    'small'
+    'small',
+    'report'
   ],
   data () {
     return {
@@ -32,6 +39,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'dataCache'
+    ]),
     haveGraphs () {
       return (this.graphs && this.graphs.list && this.graphs.list.length > 0 && this.graphs.list[0] && this.graphs.list[0] !== undefined)
     },
@@ -50,6 +60,14 @@ export default {
     'selected_month': 'isChanged'
   },
   methods: {
+    ...mapActions([
+      'setDataCache'
+    ]),
+    getData () {
+      const newDataCache = {}
+      newDataCache[this.report] = {}
+      this.setDataCache(newDataCache)
+    },
     goHome () {
       this.$router.push('/')
     },

@@ -7,16 +7,25 @@ Vue.use(Vuex)
 export const store = new Vuex.Store({
   state: {
     tokenName: 'jwt-token',
+    dataName: 'data',
     loggedIn: true,
-    backRoute: false
+    backRoute: false,
+    dataCache: {}
   },
   getters: {
+    backRoute: (state) => {
+      return state.backRoute
+    },
     checkLogIn: (state) => {
       state.loggedIn = (ls.get(state.tokenName))
       return (state.loggedIn)
     },
-    backRoute: (state) => {
-      return state.backRoute
+    dataCache: (state) => {
+      // state.dataCache = JSON.parse(ls.get(state.dataName)) || {}
+      return state.dataCache
+    },
+    dataName: (state) => {
+      return state.dataName
     },
     tokenName: (state) => {
       return state.tokenName
@@ -35,6 +44,10 @@ export const store = new Vuex.Store({
       if (payload !== '/login') {
         state.backRoute = payload
       }
+    },
+    setDataCache: (state, payload) => {
+      state.dataCache = Object.assign(state.dataCache, payload)
+      // ls.set(state.dataName, JSON.stringify(state.dataCache))
     }
   },
   actions: {
@@ -46,6 +59,9 @@ export const store = new Vuex.Store({
     },
     setBackRoute: ({commit}, payload) => {
       commit('setBackRoute', payload)
+    },
+    setDataCache: ({commit}, payload) => {
+      commit('setDataCache', payload)
     }
   }
 })
