@@ -17,7 +17,7 @@ export const lf = {
     })
     .then(() => {
       console.log('load all', result)
-      return result
+      callback(result)
     })
   },
   set (key, val) {

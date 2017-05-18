@@ -2,7 +2,7 @@
   <div :class="['row', 'navbar', 'navbar-inverse', enableDB ? 'ok' : 'attention']">
     <div class="btn-toolbar">
       <div class="btn-group btn-group-sm">
-        <button class="btn btn-secondary btn-sm " @click="goHome">≡</button>
+        <button class="btn btn-secondary btn-sm " @click="goHome">?</button>
       </div>
       <div  v-if="showArrows" class="btn-group">
         <button class="btn btn-secondary btn-sm" @click="graphInc(-1)"> < </button>
@@ -15,7 +15,7 @@
         <option v-for="(month, i) in months.list" v-bind:value="i">{{ month }}</option>
       </select>
       <div v-if="cache > 0" class="btn-group">
-        <button class="btn btn-secondary btn-sm" @click="getData"> {{ cache }} ч. </button>
+        <button class="btn btn-secondary btn-sm" @click="getData"> {{ cache }} ?. </button>
       </div>
     </div>
   </div>
@@ -111,6 +111,6 @@ export default {
   background-color: red;
 }
 .ok {
-  background-color: green;
+  background-color: #333;
 }
 </style>

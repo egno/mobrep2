@@ -13,16 +13,22 @@ export const store = new Vuex.Store({
     dataCache: {},
     dataName: 'data',
     loggedIn: true,
-    tokenName: 'jwt-token',
-    offlineMode: false
+    offlineMode: false,
+    tokenName: 'jwt-token'
   },
   getters: {
     backRoute: (state) => {
       return state.backRoute
     },
     checkLogIn: (state) => {
-      state.loggedIn = (ls.get(state.tokenName))
+      // state.loggedIn = (ls.get(state.tokenName))
       return (state.loggedIn)
+    },
+    dataBaseIsAvaiable: (state) => {
+      return state.dataBaseIsAvaiable
+    },
+    dataBaseRequestInProcess: (state) => {
+      return state.dataBaseRequestInProcess
     },
     dataCache: (state) => {
       return state.dataCache
@@ -30,17 +36,21 @@ export const store = new Vuex.Store({
     dataName: (state) => {
       return state.dataName
     },
+    loggedIn: (state) => {
+      return state.loggedIn
+    },
+    offlineMode: (state) => {
+      return state.offlineMode
+    },
     tokenName: (state) => {
       return state.tokenName
     }
   },
   mutations: {
     logIn: (state, payload) => {
-      ls.set(state.tokenName, payload)
       state.loggedIn = true
     },
     logOut: (state) => {
-      ls.remove(state.tokenName)
       state.loggedIn = false
     },
     setBackRoute: (state, payload) => {
@@ -48,29 +58,22 @@ export const store = new Vuex.Store({
         state.backRoute = payload
       }
     },
-    setDataCache: (state, payload) => {
-      Object.keys(payload).map((key) => {
-        lf.get(key, JSON.stringify(state.dataCache[key]), function (val) {
-          state.dataCache[key] = Object.assign(state.dataCache[key], val ? JSON.parse(val) : {}, payload[key])
-        })
-        lf.set(key, payload[key])
-      })
+    setDataBaseRequestInProcess: (state, payload) => {
+      console.log('progress:', payload)
+      state.dataBaseRequestInProcess = payload
     },
-    loadDataCache: (state) => {
-      console.log('load all')
-      console.log(state.dataCache, state.dataCache.length === undefined)
-      if (state.dataCache.length === undefined) {
-        lf.getAll(state.dataCache, function (val) {
-          state.dataCache = Object.assign(state.dataCache, val ? JSON.parse(val) : {})
-        })
-      }
+    setDataCache: (state, payload) => {
+      console.log('set', payload)
+      state.dataCache = Object.assign(state.dataCache, payload)
     }
   },
   actions: {
     logIn: ({commit}, payload) => {
+      ls.set(this.tokenName, payload)
       commit('logIn', payload)
     },
     logOut: ({commit}) => {
+      ls.remove(this.tokenName)
       commit('logOut')
     },
     setBackRoute: ({commit}, payload) => {
@@ -80,7 +83,14 @@ export const store = new Vuex.Store({
       commit('setDataCache', payload)
     },
     loadDataCache: ({commit}) => {
-      commit('loadDataCache')
+      if (!this.dataBaseRequestInProcess) {
+        console.log('progress..')
+        commit('setDataBaseRequestInProcess', true)
+        lf.getAll(this.dataCache, function (val) {
+          commit('setDataCache', val)
+          commit('setDataBaseRequestInProcess', false)
+        })
+      }
     }
   }
 })

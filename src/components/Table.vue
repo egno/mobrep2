@@ -1,7 +1,15 @@
 <template>
   <div class="">
-    <div ref="main" class="" v-if="name">
-      <scroll-table
+    <div ref="main" class="">
+      <div v-if="!(data)" class="container">
+        <div class="row">
+          <h2>Отчёт не найден</h2>
+        </div>
+        <div class="row">
+          <button type="submit" class="btn btn-primary" @click="goHome">К списку отчётов</button>
+        </div>
+      </div>
+      <scroll-table v-if="(data)"
       :fixedColumn="caption"
       :headers="headers"
       :data="currentData"
@@ -9,6 +17,9 @@
       @reorder="reorder"
       >
       </scroll-table>
+    </div>
+    <div class="progress">
+      <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%; height: 3px;"></div>
     </div>
     <div ref="navigation" v-if="name">
       <chart-control
@@ -19,14 +30,6 @@
       :report="report.name"
       @isChanged="isChanged"
       ></chart-control>
-    </div>
-    <div v-if="!name" class="container">
-      <div class="row">
-        <h2>Отчёт не найден</h2>
-      </div>
-      <div class="row">
-        <button type="submit" class="btn btn-primary" @click="goHome">К списку отчётов</button>
-      </div>
     </div>
   </div>
 </template>
@@ -48,7 +51,6 @@ export default {
   },
   data () {
     return {
-      data: {},
       report: {},
       totlalCaption: 'ИТОГО',
       current_graph: 0,
@@ -58,8 +60,7 @@ export default {
     }
   },
   watch: {
-    'name': 'fetchData',
-    'dataCache': 'fetchData'
+    'name': 'fetchData'
   },
   computed: {
     ...mapGetters([
@@ -105,6 +106,11 @@ export default {
           (this.currentOrder && a.values.length >= this.currentOrder)
           ? order(a.values[this.currentOrder - 1], b.values[this.currentOrder - 1])
           : order(a.caption, b.caption))
+      }
+    },
+    data () {
+      if (this.dataCache && this.dataCache[this.report.name]) {
+        return this.dataCache[this.report.name].data
       }
     },
     graphs () {
@@ -166,7 +172,7 @@ export default {
       }
     },
     calcHeight () {
-      if (this.report) {
+      if (this.report && this.$refs.main) {
         this.$refs.main.style.height = (document.documentElement.clientHeight - this.$refs.navigation.offsetHeight) + 'px'
       }
     },
@@ -180,7 +186,6 @@ export default {
         const options = {
           headers: {}
         }
-        this.data = (this.dataCache[this.report.name] && this.dataCache[this.report.name].ts) ? this.dataCache[this.report.name].data : {}
         if (force || this.needToRead) {
           if ((this.checkLogIn) && ls.get(this.tokenName) !== null) {
             options.headers.Authorization = 'Bearer ' + ls.get(this.tokenName)
@@ -202,7 +207,6 @@ export default {
                 data: data
               }
               this.setDataCache(newDataCache)
-              this.data = data
             }
           )
         }
@@ -224,13 +228,13 @@ export default {
     }
   },
   mounted () {
-    this.fetchData()
+    this.loadDataCache()
+    // this.fetchData()
     this.calcHeight()
     this.$nextTick(function () {
       window.addEventListener('resize', this.getWindowHeight)
       this.getWindowHeight()
     })
-    this.loadDataCache()
   },
   updated () {
     this.calcHeight()
