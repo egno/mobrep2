@@ -56,6 +56,7 @@ export default {
   },
   methods: {
     ...mapActions([
+      'loadDataCache',
       'logOut'
     ]),
     checkWidth () {
@@ -90,6 +91,7 @@ export default {
       window.addEventListener('resize', this.checkWidth)
       this.checkWidth()
     })
+    this.loadDataCache()
   },
   updated () {
     this.checkWidth()

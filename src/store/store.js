@@ -1,16 +1,20 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { ls } from './../services/localStore'
+import { lf } from './../services/localForage'
 
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
   state: {
-    tokenName: 'jwt-token',
+    backRoute: false,
+    dataBaseIsAvaiable: false,
+    dataBaseRequestInProcess: false,
+    dataCache: {},
     dataName: 'data',
     loggedIn: true,
-    backRoute: false,
-    dataCache: {}
+    tokenName: 'jwt-token',
+    offlineMode: false
   },
   getters: {
     backRoute: (state) => {
@@ -21,7 +25,6 @@ export const store = new Vuex.Store({
       return (state.loggedIn)
     },
     dataCache: (state) => {
-      // state.dataCache = JSON.parse(ls.get(state.dataName)) || {}
       return state.dataCache
     },
     dataName: (state) => {
@@ -46,8 +49,21 @@ export const store = new Vuex.Store({
       }
     },
     setDataCache: (state, payload) => {
-      state.dataCache = Object.assign(state.dataCache, payload)
-      // ls.set(state.dataName, JSON.stringify(state.dataCache))
+      Object.keys(payload).map((key) => {
+        lf.get(key, JSON.stringify(state.dataCache[key]), function (val) {
+          state.dataCache[key] = Object.assign(state.dataCache[key], val ? JSON.parse(val) : {}, payload[key])
+        })
+        lf.set(key, payload[key])
+      })
+    },
+    loadDataCache: (state) => {
+      console.log('load all')
+      console.log(state.dataCache, state.dataCache.length === undefined)
+      if (state.dataCache.length === undefined) {
+        lf.getAll(state.dataCache, function (val) {
+          state.dataCache = Object.assign(state.dataCache, val ? JSON.parse(val) : {})
+        })
+      }
     }
   },
   actions: {
@@ -62,6 +78,9 @@ export const store = new Vuex.Store({
     },
     setDataCache: ({commit}, payload) => {
       commit('setDataCache', payload)
+    },
+    loadDataCache: ({commit}) => {
+      commit('loadDataCache')
     }
   }
 })
