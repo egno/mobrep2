@@ -26,14 +26,15 @@ export default {
   props: {
     data: {},
     totals: {},
-    width: 0
+    width: 0,
+    height: 24
   },
   components: {
     TableCell
   },
   watch: {
-    'width': 'setWidth',
-    'data': 'setWidth'
+    'width': 'setSize',
+    'data': 'setSize'
   },
   computed: {
     currentData () {
@@ -79,21 +80,19 @@ export default {
         : (start + value) / width
       )
     },
-    setWidth () {
+    setSize () {
       if (this.data && this.width) {
         this.$refs.main.style.width = (this.width * Object.keys(this.data[0]).length) + 'px'
+        this.$refs.main.style.height = (this.height * this.data.length) + 'px'
       }
     }
   },
   mounted () {
-    this.setWidth()
+    this.setSize()
   }
 
 }
 </script>
 
 <style scoped>
-.scrollarea {
-  height: 1000px;
-}
 </style>

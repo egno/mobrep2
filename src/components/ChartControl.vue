@@ -1,12 +1,12 @@
 <template>
-  <div class="row navbar navbar-inverse bg-inverse">
+  <div :class="['row', 'navbar', 'navbar-inverse', enableDB ? 'ok' : 'attention']">
     <div class="btn-toolbar">
       <div class="btn-group btn-group-sm">
         <button class="btn btn-secondary btn-sm " @click="goHome">≡</button>
       </div>
       <div  v-if="showArrows" class="btn-group">
-        <button class="btn btn-secondary " @click="graphInc(-1)"> < </button>
-        <button class="btn btn-secondary " @click="graphInc(1)"> > </button>
+        <button class="btn btn-secondary btn-sm" @click="graphInc(-1)"> < </button>
+        <button class="btn btn-secondary btn-sm" @click="graphInc(1)"> > </button>
       </div>
       <select v-if="haveGraphs" class="custom-select custom-select-sm form-control" v-model="selected_graph">
         <option v-for="(graph, i) in graphs.list" v-bind:value="i">{{ graph }}</option>
@@ -14,16 +14,24 @@
       <select v-if="haveMonths" class="custom-select custom-select-sm form-control" v-model="selected_month">
         <option v-for="(month, i) in months.list" v-bind:value="i">{{ month }}</option>
       </select>
+      <div v-if="cache > 0" class="btn-group">
+        <button class="btn btn-secondary btn-sm" @click="getData"> {{ cache }} ч. </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
   props: [
+    'cache',
+    'enableDB',
     'graphs',
     'months',
-    'small'
+    'small',
+    'report'
   ],
   data () {
     return {
@@ -32,6 +40,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'dataCache'
+    ]),
     haveGraphs () {
       return (this.graphs && this.graphs.list && this.graphs.list.length > 0 && this.graphs.list[0] && this.graphs.list[0] !== undefined)
     },
@@ -50,6 +61,14 @@ export default {
     'selected_month': 'isChanged'
   },
   methods: {
+    ...mapActions([
+      'setDataCache'
+    ]),
+    getData () {
+      const newDataCache = {}
+      newDataCache[this.report] = {}
+      this.setDataCache(newDataCache)
+    },
     goHome () {
       this.$router.push('/')
     },
@@ -87,5 +106,11 @@ export default {
 }
 .custom-select {
   max-width: 20em;
+}
+.attention {
+  background-color: red;
+}
+.ok {
+  background-color: green;
 }
 </style>

@@ -190,6 +190,6 @@ export default {
   text-align: right;
 }
 .fixed-column {
-  width: 150px;
+  width: 132px;
 }
 </style>
