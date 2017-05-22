@@ -24,7 +24,7 @@
       :small="true"
       :cache="cacheAgo"
       :enableDB="checkDB"
-      :report="report.name"
+      :report="name"
       @isChanged="isChanged"
       ></chart-control>
     </div>
@@ -54,12 +54,13 @@ export default {
     }
   },
   watch: {
-    'report': 'fetchData'
+    'uri': 'fetchData'
   },
   computed: {
     ...mapGetters([
       'checkLogIn',
       'dataCache',
+      'reportsList',
       'tokenName'
     ]),
     base () {
@@ -68,10 +69,12 @@ export default {
     cacheAgo () {
       const period = 60 * 60 * 1000
       const currentdate = new Date()
-      const cache = this.dataCache[this.report.name]
-      if ((cache) && (cache.ts)) {
-        console.log(cache.ts)
-        return Math.round(Math.abs((currentdate.getTime() - Date.parse(cache.ts)) / (period)))
+      if (this.dataCache && this.report && this.name && this.dataCache[this.name]) {
+        const cache = this.dataCache[this.name]
+        if ((cache) && (cache.ts)) {
+          console.log(cache.ts)
+          return Math.round(Math.abs((currentdate.getTime() - Date.parse(cache.ts)) / (period)))
+        }
       }
     },
     caption () {
@@ -104,9 +107,8 @@ export default {
       }
     },
     data () {
-      console.log(this.dataCache, this.report.name)
-      if (this.dataCache && this.dataCache[this.report.name]) {
-        return this.dataCache[this.report.name].data
+      if (this.dataCache && this.dataCache[this.name]) {
+        return this.dataCache[this.name].data
       }
     },
     graphs () {
@@ -127,7 +129,7 @@ export default {
       }
     },
     needToRead () {
-      return !(this.dataCache[this.report.name] && this.dataCache[this.report.name].ts) || (this.cacheAgo > 0)
+      return !(this.report && this.name && this.dataCache[this.name] && this.dataCache[this.name].ts) || (this.cacheAgo > 0)
     },
     report () {
       console.log(this.dataCache)
@@ -186,10 +188,9 @@ export default {
       return this.currentOrder
     },
     fetchData (force) {
+      console.log('fetchData')
       if (this.report) {
-        if (force || this.needToRead) {
-          this.loadREST({name: this.report.name, uri: this.uri})
-        }
+        this.loadREST({name: this.name, uri: this.uri})
       }
     },
     getWindowHeight (event) {
@@ -208,8 +209,8 @@ export default {
     }
   },
   mounted () {
+    // this.fetchData()
     this.loadDataCache()
-    this.fetchData()
     this.calcHeight()
     this.$nextTick(function () {
       window.addEventListener('resize', this.getWindowHeight)

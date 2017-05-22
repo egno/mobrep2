@@ -11,7 +11,7 @@ export const store = new Vuex.Store({
     dataBaseIsAvaiable: false,
     dataBaseRequestInProcess: false,
     dataRESTRequestInProcess: false,
-    dataCache: {},
+    dataCache: {reportsList: []},
     dataName: 'data',
     loggedIn: true,
     offlineMode: false,
@@ -48,7 +48,7 @@ export const store = new Vuex.Store({
       return state.offlineMode
     },
     reportsList: (state) => {
-      console.log('reportsList', state.dataCache['reportsList'])
+      console.log('reportsList', state.dataCache.reportsList)
       return state.dataCache['reportsList']
     },
     tokenName: (state) => {
@@ -97,6 +97,9 @@ export const store = new Vuex.Store({
       commit('setBackRoute', payload)
     },
     setDataCache: ({commit}, payload) => {
+      Object.keys(payload).forEach(key => {
+        lf.set(key, payload[key])
+      })
       commit('setDataCache', payload)
     },
     setReportsList: ({commit}, payload) => {
@@ -112,7 +115,7 @@ export const store = new Vuex.Store({
           headers: {}
         }
         options.headers.Authorization = 'Bearer ' + ls.get(this.tokenName)
-        this.$http.get(payload.uri, options)
+        Vue.http.get(payload.uri, options)
           .then(
             (response) => {
               return response.json()
