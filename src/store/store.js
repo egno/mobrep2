@@ -10,10 +10,12 @@ export const store = new Vuex.Store({
     backRoute: false,
     dataBaseIsAvaiable: false,
     dataBaseRequestInProcess: false,
+    dataRESTRequestInProcess: false,
     dataCache: {},
     dataName: 'data',
     loggedIn: true,
     offlineMode: false,
+    token: null,
     tokenName: 'jwt-token'
   },
   getters: {
@@ -36,11 +38,18 @@ export const store = new Vuex.Store({
     dataName: (state) => {
       return state.dataName
     },
+    dataRESTRequestInProcess: (state) => {
+      return state.dataRESTRequestInProcess
+    },
     loggedIn: (state) => {
       return state.loggedIn
     },
     offlineMode: (state) => {
       return state.offlineMode
+    },
+    reportsList: (state) => {
+      console.log('reportsList', state.dataCache['reportsList'])
+      return state.dataCache['reportsList']
     },
     tokenName: (state) => {
       return state.tokenName
@@ -48,6 +57,7 @@ export const store = new Vuex.Store({
   },
   mutations: {
     logIn: (state, payload) => {
+      state.token = ls.set(state.tokenName, payload)
       state.loggedIn = true
     },
     logOut: (state) => {
@@ -59,8 +69,15 @@ export const store = new Vuex.Store({
       }
     },
     setDataBaseRequestInProcess: (state, payload) => {
-      console.log('progress:', payload)
+      console.log('progress DB:', payload)
       state.dataBaseRequestInProcess = payload
+    },
+    setDataRESTRequestInProcess: (state, payload) => {
+      console.log('progress REST:', payload)
+      state.setDataRESTRequestInProcess = payload
+    },
+    setReportsList: (state, payload) => {
+      state.dataCache.reportsList = Object.assign(state.dataCache.reportsList || payload, payload)
     },
     setDataCache: (state, payload) => {
       console.log('set', payload)
@@ -82,9 +99,44 @@ export const store = new Vuex.Store({
     setDataCache: ({commit}, payload) => {
       commit('setDataCache', payload)
     },
+    setReportsList: ({commit}, payload) => {
+      lf.set('reportsList', payload)
+      commit('setReportsList', payload)
+    },
+    loadREST: ({commit}, payload) => {
+      console.log('loadREST:', payload)
+      if (!this.dataRESTRequestInProcess && payload.uri && payload.name) {
+        console.log('Loading REST in progress...')
+        commit('setDataRESTRequestInProcess', true)
+        const options = {
+          headers: {}
+        }
+        options.headers.Authorization = 'Bearer ' + ls.get(this.tokenName)
+        this.$http.get(payload.uri, options)
+          .then(
+            (response) => {
+              return response.json()
+            },
+            (response) => {
+              console.log(response)
+            }
+          )
+          .then((data) => {
+            const currentdate = new Date()
+            const newDataCache = {}
+            newDataCache[payload.name] = {
+              ts: currentdate,
+              data: data
+            }
+            commit('setDataCache', newDataCache)
+          }
+        )
+        commit('setDataRESTRequestInProcess', false)
+      }
+    },
     loadDataCache: ({commit}) => {
       if (!this.dataBaseRequestInProcess) {
-        console.log('progress..')
+        console.log('Loading cache in progress...')
         commit('setDataBaseRequestInProcess', true)
         lf.getAll(this.dataCache, function (val) {
           commit('setDataCache', val)

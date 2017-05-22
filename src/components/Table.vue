@@ -18,9 +18,6 @@
       >
       </scroll-table>
     </div>
-    <div class="progress">
-      <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%; height: 3px;"></div>
-    </div>
     <div ref="navigation" v-if="name">
       <chart-control
       :months="month_list"
@@ -36,8 +33,6 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { ls } from '@/services/localStore'
-import { reports } from '@/reports'
 import ChartControl from '@/components/ChartControl'
 import ScrollTable from '@/components/ScrollTable'
 
@@ -51,7 +46,6 @@ export default {
   },
   data () {
     return {
-      report: {},
       totlalCaption: 'ИТОГО',
       current_graph: 0,
       current_month: 0,
@@ -60,7 +54,7 @@ export default {
     }
   },
   watch: {
-    'name': 'fetchData'
+    'report': 'fetchData'
   },
   computed: {
     ...mapGetters([
@@ -76,7 +70,8 @@ export default {
       const currentdate = new Date()
       const cache = this.dataCache[this.report.name]
       if ((cache) && (cache.ts)) {
-        return Math.round(Math.abs((currentdate.getTime() - cache.ts.getTime()) / (period)))
+        console.log(cache.ts)
+        return Math.round(Math.abs((currentdate.getTime() - Date.parse(cache.ts)) / (period)))
       }
     },
     caption () {
@@ -109,6 +104,7 @@ export default {
       }
     },
     data () {
+      console.log(this.dataCache, this.report.name)
       if (this.dataCache && this.dataCache[this.report.name]) {
         return this.dataCache[this.report.name].data
       }
@@ -132,6 +128,14 @@ export default {
     },
     needToRead () {
       return !(this.dataCache[this.report.name] && this.dataCache[this.report.name].ts) || (this.cacheAgo > 0)
+    },
+    report () {
+      console.log(this.dataCache)
+      if (this.dataCache && this.dataCache.reportsList) {
+        return this.dataCache.reportsList.filter(x => x.name === this.name)[0]
+      } else {
+        return {}
+      }
     },
     saturation_caption () {
       return (this.graphs[this.current_graph].saturation)
@@ -158,6 +162,7 @@ export default {
   methods: {
     ...mapActions([
       'loadDataCache',
+      'loadREST',
       'logOut',
       'setDataCache'
     ]),
@@ -181,34 +186,9 @@ export default {
       return this.currentOrder
     },
     fetchData (force) {
-      this.report = reports.filter(x => x.name === this.name)[0]
       if (this.report) {
-        const options = {
-          headers: {}
-        }
         if (force || this.needToRead) {
-          if ((this.checkLogIn) && ls.get(this.tokenName) !== null) {
-            options.headers.Authorization = 'Bearer ' + ls.get(this.tokenName)
-          }
-          this.$http.get(this.uri, options)
-            .then(
-              (response) => {
-                return response.json()
-              },
-              (response) => {
-                this.logOut()
-              }
-            )
-            .then((data) => {
-              const currentdate = new Date()
-              const newDataCache = {}
-              newDataCache[this.report.name] = {
-                ts: currentdate,
-                data: data
-              }
-              this.setDataCache(newDataCache)
-            }
-          )
+          this.loadREST({name: this.report.name, uri: this.uri})
         }
       }
     },
@@ -229,7 +209,7 @@ export default {
   },
   mounted () {
     this.loadDataCache()
-    // this.fetchData()
+    this.fetchData()
     this.calcHeight()
     this.$nextTick(function () {
       window.addEventListener('resize', this.getWindowHeight)

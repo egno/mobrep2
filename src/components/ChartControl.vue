@@ -1,21 +1,27 @@
 <template>
-  <div :class="['row', 'navbar', 'navbar-inverse', enableDB ? 'ok' : 'attention']">
-    <div class="btn-toolbar">
-      <div class="btn-group btn-group-sm">
-        <button class="btn btn-secondary btn-sm " @click="goHome">?</button>
-      </div>
-      <div  v-if="showArrows" class="btn-group">
-        <button class="btn btn-secondary btn-sm" @click="graphInc(-1)"> < </button>
-        <button class="btn btn-secondary btn-sm" @click="graphInc(1)"> > </button>
-      </div>
-      <select v-if="haveGraphs" class="custom-select custom-select-sm form-control" v-model="selected_graph">
-        <option v-for="(graph, i) in graphs.list" v-bind:value="i">{{ graph }}</option>
-      </select>
-      <select v-if="haveMonths" class="custom-select custom-select-sm form-control" v-model="selected_month">
-        <option v-for="(month, i) in months.list" v-bind:value="i">{{ month }}</option>
-      </select>
-      <div v-if="cache > 0" class="btn-group">
-        <button class="btn btn-secondary btn-sm" @click="getData"> {{ cache }} ?. </button>
+  <div>
+    <div class="progress">
+      <div v-if="dataBaseRequestInProcess" class="progress-bar" role="progressbar" style="width: 50%" :aria-valuenow="(50 * (dataBaseRequestInProcess ? 1 : 0))" aria-valuemin="0" aria-valuemax="100"></div>
+      <div v-if="dataRESTRequestInProcess" class="progress-bar bg-success" role="progressbar" style="width: 50%" :aria-valuenow="(50 * (dataRESTRequestInProcess ? 1 : 0))" aria-valuemin="50" aria-valuemax="100"></div>
+    </div>
+    <div :class="['row', 'navbar', 'navbar-inverse', enableDB ? 'ok' : 'attention']">
+      <div class="btn-toolbar">
+        <div class="btn-group btn-group-sm">
+          <button class="btn btn-secondary btn-sm " @click="goHome">?</button>
+        </div>
+        <div  v-if="showArrows" class="btn-group">
+          <button class="btn btn-secondary btn-sm" @click="graphInc(-1)"> < </button>
+          <button class="btn btn-secondary btn-sm" @click="graphInc(1)"> > </button>
+        </div>
+        <select v-if="haveGraphs" class="custom-select custom-select-sm form-control" v-model="selected_graph">
+          <option v-for="(graph, i) in graphs.list" v-bind:value="i">{{ graph }}</option>
+        </select>
+        <select v-if="haveMonths" class="custom-select custom-select-sm form-control" v-model="selected_month">
+          <option v-for="(month, i) in months.list" v-bind:value="i">{{ month }}</option>
+        </select>
+        <div v-if="cache > 0" class="btn-group">
+          <button class="btn btn-secondary btn-sm" @click="getData"> {{ cache }} ?. </button>
+        </div>
       </div>
     </div>
   </div>
@@ -41,7 +47,9 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'dataCache'
+      'dataBaseRequestInProcess',
+      'dataCache',
+      'dataRESTRequestInProcess'
     ]),
     haveGraphs () {
       return (this.graphs && this.graphs.list && this.graphs.list.length > 0 && this.graphs.list[0] && this.graphs.list[0] !== undefined)

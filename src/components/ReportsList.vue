@@ -57,7 +57,8 @@ export default {
   methods: {
     ...mapActions([
       'loadDataCache',
-      'logOut'
+      'logOut',
+      'setReportsList'
     ]),
     checkWidth () {
       this.smallScreen = document.documentElement.clientWidth < this.maxWidth
@@ -81,6 +82,7 @@ export default {
         .then((data) => {
           this.loaded = true
           this.data = data
+          this.setReportsList(this.reports)
         }
       )
     }
