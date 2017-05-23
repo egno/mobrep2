@@ -1,10 +1,6 @@
 <template>
   <div>
-    <div class="progress">
-      <div v-if="dataBaseRequestInProcess" class="progress-bar" role="progressbar" style="width: 50%" :aria-valuenow="(50 * (dataBaseRequestInProcess ? 1 : 0))" aria-valuemin="0" aria-valuemax="100"></div>
-      <div v-if="dataRESTRequestInProcess" class="progress-bar bg-success" role="progressbar" style="width: 50%" :aria-valuenow="(50 * (dataRESTRequestInProcess ? 1 : 0))" aria-valuemin="50" aria-valuemax="100"></div>
-    </div>
-    <div :class="['row', 'navbar', 'navbar-inverse', enableDB ? 'ok' : 'attention']">
+    <div :class="['row', 'navbar', 'navbar-inverse', offlineMode ? 'offline' : 'ok']">
       <div class="btn-toolbar">
         <div class="btn-group btn-group-sm">
           <button class="btn btn-secondary btn-sm " @click="goHome">?</button>
@@ -19,8 +15,8 @@
         <select v-if="haveMonths" class="custom-select custom-select-sm form-control" v-model="selected_month">
           <option v-for="(month, i) in months.list" v-bind:value="i">{{ month }}</option>
         </select>
-        <div v-if="cache > 0" class="btn-group">
-          <button class="btn btn-secondary btn-sm" @click="getData"> {{ cache }} ?. </button>
+        <div v-if="(note)" class="btn-group">
+          <button :class="['btn', 'btn-sm', (dataBaseRequestInProcess || dataRESTRequestInProcess) ? 'btn-primary' : 'btn-secondary']" @click="reload" :disabled="(dataBaseRequestInProcess || dataRESTRequestInProcess)"><small>{{ note }} </small></button>
         </div>
       </div>
     </div>
@@ -28,7 +24,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 
 export default {
   props: [
@@ -36,6 +32,7 @@ export default {
     'enableDB',
     'graphs',
     'months',
+    'note',
     'small',
     'report'
   ],
@@ -46,10 +43,11 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapState([
       'dataBaseRequestInProcess',
       'dataCache',
-      'dataRESTRequestInProcess'
+      'dataRESTRequestInProcess',
+      'offlineMode'
     ]),
     haveGraphs () {
       return (this.graphs && this.graphs.list && this.graphs.list.length > 0 && this.graphs.list[0] && this.graphs.list[0] !== undefined)
@@ -89,6 +87,10 @@ export default {
       let sendData = {graph: this.selected_graph, month: this.selected_month}
       this.$emit('isChanged', sendData)
     },
+    reload () {
+      this.dataRESTRequestInProcess = true
+      this.$emit('reload')
+    },
     updateSelected () {
       if (this.graphs) {
         this.selected_graph = this.graphs.selected
@@ -115,8 +117,8 @@ export default {
 .custom-select {
   max-width: 20em;
 }
-.attention {
-  background-color: red;
+.offline {
+  background-color: #833;
 }
 .ok {
   background-color: #333;

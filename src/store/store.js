@@ -19,34 +19,22 @@ export const store = new Vuex.Store({
     tokenName: 'jwt-token'
   },
   getters: {
-    backRoute: (state) => {
-      return state.backRoute
-    },
+    backRoute: (state) => state.backRoute,
     checkLogIn: (state) => {
       // state.loggedIn = (ls.get(state.tokenName))
       return (state.loggedIn)
     },
-    dataBaseIsAvaiable: (state) => {
-      return state.dataBaseIsAvaiable
-    },
-    dataBaseRequestInProcess: (state) => {
-      return state.dataBaseRequestInProcess
-    },
-    dataCache: (state) => {
-      return state.dataCache
-    },
+    dataBaseIsAvaiable: (state) => state.dataBaseIsAvaiable,
+    dataBaseRequestInProcess: (state) => state.dataBaseRequestInProcess,
+    dataCache: (state) => state.dataCache,
     dataName: (state) => {
       return state.dataName
     },
-    dataRESTRequestInProcess: (state) => {
-      return state.dataRESTRequestInProcess
-    },
+    dataRESTRequestInProcess: (state) => state.dataRESTRequestInProcess,
     loggedIn: (state) => {
       return state.loggedIn
     },
-    offlineMode: (state) => {
-      return state.offlineMode
-    },
+    offlineMode: (state) => state.offlineMode,
     reportsList: (state) => {
       console.log('reportsList', state.dataCache.reportsList)
       return state.dataCache['reportsList']
@@ -74,7 +62,7 @@ export const store = new Vuex.Store({
     },
     setDataRESTRequestInProcess: (state, payload) => {
       console.log('progress REST:', payload)
-      state.setDataRESTRequestInProcess = payload
+      state.dataRESTRequestInProcess = payload
     },
     setReportsList: (state, payload) => {
       state.dataCache.reportsList = Object.assign(state.dataCache.reportsList || payload, payload)
@@ -82,6 +70,11 @@ export const store = new Vuex.Store({
     setDataCache: (state, payload) => {
       console.log('set', payload)
       state.dataCache = Object.assign(state.dataCache, payload)
+      // state.dataRESTRequestInProcess = false
+    },
+    setOfflineMode: (state, payload) => {
+      console.log('setOfflineMode:', payload)
+      state.offlineMode = payload
     }
   },
   actions: {
@@ -98,6 +91,7 @@ export const store = new Vuex.Store({
     },
     setDataCache: ({commit}, payload) => {
       Object.keys(payload).forEach(key => {
+        console.log('action setDataCache:', key)
         lf.set(key, payload[key])
       })
       commit('setDataCache', payload)
@@ -106,8 +100,9 @@ export const store = new Vuex.Store({
       lf.set('reportsList', payload)
       commit('setReportsList', payload)
     },
-    loadREST: ({commit}, payload) => {
+    loadREST: ({dispatch, commit}, payload) => {
       console.log('loadREST:', payload)
+      commit('setOfflineMode', false)
       if (!this.dataRESTRequestInProcess && payload.uri && payload.name) {
         console.log('Loading REST in progress...')
         commit('setDataRESTRequestInProcess', true)
@@ -121,7 +116,14 @@ export const store = new Vuex.Store({
               return response.json()
             },
             (response) => {
-              console.log(response)
+              console.log(response.status, response)
+              if (!response.status) {
+                commit('setOfflineMode', true)
+              }
+              if (response.status === 400) {
+                dispatch('logOut')
+              }
+              commit('setDataRESTRequestInProcess', false)
             }
           )
           .then((data) => {
@@ -131,10 +133,10 @@ export const store = new Vuex.Store({
               ts: currentdate,
               data: data
             }
-            commit('setDataCache', newDataCache)
+            dispatch('setDataCache', newDataCache)
+            commit('setDataRESTRequestInProcess', false)
           }
         )
-        commit('setDataRESTRequestInProcess', false)
       }
     },
     loadDataCache: ({commit}) => {

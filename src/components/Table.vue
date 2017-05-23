@@ -1,6 +1,6 @@
 <template>
-  <div class="">
-    <div ref="main" class="">
+  <div>
+    <div ref="main" >
       <div v-if="!(data)" class="container">
         <div class="row">
           <h2>Отчёт не найден</h2>
@@ -9,7 +9,7 @@
           <button type="submit" class="btn btn-primary" @click="goHome">К списку отчётов</button>
         </div>
       </div>
-      <scroll-table v-if="(data)"
+      <scroll-table v-if="(data.length > 0)"
       :fixedColumn="caption"
       :headers="headers"
       :data="currentData"
@@ -24,15 +24,17 @@
       :small="true"
       :cache="cacheAgo"
       :enableDB="checkDB"
+      :note="note"
       :report="name"
       @isChanged="isChanged"
+      @reload="fetchData"
       ></chart-control>
     </div>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapState } from 'vuex'
 import ChartControl from '@/components/ChartControl'
 import ScrollTable from '@/components/ScrollTable'
 
@@ -59,9 +61,12 @@ export default {
   computed: {
     ...mapGetters([
       'checkLogIn',
-      'dataCache',
       'reportsList',
       'tokenName'
+    ]),
+    ...mapState([
+      'dataCache',
+      'offlineMode'
     ]),
     base () {
       return (this.graphs[this.current_graph].columns[1] && this.graphs[this.current_graph].columns[1].type)
@@ -104,11 +109,15 @@ export default {
           (this.currentOrder && a.values.length >= this.currentOrder)
           ? order(a.values[this.currentOrder - 1], b.values[this.currentOrder - 1])
           : order(a.caption, b.caption))
+      } else {
+        return {}
       }
     },
     data () {
       if (this.dataCache && this.dataCache[this.name]) {
         return this.dataCache[this.name].data
+      } else {
+        return {}
       }
     },
     graphs () {
@@ -130,6 +139,12 @@ export default {
     },
     needToRead () {
       return !(this.report && this.name && this.dataCache[this.name] && this.dataCache[this.name].ts) || (this.cacheAgo > 0)
+    },
+    note () {
+      if (this.dataCache && this.dataCache[this.name]) {
+        const dt = new Date(this.dataCache[this.name].ts)
+        return dt.toLocaleString('ru-RU')
+      }
     },
     report () {
       console.log(this.dataCache)
@@ -165,8 +180,7 @@ export default {
     ...mapActions([
       'loadDataCache',
       'loadREST',
-      'logOut',
-      'setDataCache'
+      'logOut'
     ]),
     calcAutoColumn (a, b, type) {
       if (type) {
@@ -227,4 +241,7 @@ export default {
 </script>
 
 <style>
+.offline {
+  background-color: #eef;
+}
 </style>
