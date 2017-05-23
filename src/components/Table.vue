@@ -34,7 +34,6 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import { ls } from '@/services/localStore'
-import { idb } from '@/services/indexDB'
 import { reports } from '@/reports'
 import ChartControl from '@/components/ChartControl'
 import ScrollTable from '@/components/ScrollTable'
@@ -85,7 +84,7 @@ export default {
       }
     },
     checkDB () {
-      return idb.check()
+      return true
     },
     currentData () {
       function order (a, b) {
