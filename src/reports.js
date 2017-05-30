@@ -39,6 +39,12 @@ export const reports = [
       },
       {
         columns: [
+          { name: 'Вып.Кварт, %', total: 'avg' },
+          { name: 'Выпол. Год, %', type: '', total: '' }
+        ]
+      },
+      {
+        columns: [
           { name: '%РН', total: 'avg' },
           { name: 'РН.млн.р', total: 'sum' }
         ]
