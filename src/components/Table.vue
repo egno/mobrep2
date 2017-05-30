@@ -9,7 +9,7 @@
           <button type="submit" class="btn btn-primary" @click="goHome">К списку отчётов</button>
         </div>
       </div>
-      <scroll-table v-if="(data.length > 0)"
+      <scroll-table v-if="(data) && (data.length > 0)"
       :fixedColumn="caption"
       :headers="headers"
       :data="currentData"
