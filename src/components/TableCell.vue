@@ -50,13 +50,13 @@ export default {
         value === '') {
         return nullSign
       } else {
-        if (typeof (value) === 'string') {
+        if (typeof (value) === 'string' && isNaN(+value)) {
           return value
         } else {
           if ((value ^ 0) === value) {
-            return value
+            return (String(value)).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ')
           } else {
-            return value.toFixed(1)
+            return (+value).toFixed(1).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ')
           }
         }
       }

@@ -111,10 +111,10 @@
           value === '') {
           return nullSign
         } else {
-          if (typeof (value) === 'string') {
+          if (typeof (value) === 'string' && isNaN(+value)) {
             return value
           } else {
-            return value.toFixed(1)
+            return (+value).toFixed(1).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ')
           }
         }
       }
