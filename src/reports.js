@@ -169,8 +169,19 @@ export const reports = [
         { name: 'Подкл.апт', type: 'percent', total: 'sum' }
       ]},
       { columns: [
-        { name: 'Возвраты', total: 'sum' },
         { name: 'Заказов', type: 'percent', total: 'sum' }
+      ]},
+      { columns: [
+        { name: '%Возвраты', total: 'avg' }
+      ]},
+      { columns: [
+        { name: '%апт.нац.', total: 'avg' }
+      ]},
+      { columns: [
+        { name: 'Заказ/млн.насел', total: 'avg' }
+      ]},
+      { columns: [
+        { name: 'Аптек/млн.насел', total: 'avg' }
       ]},
       { columns: [
         { name: 'Заказов на апт. в день', total: 'avg' },
@@ -202,7 +213,7 @@ export const reports = [
       ]},
       { columns: [
         { name: 'РН,тыс.р.', total: 'sum' },
-        { name: 'Насел.млн.ч.', type: 'part', total: 'sum' }
+        { name: 'РН/тыс.насел', type: 'part', total: 'sum' }
       ]}
     ]
   }

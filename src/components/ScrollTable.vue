@@ -54,7 +54,7 @@
         <div
           id="foother"
           ref="foother"
-          class="col header"
+          class="col header foother"
           v-scroll="onScroll">
           <scroll-header
           :data="totalsData"
@@ -175,6 +175,9 @@ export default {
 .header {
   background-color: #eee;
   overflow: hidden;
+}
+.foother {
+  font-size: 1.3em;
 }
 .cell {
   height: 24px;
