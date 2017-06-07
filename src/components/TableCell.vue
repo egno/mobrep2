@@ -106,5 +106,6 @@ svg text {
 .prev {
   text-anchor:end;
   font-size: 0.7em;
+  fill: #00a;
 }
 </style>

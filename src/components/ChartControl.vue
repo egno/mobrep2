@@ -8,10 +8,10 @@
         <button class="btn btn-secondary btn-sm" @click="graphInc(-1)"> < </button>
         <button class="btn btn-secondary btn-sm" @click="graphInc(1)"> > </button>
       </div>
-      <select v-if="haveGraphs" class="custom-select custom-select-sm form-control" v-model="selected_graph">
+      <select v-if="haveGraphs" class="custom-select custom-select-sm sm " v-model="selected_graph">
         <option v-for="(graph, i) in graphs.list" v-bind:value="i">{{ graph }}</option>
       </select>
-      <select v-if="haveMonths" class="custom-select custom-select-sm form-control" v-model="selected_month">
+      <select v-if="haveMonths" class="custom-select custom-select-sm sm " v-model="selected_month">
         <option v-for="(month, i) in months.list" v-bind:value="i">{{ month }}</option>
       </select>
     </div>
@@ -97,6 +97,9 @@ export default {
 </script>
 
 <style scoped>
+.sm {
+  height: 2.3em;
+}
 .navbar {
   overflow-y: auto;
   padding: 5px;
