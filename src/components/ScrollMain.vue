@@ -10,10 +10,11 @@
       <table-cell
       v-for="(cell, ii) of row"
       :key="ii"
-      class="col center fixed-width"
-      align="center"
+      class="col right fixed-width"
+      align="right"
       :value="cell.value"
       :bar="cell.bar"
+      :decimal="cell.decimal"
       ></table-cell>
     </div>
   </div>
@@ -42,6 +43,7 @@ export default {
         x = x.map((xx, ii) => {
           return {
             value: xx,
+            decimal: this.calcDecimal(this.currentTotals[ii].min, this.currentTotals[ii].max, 3),
             bar: (!Array.isArray(xx)) ? {
               width: this.barWidth(xx, this.currentTotals[ii].min, this.currentTotals[ii].max) || 0,
               x: this.barStart(xx, this.currentTotals[ii].min, this.currentTotals[ii].max) || 0
@@ -56,8 +58,8 @@ export default {
         return x.map((xx, ii) => {
           r[ii] = r[ii] || {min: 0, max: 0}
           return {
-            max: Math.max(r[ii].max || 0, xx),
-            min: Math.min(r[ii].min || 0, xx)
+            max: Math.max(r[ii].max || 0, (Array.isArray(xx)) ? xx[0] : xx),
+            min: Math.min(r[ii].min || 0, (Array.isArray(xx)) ? xx[0] : xx)
           }
         })
       }, [])
@@ -79,6 +81,11 @@ export default {
         ? start / width
         : (start + value) / width
       )
+    },
+    calcDecimal (min, max, def) {
+      return Math.max(0, def - Math.max(
+        Math.abs(min).toFixed(0).length,
+        Math.abs(max).toFixed(0).length))
     },
     setSize () {
       if (this.data && this.width) {

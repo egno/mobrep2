@@ -98,7 +98,7 @@ export default {
 
 <style scoped>
 .sm {
-  height: 2.3em;
+  height: 2.5em;
 }
 .navbar {
   overflow-y: auto;

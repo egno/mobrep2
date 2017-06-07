@@ -2,10 +2,10 @@
   <div class="cell"
   @click="setOrder(i)">
     <svg>
-      <text v-if="showBar" :x="x" y="17" >{{ value | beautyNumber }}</text>
+      <text v-if="showBar" :x="x" y="17" >{{ value | beautyNumber(decimal) }}</text>
       <text v-if="!showBar && !isArray" :x="x" y="12" >{{ value | beautyNumber }}</text>
-      <text class="curr" v-if="isArray && value.length > 0" :x="x" y="16" >{{ value[0] | beautyNumber }}</text>
-      <text class="prev" v-if="isArray && value.length > 1" x="100" y="16" >{{ value[1] | beautyNumber }}</text>
+      <text class="curr" v-if="isArray && value.length > 0" :x="x" y="16" >{{ value[0] | beautyNumber(decimal) }}</text>
+      <text class="prev" v-if="isArray && value.length > 1" x="100" y="16" >{{ value[1] | beautyNumber(decimal) }}</text>
       <rect v-if="showBar" :width="bar.width + '%'" :fill="color" :x="bar.x" :height="'100%'"></rect>
     </svg>
   </div>
@@ -17,6 +17,7 @@ export default {
     value: '',
     i: 0,
     bar: {},
+    decimal: 0,
     align: ''
   },
   computed: {
@@ -34,7 +35,11 @@ export default {
       return (this.bar)
     },
     x () {
-      return (this.align === 'center') ? '50%' : '5'
+      if (this.isArray) {
+        return '50%'
+      } else {
+        return (this.align === 'center') ? '50%' : (this.align === 'right') ? '75' : '5'
+      }
     }
   },
   methods: {
@@ -45,7 +50,7 @@ export default {
     }
   },
   filters: {
-    beautyNumber: function (value) {
+    beautyNumber: function (value, decimal) {
       const nullSign = '-'
       if (!value ||
         value === undefined ||
@@ -61,7 +66,7 @@ export default {
           if ((value ^ 0) === value) {
             return (String(value)).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ')
           } else {
-            return (+value).toFixed(1).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ')
+            return (+value).toFixed(decimal).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ')
           }
         }
       }
@@ -98,6 +103,9 @@ svg text {
 }
 .center {
   text-anchor: middle;
+}
+.right {
+  text-anchor: end;
 }
 .curr {
   text-anchor:end;
