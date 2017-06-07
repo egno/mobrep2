@@ -3,7 +3,9 @@
   @click="setOrder(i)">
     <svg>
       <text v-if="showBar" :x="x" y="17" >{{ value | beautyNumber }}</text>
-      <text v-if="!showBar" :x="x" y="12" >{{ value | beautyNumber }}</text>
+      <text v-if="!showBar && !isArray" :x="x" y="12" >{{ value | beautyNumber }}</text>
+      <text class="curr" v-if="isArray && value.length > 0" :x="x" y="16" >{{ value[0] | beautyNumber }}</text>
+      <text class="prev" v-if="isArray && value.length > 1" x="100" y="16" >{{ value[1] | beautyNumber }}</text>
       <rect v-if="showBar" :width="bar.width + '%'" :fill="color" :x="bar.x" :height="'100%'"></rect>
     </svg>
   </div>
@@ -24,6 +26,9 @@ export default {
       let l = 50
       let a = 1
       return 'hsla(' + h + ',' + s + '%,' + l + '%,' + a + ')'
+    },
+    isArray () {
+      return Array.isArray(this.value)
     },
     showBar () {
       return (this.bar)
@@ -93,5 +98,13 @@ svg text {
 }
 .center {
   text-anchor: middle;
+}
+.curr {
+  text-anchor:end;
+  font-size: 0.9em;
+}
+.prev {
+  text-anchor:end;
+  font-size: 0.7em;
 }
 </style>

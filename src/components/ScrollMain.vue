@@ -42,10 +42,10 @@ export default {
         x = x.map((xx, ii) => {
           return {
             value: xx,
-            bar: {
+            bar: (!Array.isArray(xx)) ? {
               width: this.barWidth(xx, this.currentTotals[ii].min, this.currentTotals[ii].max) || 0,
               x: this.barStart(xx, this.currentTotals[ii].min, this.currentTotals[ii].max) || 0
-            }
+            } : ''
           }
         })
         return x

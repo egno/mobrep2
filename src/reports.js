@@ -136,23 +136,23 @@ export const reports = [
     caption: 'Экран контроля поставок',
     path: 'report',
     name: 'gdlivedeliverystat',
-    uri: 'gdlivedeliverystat',
+    uri: 'livedeliverystat2',
     fixedColumn: 'Менеджер ОП',
     screens: [
       { columns: [
-          { name: 'Факт (млн.руб.)', total: 'sum' },
-          { name: 'План (млн.руб.)', type: '', total: 'sum' }
+          { name: 'ТО, млн. руб.', total: 'sum' },
+          { name: '% ЭСП', type: '', total: 'sum' }
       ]},
       { columns: [
-          { name: '% вып.плана', total: 'avg' },
-          { name: 'Вып. Год %', total: 'avg' }
+          { name: 'Кол-во позиций', total: 'avg' },
+          { name: 'ОТЗ, к.дн.', total: 'avg' }
       ]},
       { columns: [
-          { name: 'Дельта ТЗ,к.дн', total: 'avg' },
-          { name: 'Дельта ФЦ,к.дн', total: 'avg' }
+          { name: 'Дельта ФЦ, к.дн.', total: 'avg' },
+          { name: '% инв.', total: 'avg' }
       ]},
       { columns: [
-          { name: '% инвестиций и кредитов', total: 'avg' },
+          { name: '% ККС', total: 'avg' },
           { name: '% НКС', total: 'avg' }
       ]}
     ]
