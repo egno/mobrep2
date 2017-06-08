@@ -88,6 +88,8 @@ export default {
     },
     currentData () {
       function order (a, b) {
+        a = (Array.isArray(a)) ? a[0] : a
+        b = (Array.isArray(b)) ? b[0] : b
         if (typeof (a) !== 'string') {
           return (a || 0) - (b || 0)
         } else {
