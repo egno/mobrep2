@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import ReportsList from '@/components/ReportsList'
-import Report from '@/components/Report'
 import Table from '@/components/Table'
 import Login from '@/components/Login'
 
@@ -17,12 +16,6 @@ export default new Router({
     {
       path: '/login',
       component: Login
-    },
-    {
-      path: '/report/:name',
-      name: 'report',
-      component: Report,
-      props: true
     },
     {
       path: '/table/:name',
