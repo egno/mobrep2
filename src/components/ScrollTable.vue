@@ -40,6 +40,7 @@
           v-scroll="onScroll">
            <scroll-main
            :data="mainData"
+           :decimals="decimals"
            :totals="totalsData"
            :width="columnWidth">
            </scroll-main>
@@ -58,6 +59,7 @@
           v-scroll="onScroll">
           <scroll-header
           :data="totalsData"
+          :decimals="decimals"
           :width="columnWidth">
         </scroll-header>
         </div>
@@ -108,6 +110,19 @@ export default {
         return this.data.map((x) => x.caption)
       }
     },
+    decimals () {
+      const def = 3
+      return this.headers.map((h, i) =>
+        this.data.map(x => x.values[i])
+        .reduce((r, xx) => {
+          return {
+            max: Math.max(r.max || 0, (Array.isArray(xx)) ? xx[0] : xx),
+            min: Math.min(r.min || 0, (Array.isArray(xx)) ? xx[0] : xx)
+          }
+        }, [])
+      )
+      .map(x => this.calcDecimal(x.min, x.max, def))
+    },
     mainData () {
       if (this.data) {
         return this.data.map((x) => x.values)
@@ -120,6 +135,11 @@ export default {
     }
   },
   methods: {
+    calcDecimal (min, max, def) {
+      let natlen = Math.max(Math.abs(min), Math.abs(max)).toFixed(0).length
+      let decfirst = String(Math.max(Math.abs(min), Math.abs(max))).search(/[^0\\.]/) - 2
+      return (Math.max(Math.abs(min), Math.abs(max)).toFixed(0) !== '0') ? Math.max(0, def - natlen) : (decfirst + def)
+    },
     getWindowHeight (event) {
       // console.log(event)
       let self = this

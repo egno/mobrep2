@@ -3,7 +3,7 @@
   @click="setOrder(i)">
     <svg>
       <text v-if="showBar" :x="x" y="17" >{{ value | beautyNumber(decimal) }}</text>
-      <text v-if="!showBar && !isArray" :x="x" y="12" >{{ value | beautyNumber }}</text>
+      <text v-if="!showBar && !isArray" :x="x" y="12" >{{ value | beautyNumber(decimal) }}</text>
       <text class="curr" v-if="isArray && value.length > 0" :x="x" y="16" >{{ value[0] | beautyNumber(decimal) }}</text>
       <text class="prev" v-if="isArray && value.length > 1" x="100" y="16" >{{ value[1] | beautyNumber(decimal) }}</text>
       <rect v-if="showBar" :width="bar.width + '%'" :fill="color" :x="bar.x" :height="'100%'"></rect>
@@ -63,11 +63,7 @@ export default {
         if (typeof (value) === 'string' && isNaN(+value)) {
           return value
         } else {
-          if ((value ^ 0) === value) {
-            return (String(value)).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ')
-          } else {
-            return (+value).toFixed(decimal).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ')
-          }
+          return (+value).toFixed(decimal).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ')
         }
       }
     }

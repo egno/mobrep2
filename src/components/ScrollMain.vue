@@ -26,6 +26,7 @@ import TableCell from '@/components/TableCell'
 export default {
   props: {
     data: {},
+    decimals: {},
     totals: {},
     width: 0,
     height: 24
@@ -43,7 +44,7 @@ export default {
         x = x.map((xx, ii) => {
           return {
             value: xx,
-            decimal: this.calcDecimal(this.currentTotals[ii].min, this.currentTotals[ii].max, 3),
+            decimal: this.decimals[ii],
             bar: (!Array.isArray(xx)) ? {
               width: this.barWidth(xx, this.currentTotals[ii].min, this.currentTotals[ii].max) || 0,
               x: this.barStart(xx, this.currentTotals[ii].min, this.currentTotals[ii].max) || 0
@@ -81,11 +82,6 @@ export default {
         ? start / width
         : (start + value) / width
       )
-    },
-    calcDecimal (min, max, def) {
-      return Math.max(0, def - Math.max(
-        Math.abs(min).toFixed(0).length,
-        Math.abs(max).toFixed(0).length))
     },
     setSize () {
       if (this.data && this.width) {

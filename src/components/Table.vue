@@ -118,7 +118,6 @@ export default {
           .filter((x) => this.graphs.reduce((r, xx) => r || xx.columns.reduce((cr, cx) => cr || cx.name === x, false), false))
         if (this.data[0].fields) {
           result = result.sort((a, b) => parseInt(this.data[0].fields[a]) - parseInt(this.data[0].fields[b]))
-          console.log(this.data[0].fields, result)
         }
         return result
       }

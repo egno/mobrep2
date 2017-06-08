@@ -10,6 +10,7 @@
       class="col center fixed-width"
       align="center"
       :value="value"
+      :decimal="calcDecimals(i)"
       :i="i + 1"
       @reorder="reorder"
       ></table-cell>
@@ -23,6 +24,7 @@ import TableCell from '@/components/TableCell'
 export default {
   props: {
     data: {},
+    decimals: {},
     width: 0
   },
   components: {
@@ -40,6 +42,9 @@ export default {
     }
   },
   methods: {
+    calcDecimals (i) {
+      return (this.decimals) ? this.decimals[i] : 0
+    },
     reorder (event) {
       this.$emit('reorder', event)
     },
