@@ -137,7 +137,7 @@ export default {
       }
     },
     totalsData () {
-      if (this.totals) {
+      if (this.totals && this.totals[0]) {
         return this.totals.map((x, i) => (this.showInPercent && this.showInPercent[i] && this.showInPercent[i].percent) ? '100%' : x)
       }
     }
