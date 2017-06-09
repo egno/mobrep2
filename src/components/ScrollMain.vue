@@ -10,11 +10,13 @@
       <table-cell
       v-for="(cell, ii) of row"
       :key="ii"
+      :i="ii"
       class="col right fixed-width"
       align="right"
       :value="cell.value"
       :bar="cell.bar"
       :decimal="cell.decimal"
+      @click="percentSwitch"
       ></table-cell>
     </div>
   </div>
@@ -27,6 +29,7 @@ export default {
   props: {
     data: {},
     decimals: {},
+    percentColumn: {},
     totals: {},
     width: 0,
     height: 24
@@ -82,6 +85,9 @@ export default {
         ? start / width
         : (start + value) / width
       )
+    },
+    percentSwitch (event) {
+      this.$emit('percentSwitch', event)
     },
     setSize () {
       if (this.data && this.width) {

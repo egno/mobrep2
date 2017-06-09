@@ -6,7 +6,7 @@
            <table-cell
            :value="fixedColumn"
            :i="0"
-           @reorder="reorder"
+           @click="reorder"
            ></table-cell>
         </div>
         <div
@@ -17,7 +17,8 @@
           <scroll-header
           :data="headers"
           :width="columnWidth"
-          @reorder="reorder">
+          @reorder="reorder"
+          >
         </scroll-header>
         </div>
       </div>
@@ -41,8 +42,11 @@
            <scroll-main
            :data="mainData"
            :decimals="decimals"
+           :percentColumn="colPercent"
            :totals="totalsData"
-           :width="columnWidth">
+           :width="columnWidth"
+           @percentSwitch="percentSwitch"
+           >
            </scroll-main>
         </div>
       </div>
@@ -87,7 +91,8 @@ import ScrollMain from '@/components/ScrollMain'
 export default {
   data () {
     return {
-      columnWidth: 100
+      columnWidth: 100,
+      showInPercent: []
     }
   },
   props: {
@@ -110,6 +115,9 @@ export default {
         return this.data.map((x) => x.caption)
       }
     },
+    colPercent () {
+      return this.showInPercent.map(x => x.percent)
+    },
     decimals () {
       const def = 3
       return this.headers.map((h, i) =>
@@ -121,24 +129,34 @@ export default {
           }
         }, [])
       )
-      .map(x => this.calcDecimal(x.min, x.max, def))
+      .map((x, i) => (this.showInPercent[i] && this.showInPercent[i].percent) ? 1 : this.calcDecimal(x.min, x.max, def))
     },
     mainData () {
       if (this.data) {
-        return this.data.map((x) => x.values)
+        return this.data.map((x) => x.values.map((xx, ii) => (this.showInPercent && this.showInPercent[ii] && this.showInPercent[ii].percent) ? ((Array.isArray(xx) ? xx[0] : xx) * 100.0 / ((Array.isArray(this.totals[ii])) ? this.totals[ii][0] : this.totals[ii])).toFixed(1) + '%' : xx))
       }
     },
     totalsData () {
       if (this.totals) {
-        return this.totals
+        return this.totals.map((x, i) => (this.showInPercent && this.showInPercent[i] && this.showInPercent[i].percent) ? '100%' : x)
       }
     }
+  },
+  watch: {
+    'headers': 'fillPercentColumns'
   },
   methods: {
     calcDecimal (min, max, def) {
       let natlen = Math.max(Math.abs(min), Math.abs(max)).toFixed(0).length
       let decfirst = String(Math.max(Math.abs(min), Math.abs(max))).search(/[^0\\.]/) - 2
       return (Math.max(Math.abs(min), Math.abs(max)).toFixed(0) !== '0') ? Math.max(0, def - natlen) : (decfirst + def)
+    },
+    fillPercentColumns () {
+      if (this.headers) {
+        this.showInPercent = this.headers.map((h, i) => {
+          return {percent: false}
+        })
+      }
     },
     getWindowHeight (event) {
       // console.log(event)
@@ -160,6 +178,10 @@ export default {
     reorder (event) {
       this.$emit('reorder', event)
     },
+    percentSwitch (event) {
+      const newVal = (this.headers[event].search('%') === -1) && !(this.showInPercent[event] && this.showInPercent[event].percent)
+      this.showInPercent[event].percent = newVal
+    },
     setHeight () {
       if (this.$refs.mainrow) {
         this.$refs.mainrow.style.height = (this.$el.offsetHeight - this.$refs.header.offsetHeight - this.$refs.foother.offsetHeight) + 'px'
@@ -174,6 +196,7 @@ export default {
       window.addEventListener('resize', this.getWindowHeight)
       this.getWindowHeight()
     })
+    this.fillPercentColumns()
   },
   updated () {
     this.setHeight()

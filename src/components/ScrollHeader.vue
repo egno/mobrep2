@@ -12,7 +12,7 @@
       :value="value"
       :decimal="calcDecimals(i)"
       :i="i + 1"
-      @reorder="reorder"
+      @click="reorder"
       ></table-cell>
     </div>
   </div>

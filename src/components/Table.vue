@@ -6,6 +6,7 @@
       :headers="headers"
       :data="currentData"
       :totals="totals"
+      :percentColumns="showInPercent"
       @reorder="reorder"
       >
       </scroll-table>
@@ -32,7 +33,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 import { ls } from '@/services/localStore'
 import { reports } from '@/reports'
 import ChartControl from '@/components/ChartControl'
@@ -62,11 +63,17 @@ export default {
     'dataCache': 'fetchData'
   },
   computed: {
+    ...mapState([
+    ]),
     ...mapGetters([
       'checkLogIn',
       'dataCache',
+      'showInPercent',
       'tokenName'
     ]),
+    localShowinPercent () {
+      return this.showInPercent
+    },
     base () {
       return (this.graphs[this.current_graph].columns[1] && this.graphs[this.current_graph].columns[1].type)
     },

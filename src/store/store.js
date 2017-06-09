@@ -10,7 +10,8 @@ export const store = new Vuex.Store({
     dataName: 'data',
     loggedIn: true,
     backRoute: false,
-    dataCache: {}
+    dataCache: {},
+    showInPercent: {}
   },
   getters: {
     backRoute: (state) => {
@@ -24,9 +25,8 @@ export const store = new Vuex.Store({
       // state.dataCache = JSON.parse(ls.get(state.dataName)) || {}
       return state.dataCache
     },
-    dataName: (state) => {
-      return state.dataName
-    },
+    dataName: (state) => state.dataName,
+    showInPercent: (state) => state.showInPercent,
     tokenName: (state) => {
       return state.tokenName
     }
@@ -48,6 +48,9 @@ export const store = new Vuex.Store({
     setDataCache: (state, payload) => {
       state.dataCache = Object.assign(state.dataCache, payload)
       // ls.set(state.dataName, JSON.stringify(state.dataCache))
+    },
+    setShowInPercent: (state, payload) => {
+      state.showInPercent[payload] = !state.showInPercent[payload]
     }
   },
   actions: {
@@ -62,6 +65,9 @@ export const store = new Vuex.Store({
     },
     setDataCache: ({commit}, payload) => {
       commit('setDataCache', payload)
+    },
+    setShowInPercent: ({commit}, payload) => {
+      commit('setShowInPercent', payload)
     }
   }
 })

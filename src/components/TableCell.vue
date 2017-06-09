@@ -1,6 +1,6 @@
 <template>
   <div class="cell"
-  @click="setOrder(i)">
+  @click="onClick(i)">
     <svg>
       <text v-if="showBar" :x="x" y="17" >{{ value | beautyNumber(decimal) }}</text>
       <text v-if="!showBar && !isArray" :x="x" y="16" >{{ value | beautyNumber(decimal) }}</text>
@@ -43,9 +43,9 @@ export default {
     }
   },
   methods: {
-    setOrder (payload) {
+    onClick (payload) {
       if (payload === 0 || payload) {
-        this.$emit('reorder', payload)
+        this.$emit('click', payload)
       }
     }
   },
