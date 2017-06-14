@@ -122,7 +122,7 @@ export default {
       }
     },
     headers () {
-      if (this.data[0]) {
+      if (this.data && this.data[0]) {
         let result = Object.keys(this.data[0].data[0])
           .filter((x) => this.graphs.reduce((r, xx) => r || xx.columns.reduce((cr, cx) => cr || cx.name === x, false), false))
         if (this.data[0].fields) {
@@ -138,7 +138,7 @@ export default {
       }
     },
     needToRead () {
-      return !(this.dataCache[this.report.name] && this.dataCache[this.report.name].ts) || (this.cacheAgo > 0)
+      return !(this.dataCache[this.report.name] && this.dataCache[this.report.name].ts && this.dataCache[this.report.name].data) || (this.cacheAgo > 0)
     },
     saturation_caption () {
       return (this.graphs[this.current_graph].saturation)
@@ -178,7 +178,7 @@ export default {
       }
     },
     calcHeight () {
-      if (this.report) {
+      if (this.report && this.$refs && this.$refs.main) {
         this.$refs.main.style.height = (document.documentElement.clientHeight - this.$refs.navigation.offsetHeight) + 'px'
       }
     },

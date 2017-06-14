@@ -120,16 +120,20 @@ export default {
     },
     decimals () {
       const def = 3
-      return this.headers.map((h, i) =>
-        this.data.map(x => x.values[i])
-        .reduce((r, xx) => {
-          return {
-            max: Math.max(r.max || 0, (Array.isArray(xx)) ? xx[0] : xx),
-            min: Math.min(r.min || 0, (Array.isArray(xx)) ? xx[0] : xx)
-          }
-        }, [])
-      )
-      .map((x, i) => (this.showInPercent[i] && this.showInPercent[i].percent) ? 1 : this.calcDecimal(x.min, x.max, def))
+      if (this.headers) {
+        return this.headers.map((h, i) =>
+          this.data.map(x => x.values[i])
+          .reduce((r, xx) => {
+            return {
+              max: Math.max(r.max || 0, (Array.isArray(xx)) ? xx[0] : xx),
+              min: Math.min(r.min || 0, (Array.isArray(xx)) ? xx[0] : xx)
+            }
+          }, [])
+        )
+        .map((x, i) => (this.showInPercent[i] && this.showInPercent[i].percent) ? 1 : this.calcDecimal(x.min, x.max, def))
+      } else {
+        return {}
+      }
     },
     mainData () {
       if (this.data) {
