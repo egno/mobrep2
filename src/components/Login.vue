@@ -7,21 +7,27 @@
     </div>
     <div class="row">
       <div v-if="!checkLogIn">
-        <div class="form-group">
-          <label for="email">Учётная запись</label>
-          <input v-model.lazy="form.email" type="email" class="form-control" id="email" placeholder="email" @keyup.enter="gotoPassword"/>
-          <small id="emailHelp" class="form-text text-muted">Введите email, связанный с рабочей учётной записью</small>
-        </div>
-        <div class="form-group">
-          <label for="password">Пароль</label>
-          <input v-model.lazy="form.pass" type="password" class="form-control" id="password" ref="password" placeholder="Пароль" @keyup.enter="tryLogIn"/>
-        </div>
-        <div>
-          <p>
-            {{ message }}
-          </p>
-        </div>
-        <button type="submit" class="btn btn-primary" :disabled='waitStatus' @click="tryLogIn" @keyup.enter="tryLogIn">Войти</button>
+        <form>
+          <div class="form-group">
+            <label for="email">Учётная запись</label>
+            <input v-model.lazy="form.email" name="username" type="email"
+            class="form-control" id="email" placeholder="email"
+             @keyup.enter="gotoPassword"/>
+            <small id="emailHelp" class="form-text text-muted">Введите email, связанный с рабочей учётной записью</small>
+          </div>
+          <div class="form-group">
+            <label for="password">Пароль</label>
+            <input v-model.lazy="form.pass" name="password" type="password"
+            class="form-control" id="password" ref="password" placeholder="Пароль"
+            @keyup.enter="tryLogIn"/>
+          </div>
+          <div>
+            <p>
+              {{ message }}
+            </p>
+          </div>
+          <button type="submit" class="btn btn-primary" :disabled='waitStatus' @click="tryLogIn" @keyup.enter="tryLogIn">Войти</button>
+        </form>
       </div>
       <div v-if="checkLogIn">
         <button type="submit" class="btn btn-primary" @click="logOut">Выйти</button>
