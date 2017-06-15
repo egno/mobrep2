@@ -6,6 +6,7 @@ Vue.use(Vuex)
 
 export const store = new Vuex.Store({
   state: {
+    appTitle: 'Живой экран',
     tokenName: 'jwt-token',
     dataName: 'data',
     loggedIn: true,
@@ -14,6 +15,9 @@ export const store = new Vuex.Store({
     showInPercent: {}
   },
   getters: {
+    appTitle: (state) => {
+      return state.appTitle
+    },
     backRoute: (state) => {
       return state.backRoute
     },

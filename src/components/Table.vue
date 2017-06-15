@@ -59,13 +59,15 @@ export default {
     }
   },
   watch: {
-    'name': 'fetchData',
-    'dataCache': 'fetchData'
+    'name': 'fetchData, updateTitle',
+    'dataCache': 'fetchData',
+    'report': 'updateTitle'
   },
   computed: {
     ...mapState([
     ]),
     ...mapGetters([
+      'appTitle',
       'checkLogIn',
       'dataCache',
       'showInPercent',
@@ -233,9 +235,15 @@ export default {
     },
     reorder (event) {
       this.currentOrder = event
+    },
+    updateTitle () {
+      if (this.name && this.report) {
+        window.document.title = this.report.caption
+      }
     }
   },
   mounted () {
+    window.document.title = this.appTitle
     this.fetchData()
     this.calcHeight()
     this.$nextTick(function () {

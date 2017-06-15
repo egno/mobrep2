@@ -40,7 +40,8 @@ export default {
   computed: {
     ...mapGetters([
       'checkLogIn',
-      'tokenName'
+      'tokenName',
+      'appTitle'
     ]),
     reports () {
       return reports.filter(x => this.data.reduce((r, xx) => r || (xx.name === x.uri), false))
@@ -85,6 +86,7 @@ export default {
     }
   },
   mounted () {
+    window.document.title = this.appTitle
     this.fetchData()
     this.$nextTick(function () {
       window.addEventListener('resize', this.checkWidth)

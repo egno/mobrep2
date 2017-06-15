@@ -19,6 +19,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'appTitle',
       'checkLogIn',
       'backRoute'
     ])
@@ -75,6 +76,7 @@ export default {
     }
   },
   mounted () {
+    window.document.title = this.appTitle
     this.checkRoute()
     // window.addEventListener('touchmove', this.eventListener)
     // window.addEventListener('touchstart', this.eventListener)
