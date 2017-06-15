@@ -30,8 +30,8 @@
         </form>
       </div>
       <div v-if="checkLogIn">
+        <button type="submit" class="btn" @click="goHome"><span class="fa fa-home fa-lg" aria-hidden="true"></span></button>
         <button type="submit" class="btn btn-primary" @click="logOut">Выйти</button>
-        <button type="submit" class="btn" @click="goHome">Не выходить</button>
       </div>
     </div>
   </div>
