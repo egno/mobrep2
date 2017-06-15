@@ -2,7 +2,9 @@
   <div :class="['row', 'navbar', 'navbar-inverse', 'ok']">
     <div class="btn-toolbar">
       <div class="btn-group btn-group-sm">
-        <button class="btn btn-secondary btn-sm " @click="goHome">M</button>
+        <button class="btn btn-secondary btn-sm " @click="goHome">
+        <span class="fa fa-home fa-lg" aria-hidden="true"></span>
+      </button>
       </div>
       <div  v-if="showArrows" class="btn-group">
         <button class="btn btn-secondary btn-sm" @click="graphInc(-1)"> < </button>
