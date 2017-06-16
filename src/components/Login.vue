@@ -1,6 +1,13 @@
 <template>
   <div class="col">
     <div class="row">
+      <p><small>
+        Система работает в тестовом режиме.<br>Если обнаружите ошибки, прошу отнестить с пониманием и сообщить о них <a href="mailto:shelemetyev2katren.ru">Александру Шелеметьеву</a>
+      </small>
+      </p>
+
+    </div>
+    <div class="row">
       <h1>
           Вход
       </h1>
@@ -24,6 +31,9 @@
           <div>
             <p>
               {{ message }}
+            </p>
+            <p v-if="help">
+              Обратитесь в техподдержку <a href="mailto:help@katren.ru">help@katren.ru</a> с заявкой на включение вас в группу пользователей СмартГланс (Nsk-Resource-SmartGlanceUser)
             </p>
           </div>
           <button type="submit" class="btn btn-primary" :disabled='waitStatus' @click="tryLogIn" @keyup.enter="tryLogIn">Войти</button>
@@ -55,7 +65,10 @@ export default {
   computed: {
     ...mapGetters([
       'checkLogIn'
-    ])
+    ]),
+    help () {
+      return this.message === 'Доступ запрещён'
+    }
   },
   watch: {
     'token': 'checkToken'

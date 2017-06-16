@@ -1,5 +1,12 @@
 <template>
 <div class="container">
+  <div class="row">
+    <p><small>
+      Система работает в тестовом режиме.<br>Если обнаружите ошибки, прошу отнестить с пониманием и сообщить о них <a href="mailto:shelemetyev2katren.ru">Александру Шелеметьеву</a>
+    </small>
+    </p>
+
+  </div>
   <h1 v-if="!smallScreen">Отчёты</h1>
   <h1 v-if="smallScreen">Графики</h1>
   <section class="row" v-if="reports.length > 0">
