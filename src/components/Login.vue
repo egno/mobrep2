@@ -20,7 +20,7 @@
             class="form-control" id="email" placeholder="email"
              @keyup.enter="gotoPassword"
              />
-            <small id="emailHelp" class="form-text text-muted">Введите email, связанный с рабочей учётной записью</small>
+            <small id="emailHelp" class="form-text text-muted">Введите имя пользователя или email, связанный с рабочей учётной записью</small>
           </div>
           <div class="form-group">
             <label for="password">Пароль</label>
