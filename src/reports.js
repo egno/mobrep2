@@ -51,8 +51,8 @@ export const reports = [
       },
       {
         columns: [
-          { name: 'РН.млн.р', total: 'sum' },
-          { name: 'РН на душу нас.', total: 'avg' } ]
+          { name: 'РН.млн.р', total: 'sum' }
+        ]
       },
       {
         columns: [
@@ -83,7 +83,7 @@ export const reports = [
         columns: [ { name: 'Фин.цикл,дн', total: 'avg' } ]
       },
       {
-        columns: [ { name: 'Прибыль,млн.р', total: 'sum' }, { name: 'ТС,млн.р' } ]
+        columns: [ { name: 'Население,млн.', total: 'sum' }, { name: 'ТС,млн.р' } ]
       },
       {
         columns: [ { name: 'УП(1000ч.)' }, { name: 'Доля филиала' } ]
