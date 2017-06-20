@@ -14,24 +14,26 @@
     </div>
     <div class="row">
       <div v-if="!checkLogIn">
+        <form>
           <div class="form-group">
             <label for="email">Учётная запись</label>
-            <input v-model.trim="form.email" name="username" type="email"
-            class="form-control" id="email" placeholder="email"
+            <input v-model.trim="form.email" name="username" autocomplete="on"
+            class="form-control" id="email" placeholder="Логин или email"
              @keyup.enter="gotoPassword"
              />
             <small id="emailHelp" class="form-text text-muted">Введите имя пользователя рабочей учётной записи</small>
           </div>
           <div class="form-group">
             <label for="password">Пароль</label>
-            <input v-model="form.pass" name="password" type="password"
+            <input v-model="form.pass" name="password" type="password" autocomplete="on"
             class="form-control" id="password" ref="password" placeholder="Пароль"
             @keyup.enter="tryLogIn"
             />
           </div>
           <div class="form-group" v-html="message">
           </div>
-          <button type="submit" class="btn btn-primary" :disabled='waitStatus' @click="tryLogIn" @keyup.enter="tryLogIn">Войти</button>
+        </form>
+        <button type="submit" class="btn btn-primary" :disabled='waitStatus' @click="tryLogIn" @keyup.enter="tryLogIn">Войти</button>
       </div>
       <div v-if="checkLogIn">
         <button type="submit" class="btn" @click="goHome"><span class="fa fa-home fa-lg" aria-hidden="true"></span></button>
@@ -85,6 +87,7 @@ export default {
         this.message = 'Подождите, проверяю права доступа...'
         this.getTocken()
       }
+      return false
     },
     checkToken () {
       if (this.token) {
