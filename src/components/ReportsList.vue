@@ -2,7 +2,11 @@
 <div class="container">
   <div class="row">
     <p><small>
-      Система работает в тестовом режиме.<br>Если обнаружите ошибки, прошу отнестить с пониманием и сообщить о них <a href="mailto:shelemetyev@katren.ru">Александру Шелеметьеву</a>
+Система работает в тестовом режиме.<br>Если обнаружите ошибки, прошу <a :href="'mailto:help@katren.ru?subject=datazen. Список отчётов&body='+encodeURIComponent(`
+
+--------------------
+Данные:
+`+JSON.stringify(data, null, '  '))">сообщить о них в техподдержку</a>
     </small>
     </p>
 
@@ -20,7 +24,7 @@
   </section>
   <div class="col" v-if="(reports.length === 0) && loaded">
     <div class="row">
-      Нет доступных отчётов. Обратитесь в службу поддержки
+      Нет доступных отчётов. <a :href="'mailto:help@katren.ru?subject=datazen. Нет доступных отчетов&body=DATA:%20'+encodeURIComponent(JSON.stringify(data, null, ' '))">Обратитесь в службу поддержки</a>
     </div>
     <div class="row">
       <button type="submit" class="btn btn-primary" @click="logOut">Выйти</button>
