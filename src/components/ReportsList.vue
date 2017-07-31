@@ -79,8 +79,7 @@ export default {
       }
       if ((this.checkLogIn) && ls.get(this.tokenName) !== null) {
         options.headers.Authorization = 'Bearer ' + ls.get(this.tokenName)
-      }
-      this.$http.get(this.uri, options)
+        this.$http.get(this.uri, options)
         .then(
           (response) => {
             return response.json()
@@ -89,11 +88,13 @@ export default {
             this.logOut()
           }
         )
-        .then((data) => {
-          this.loaded = true
-          this.data = data
-        }
-      )
+        .then(
+          (data) => {
+            this.data = data
+            this.loaded = true
+          }
+        )
+      }
     }
   },
   mounted () {
