@@ -209,7 +209,8 @@ export default {
         this.$refs.mainarea.style.width = (this.$el.offsetWidth - this.$refs.colheader.offsetWidth) + 'px'
         this.$refs.header.style.width = (this.$el.offsetWidth - this.$refs.colheader.offsetWidth) + 'px'
         this.$refs.foother.style.width = (this.$el.offsetWidth - this.$refs.colheader.offsetWidth) + 'px'
-        this.rowHeight = (this.$refs.mainarea.offsetHeight - 17) / (this.data.length)
+        const calcRowHeight = (this.$refs.mainarea.offsetHeight - 17) / (this.data.length)
+        this.rowHeight = (calcRowHeight > this.minRowHeight) ? calcRowHeight : this.minRowHeight
       }
     }
   },
