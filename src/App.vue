@@ -1,7 +1,6 @@
 <template>
   <div id="app"
   <!-- v-touch:doubletap="toggleFullScreen" -->
-  >
     <div class="container">
         <router-view></router-view>
     </div>

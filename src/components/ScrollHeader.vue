@@ -6,12 +6,13 @@
     <div class="row ">
       <table-cell
       v-for="(value, i) in headers"
-      :key="value"
+      :key="i"
       class="col center fixed-width"
       align="center"
       :value="value"
       :decimal="calcDecimals(i)"
       :i="i + 1"
+      :rowHeight="rowHeight"
       @click="reorder"
       ></table-cell>
     </div>
@@ -25,6 +26,9 @@ export default {
   props: {
     data: {},
     decimals: {},
+    rowHeight: {
+      default: 24
+    },
     width: 0
   },
   components: {

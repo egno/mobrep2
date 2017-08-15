@@ -3,6 +3,7 @@
     <div ref="main" class="" v-if="name">
       <scroll-table
       :fixedColumn="caption"
+      fixedTotals="false"
       :headers="headers"
       :data="currentData"
       :totals="totals"
@@ -55,7 +56,8 @@ export default {
       current_graph: 0,
       current_month: 0,
       chart_height: 0,
-      currentOrder: 0
+      currentOrder: 0,
+      mainHeight: 0
     }
   },
   watch: {
@@ -181,6 +183,7 @@ export default {
     },
     calcHeight () {
       if (this.report && this.$refs && this.$refs.main) {
+        this.mainHeight = (document.documentElement.clientHeight - this.$refs.navigation.offsetHeight)
         this.$refs.main.style.height = (document.documentElement.clientHeight - this.$refs.navigation.offsetHeight) + 'px'
       }
     },

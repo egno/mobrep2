@@ -1,11 +1,12 @@
 <template>
-  <div class="row max">
+  <div class="row max" ref="main">
     <div v-if="(data)" class="col max">
-      <div class="row header">
+      <div class="row header" :style="{height: minRowHeight + 'px'}">
         <div class="fixed-column">
            <table-cell
            :value="fixedColumn"
            :i="0"
+           :rowHeight="minRowHeight"
            @click="reorder"
            ></table-cell>
         </div>
@@ -13,10 +14,12 @@
           id="header"
           ref="header"
           class="col header"
+          :height="minRowHeight"
           v-scroll="onScroll">
           <scroll-header
           :data="headers"
           :width="columnWidth"
+          :rowHeight="minRowHeight"
           @reorder="reorder"
           >
         </scroll-header>
@@ -24,14 +27,16 @@
       </div>
       <div
         ref="mainrow"
-        class="row mainrow">
+        class="row mainrow"
+        :style="{height: rowHeight + 'px'}">
         <div
           id="colheader"
           ref="colheader"
           class="max header colheader fixed-column"
           v-scroll="onScroll">
           <scroll-colheader
-          :data="colHeaders">
+          :data="colHeaders"
+          :rowHeight="rowHeight">
           </scroll-colheader>
         </div>
         <div
@@ -43,6 +48,7 @@
            :data="mainData"
            :decimals="decimals"
            :percentColumn="colPercent"
+           :rowHeight="rowHeight"
            :totals="totalsData"
            :width="columnWidth"
            @percentSwitch="percentSwitch"
@@ -53,6 +59,7 @@
       <div class="row header">
         <div class="fixed-column">
            <table-cell
+           :rowHeight="minRowHeight"
            :value="'ИТОГО'"
            ></table-cell>
         </div>
@@ -64,6 +71,7 @@
           <scroll-header
           :data="totalsData"
           :decimals="decimals"
+          :rowHeight="minRowHeight"
           :width="columnWidth">
         </scroll-header>
         </div>
@@ -92,12 +100,17 @@ export default {
   data () {
     return {
       columnWidth: 100,
-      showInPercent: []
+      showInPercent: [],
+      minRowHeight: 24,
+      rowHeight: 24
     }
   },
   props: {
     data: {},
     fixedColumn: '',
+    fixedTotals: {
+      default: true
+    },
     headers: {
       type: Array
     },
@@ -140,6 +153,9 @@ export default {
         return this.data.map((x) => x.values.map((xx, ii) => (this.showInPercent && this.showInPercent[ii] && this.showInPercent[ii].percent) ? ((Array.isArray(xx) ? xx[0] : xx) * 100.0 / ((Array.isArray(this.totals[ii])) ? this.totals[ii][0] : this.totals[ii])).toFixed(1) + '%' : xx))
       }
     },
+    rowCount () {
+      return this.colHeaders.length || 1
+    },
     totalsData () {
       if (this.totals && this.totals[0]) {
         return this.totals.map((x, i) => (this.showInPercent && this.showInPercent[i] && this.showInPercent[i].percent) ? '100%' : x)
@@ -147,7 +163,8 @@ export default {
     }
   },
   watch: {
-    'headers': 'fillPercentColumns'
+    'headers': 'fillPercentColumns',
+    'data': 'setHeight'
   },
   methods: {
     calcDecimal (min, max, def) {
@@ -192,6 +209,7 @@ export default {
         this.$refs.mainarea.style.width = (this.$el.offsetWidth - this.$refs.colheader.offsetWidth) + 'px'
         this.$refs.header.style.width = (this.$el.offsetWidth - this.$refs.colheader.offsetWidth) + 'px'
         this.$refs.foother.style.width = (this.$el.offsetWidth - this.$refs.colheader.offsetWidth) + 'px'
+        this.rowHeight = (this.$refs.mainarea.offsetHeight - 17) / (this.data.length)
       }
     }
   },
@@ -217,22 +235,25 @@ export default {
   height: 100%
 }
 .scrollbox {
-  overflow: auto;
+  overflow-x: auto;
 }
 .header {
-  background-color: #eee;
+  background-color: #e4e4e4;
+  font-weight: bold;
   overflow: hidden;
+}
+.colheader {
+  background-color: #f4f4f4;
 }
 .foother {
   font-size: 1.3em;
 }
 .cell {
-  height: 24px;
   overflow: hidden;
+  line-height: 0;
 }
 .header .cell {
   font-size: 0.7em;
-  font-weight: bold;
   padding-top: 0.2em;
 }
 .fixed-width {

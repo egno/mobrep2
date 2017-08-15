@@ -6,7 +6,8 @@
     >
     <div v-for="(row, i) in currentData"
     :key="i"
-    class="row">
+    :style="{height: (100 / currentData.length) +'%'}"
+    class="row row-1">
       <table-cell
       v-for="(cell, ii) of row"
       :key="ii"
@@ -16,6 +17,7 @@
       :value="cell.value"
       :bar="cell.bar"
       :decimal="cell.decimal"
+      :rowHeight="rowHeight"
       @click="percentSwitch"
       ></table-cell>
     </div>
@@ -30,9 +32,11 @@ export default {
     data: {},
     decimals: {},
     percentColumn: {},
+    rowHeight: {
+      default: 24
+    },
     totals: {},
-    width: 0,
-    height: 24
+    width: 0
   },
   components: {
     TableCell

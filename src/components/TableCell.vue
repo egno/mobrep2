@@ -1,12 +1,14 @@
 <template>
   <div class="cell"
+  :style="{height: rowHeight + 'px'}""
   @click="onClick(i)">
-    <svg>
-      <text v-if="showBar" :x="x" y="17" >{{ value | beautyNumber(decimal) }}</text>
-      <text v-if="!showBar && !isArray" :x="x" y="16" >{{ value | beautyNumber(decimal) }}</text>
-      <text class="curr" v-if="isArray && value.length > 0" :x="x" y="16" >{{ value[0] | beautyNumber(decimal) }}</text>
-      <text class="prev" v-if="isArray && value.length > 1" x="100" y="16" >{{ value[1] | beautyNumber(decimal) }}</text>
-      <rect v-if="showBar" :width="bar.width + '%'" :fill="color" :x="bar.x" :height="'100%'"></rect>
+    <svg
+    >
+      <text v-if="showBar" :x="x" :y="rowHeight/2 + 4" >{{ value | beautyNumber(decimal) }}</text>
+      <text v-if="!showBar && !isArray" :x="x" :y="rowHeight/2 + 3" >{{ value | beautyNumber(decimal) }}</text>
+      <text class="curr" v-if="isArray && value.length > 0" :x="x" :y="rowHeight/2 + 3" >{{ value[0] | beautyNumber(decimal) }}</text>
+      <text class="prev" v-if="isArray && value.length > 1" x="100" :y="rowHeight/2 + 3" >{{ value[1] | beautyNumber(decimal) }}</text>
+      <rect v-if="showBar" :width="bar.width + '%'" :fill="color" :x="bar.x" :height="rowHeight"></rect>
     </svg>
   </div>
 </template>
@@ -18,6 +20,12 @@ export default {
     i: 0,
     bar: {},
     decimal: 0,
+    pos: {
+      default: 0
+    },
+    rowHeight: {
+      default: 24
+    },
     align: ''
   },
   computed: {
@@ -96,6 +104,7 @@ svg text {
 }
 .cell {
   padding: 0;
+  min-height: 24px;
 }
 .center {
   text-anchor: middle;
