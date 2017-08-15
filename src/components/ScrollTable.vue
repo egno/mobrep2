@@ -251,7 +251,6 @@ export default {
 }
 .cell {
   overflow: hidden;
-  line-height: 0;
 }
 .header .cell {
   font-size: 0.7em;

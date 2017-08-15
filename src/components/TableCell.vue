@@ -32,7 +32,7 @@ export default {
     color () {
       let h = (this.value < 0) ? 0 : 90
       let s = 80
-      let l = 50
+      let l = 85
       let a = 1
       return 'hsla(' + h + ',' + s + '%,' + l + '%,' + a + ')'
     },
