@@ -56,7 +56,7 @@ export default {
       current_graph: 0,
       current_month: 0,
       chart_height: 0,
-      currentOrder: 0,
+      currentOrder: -1,
       mainHeight: 0
     }
   },
@@ -98,13 +98,13 @@ export default {
       return true
     },
     currentData () {
-      function order (a, b) {
+      function order (a, b, desc = false) {
         a = (Array.isArray(a)) ? a[0] : a
         b = (Array.isArray(b)) ? b[0] : b
         if (typeof (a) !== 'string') {
-          return (a || 0) - (b || 0)
+          return ((a || 0) - (b || 0)) * ((desc) ? -1 : 1)
         } else {
-          return (a > b) ? 1 : -1
+          return ((a > b) ? 1 : -1) * ((desc) ? -1 : 1)
         }
       }
       if (this.data && (Object.keys(this.data).length > 0) && this.data[this.current_month]) {
@@ -115,8 +115,8 @@ export default {
           }
         })
         .sort((a, b) =>
-          (this.currentOrder && a.values.length >= this.currentOrder)
-          ? order(a.values[this.currentOrder - 1], b.values[this.currentOrder - 1])
+          (this.currentOrder && a.values.length >= Math.abs(this.currentOrder))
+          ? order(a.values[Math.abs(this.currentOrder) - 1], b.values[Math.abs(this.currentOrder) - 1], this.currentOrder < 0)
           : order(a.caption, b.caption))
       }
     },
@@ -249,7 +249,7 @@ export default {
       this.calcHeight()
     },
     reorder (event) {
-      this.currentOrder = event
+      this.currentOrder = (Math.abs(this.currentOrder) === event) ? -this.currentOrder : event
     },
     updateTitle () {
       if (this.name && this.report) {
