@@ -56,7 +56,7 @@ export default {
       current_graph: 0,
       current_month: 0,
       chart_height: 0,
-      currentOrder: -1,
+      currentOrder: 0,
       mainHeight: 0
     }
   },
