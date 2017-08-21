@@ -51,6 +51,7 @@
            :rowHeight="rowHeight"
            :totals="totalsData"
            :width="columnWidth"
+           :rowInfo="rowInfo"
            @percentSwitch="percentSwitch"
            >
            </scroll-main>
@@ -155,6 +156,14 @@ export default {
     },
     rowCount () {
       return this.colHeaders.length || 1
+    },
+    rowInfo () {
+      return this.colHeaders.map((x) => {
+        return {
+          caption: x,
+          showBar: x.indexOf('-опт') === -1
+        }
+      })
     },
     totalsData () {
       if (this.totals && this.totals[0]) {

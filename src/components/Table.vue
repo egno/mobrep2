@@ -159,7 +159,7 @@ export default {
           if (this.report.screens) {
             const totalFunc = this.headers.map((h) => this.report.screens.reduce((r, x) => r || x.columns.filter((fx) => fx.name === h)[0], ''))
             return totalFunc.map((t, i) => {
-              const sum = this.currentData.reduce((r, x) => (r || 0) + (+x.values[i] || 0), 0)
+              const sum = this.currentData.filter((x) => x.caption.indexOf('-опт') === -1).reduce((r, x) => (r || 0) + (+x.values[i] || 0), 0)
               switch (t.total) {
                 case 'sum': return sum
                 case 'avg': return sum / this.currentData[i].values.length

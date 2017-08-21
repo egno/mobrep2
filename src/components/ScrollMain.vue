@@ -35,6 +35,7 @@ export default {
     rowHeight: {
       default: 24
     },
+    rowInfo: {},
     totals: {},
     width: 0
   },
@@ -47,13 +48,13 @@ export default {
   },
   computed: {
     currentData () {
-      return this.data.map((x) => {
+      return this.data.map((x, i) => {
         x = x.map((xx, ii) => {
           return {
             value: xx,
             decimal: this.decimals[ii],
             bar: (!Array.isArray(xx)) ? {
-              width: this.barWidth(xx, this.currentTotals[ii].min, this.currentTotals[ii].max) || 0,
+              width: (this.rowInfo[i].showBar) ? this.barWidth(xx, this.currentTotals[ii].min, this.currentTotals[ii].max) || 0 : 0,
               x: this.barStart(xx, this.currentTotals[ii].min, this.currentTotals[ii].max) || 0
             } : ''
           }
@@ -62,7 +63,7 @@ export default {
       })
     },
     currentTotals () {
-      return this.data.reduce((r, x, i) => {
+      return this.data.filter((x, i) => this.rowInfo[i].showBar).reduce((r, x, i) => {
         return x.map((xx, ii) => {
           r[ii] = r[ii] || {min: 0, max: 0}
           return {

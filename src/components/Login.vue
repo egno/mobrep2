@@ -118,7 +118,6 @@ export default {
           if ((data) && (data.token)) {
             this.message = 'Доступ разрешён'
             this.token = data.token
-            this.goHome()
           } else {
             this.logOut()
             this.waitStatus = false
