@@ -162,7 +162,7 @@ export default {
               const sum = this.currentData.filter((x) => x.caption.indexOf('-опт') === -1).reduce((r, x) => (r || 0) + (+x.values[i] || 0), 0)
               switch (t.total) {
                 case 'sum': return sum
-                case 'avg': return sum / this.currentData[i].values.length
+                case 'avg': return sum / this.currentData.filter((x) => x.caption.indexOf('-опт') === -1).length
                 default: return ''
               }
             })

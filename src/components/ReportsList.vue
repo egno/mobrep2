@@ -9,7 +9,9 @@
 `+JSON.stringify(data, null, '  '))">сообщить о них в техподдержку</a>
     </small>
     </p>
-
+  </div>
+  <div class="row">
+    <router-link :to="{ name: 'ReleaseNotes'}"><button type="submit" class="btn"><span class="fa fa-info fa-lg" aria-hidden="true"></span></button></router-link>
   </div>
   <h1 v-if="!smallScreen">Отчёты</h1>
   <h1 v-if="smallScreen">Графики</h1>

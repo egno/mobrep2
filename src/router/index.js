@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import ReportsList from '@/components/ReportsList'
 import Table from '@/components/Table'
 import Login from '@/components/Login'
+import ReleaseNotes from '@/components/ReleaseNotes'
 
 Vue.use(Router)
 
@@ -16,6 +17,11 @@ export default new Router({
     {
       path: '/login',
       component: Login
+    },
+    {
+      path: '/releasenotes',
+      name: 'ReleaseNotes',
+      component: ReleaseNotes
     },
     {
       path: '/table/:name',
