@@ -88,7 +88,7 @@ export const reports = [
         columns: [ { name: 'Население,млн.', total: 'sum' }, { name: 'ТС,млн.р' } ]
       },
       {
-        columns: [ { name: 'УП(1000ч.)' }, { name: 'Доля филиала' } ]
+        columns: [ { name: 'УП(1000ч.)' }, { name: 'Доля филиала', decimals: 0 } ]
       }
     ]
   },
