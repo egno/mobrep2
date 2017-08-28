@@ -12,10 +12,11 @@ export const reports = [
             name: 'Факт,млн.р', // Наименование столбца (поле в БД)
               // По значению первого столбца всегда строится график
             caption: 'Факт', // Отображаемый заголовок столбца (необязательный)
-            total: '' // Что отображать в итогах (необязательный):
+            total: '', // Что отображать в итогах (необязательный):
               // sum - сумму по стобцу
               // avg - среднее по столбцу
               // В других случаях итог по столбцу не выводится
+            decimals: 0 // Количество разрядов после запятой
           },
           {
             name: 'План,млн.р',
@@ -27,20 +28,21 @@ export const reports = [
               // это отношение используется для определения цвета строки.
               // Если тип не указан, то для определения цвета строки
               // используется значение второго столбца
-            total: ''
+            total: '',
+            decimals: 0 // Количество разрядов после запятой
           }
         ]
       },
       {
         columns: [
-          { name: 'Выполн.%', total: 'avg' },
-          { name: 'Выпол. Год, %', type: '', total: '' }
+          { name: 'Выполн.%', total: 'avg', decimals: 0 },
+          { name: 'Выпол. Год, %', type: '', total: '', decimals: 0 }
         ]
       },
       {
         columns: [
-          { name: 'Вып.Кварт, %', total: 'avg' },
-          { name: 'Выпол. Год, %', type: '', total: '' }
+          { name: 'Вып.Кварт, %', total: 'avg', decimals: 0 },
+          { name: 'Выпол. Год, %', type: '', total: '', decimals: 0 }
         ]
       },
       {
@@ -57,7 +59,7 @@ export const reports = [
       {
         columns: [
           { name: 'ДЗ,млн.р', total: 'sum' },
-          { name: 'ДЗ,%проср', total: 'avg' } ]
+          { name: 'ДЗ,%проср', total: 'avg', decimals: 0 } ]
       },
       {
         columns: [
@@ -71,10 +73,10 @@ export const reports = [
         columns: [ { name: 'Скл.наимен.', total: 'avg' }, { name: 'На скл,млн.р', total: 'sum' } ]
       },
       {
-        columns: [ { name: 'В пути,мл.р', total: 'sum' }, { name: 'В пути,дн' } ]
+        columns: [ { name: 'В пути,мл.р', total: 'sum' }, { name: 'В пути,дн', decimals: 0 } ]
       },
       {
-        columns: [ { name: 'Резерв,дн' }, { name: 'В пути,дн', total: 'avg' } ]
+        columns: [ { name: 'Резерв,дн', decimals: 1 }, { name: 'В пути,дн', total: 'avg' } ]
       },
       {
         columns: [ { name: 'На скл,млн.р', total: 'sum' }, { name: 'На скл,дн', total: 'avg' } ]

@@ -6,6 +6,7 @@
       fixedTotals="false"
       :headers="headers"
       :data="currentData"
+      :defDecimals="colDefDecimals"
       :totals="totals"
       :percentColumns="showInPercent"
       @reorder="reorder"
@@ -92,6 +93,18 @@ export default {
     caption () {
       if (this.report) {
         return this.report.fixedColumn
+      }
+    },
+    colDefs () {
+      if (this.data && this.data[this.current_month]) {
+        if (this.report.screens) {
+          return this.headers.map((h) => this.report.screens.reduce((r, x) => r || x.columns.filter((fx) => fx.name === h)[0], ''))
+        }
+      }
+    },
+    colDefDecimals () {
+      if (this.colDefs) {
+        return this.colDefs.map(x => x.decimals)
       }
     },
     checkDB () {

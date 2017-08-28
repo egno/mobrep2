@@ -108,6 +108,7 @@ export default {
   },
   props: {
     data: {},
+    defDecimals: {},
     fixedColumn: '',
     fixedTotals: {
       default: true
@@ -145,6 +146,7 @@ export default {
           }, [])
         )
         .map((x, i) => (this.showInPercent[i] && this.showInPercent[i].percent) ? 1 : this.calcDecimal(x.min, x.max, def))
+        .map((x, i) => (this.defDecimals[i] !== undefined) ? this.defDecimals[i] : x)
       } else {
         return {}
       }
