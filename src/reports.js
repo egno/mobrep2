@@ -215,7 +215,7 @@ export const reports = [
       ]},
       { columns: [
         { name: 'РН,тыс.р.', total: 'sum' },
-        { name: 'РН на душу насел.', type: 'part', total: 'sum' }
+        { name: 'РН на душу насел.', type: 'part', total: 'sum', decimals: 2 }
       ]}
     ]
   }
