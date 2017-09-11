@@ -2,7 +2,7 @@
   <div :class="['row', 'navbar', 'navbar-inverse', 'ok']">
     <div class="btn-toolbar">
       <div class="btn-group btn-group-sm">
-        <button class="btn btn-secondary btn-sm " @click="goHome">
+        <button class="btn btn-secondary btn-sm " @click="goHome" title="На главный экран">
         <span class="fa fa-home fa-lg" aria-hidden="true"></span>
       </button>
       </div>
@@ -16,6 +16,11 @@
       <select v-if="haveMonths" class="custom-select custom-select-sm sm " v-model="selected_month">
         <option v-for="(month, i) in months.list" v-bind:value="i">{{ month }}</option>
       </select>
+      <div class="btn-group btn-group-sm">
+        <button class="btn btn-secondary btn-sm " @click="help" title="Написать в техподдержку">
+          <span class="fa fa-exclamation-triangle fa-lg" aria-hidden="true"></span>
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -75,6 +80,13 @@ export default {
       if (this.haveGraphs) {
         this.selected_graph = (this.selected_graph + this.graphs.list.length + payload) % this.graphs.list.length
       }
+    },
+    help () {
+      location.href = 'mailto:help@katren.ru; shelemetyev@katren.ru?subject=datazen. ' + this.report + '&body=' + encodeURIComponent(`
+
+     --------------------
+     Данные:
+     ` + JSON.stringify(this.$route.path, null, '  '))
     },
     isChanged () {
       let sendData = {graph: this.selected_graph, month: this.selected_month}

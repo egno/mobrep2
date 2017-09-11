@@ -48,7 +48,7 @@ export const reports = [
       {
         columns: [
           { name: '%РН', total: 'avg' },
-          { name: 'РН.млн.р', total: 'sum' }
+          { name: 'РН.млн.р', total: 'sum', decimals: 0 }
         ]
       },
       {
@@ -79,13 +79,13 @@ export const reports = [
         columns: [ { name: 'Резерв,дн', decimals: 1 }, { name: 'В пути,дн', total: 'avg' } ]
       },
       {
-        columns: [ { name: 'На скл,млн.р', total: 'sum' }, { name: 'На скл,дн', total: 'avg' } ]
+        columns: [ { name: 'На скл,млн.р', total: 'sum' }, { name: 'На скл,дн', total: 'avg', decimals: 0 } ]
       },
       {
         columns: [ { name: 'Фин.цикл,дн', total: 'avg' } ]
       },
       {
-        columns: [ { name: 'Население,млн.', total: 'sum' }, { name: 'ТС,млн.р' } ]
+        columns: [ { name: 'Население,млн.', total: 'sum' }, { name: 'ТС,млн.р', decimals: 0 } ]
       },
       {
         columns: [ { name: 'УП(1000ч.)' }, { name: 'Доля филиала', decimals: 0 } ]
