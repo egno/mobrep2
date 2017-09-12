@@ -272,7 +272,7 @@ export default {
   },
   mounted () {
     window.document.title = this.appTitle
-    this.fetchData()
+    this.fetchData(true)
     this.calcHeight()
     this.$nextTick(function () {
       window.addEventListener('resize', this.getWindowHeight)
