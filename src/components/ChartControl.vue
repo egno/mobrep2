@@ -27,6 +27,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import { BrowserDetect } from '@/services/os'
 
 export default {
   props: [
@@ -85,6 +86,8 @@ export default {
       location.href = 'mailto:help@katren.ru; shelemetyev@katren.ru?subject=datazen. ' + this.report + '&body=' + encodeURIComponent(`
 
      --------------------
+     Браузер:
+     ` + JSON.stringify(BrowserDetect.info(), null, '  ') + `
      Данные:
      ` + JSON.stringify(this.$route.path, null, '  '))
     },

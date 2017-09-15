@@ -5,6 +5,8 @@
 Система работает в тестовом режиме.<br>Если обнаружите ошибки, прошу <a :href="'mailto:help@katren.ru?subject=datazen. Список отчётов&body='+encodeURIComponent(`
 
 --------------------
+Браузер:
+` + JSON.stringify(info, null, '  ') + `
 Данные:
 `+JSON.stringify(data, null, '  '))">сообщить о них в техподдержку</a>
     </small>
@@ -39,6 +41,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import { reports } from '@/reports'
 import { ls } from '@/services/localStore'
+import { BrowserDetect } from '@/services/os'
 
 export default {
   data () {
@@ -63,6 +66,9 @@ export default {
           return x
         }
       )
+    },
+    info () {
+      return BrowserDetect.info()
     },
     noReportsFound () {
       return (reports.length === 0)
