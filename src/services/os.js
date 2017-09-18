@@ -4,9 +4,15 @@ export const BrowserDetect = {
     var version = this.searchVersion(navigator.userAgent) || this.searchVersion(navigator.appVersion) || 'an unknown version'
     var OS = this.searchString(this.dataOS) || 'an unknown OS'
     return {
+      'useragent': navigator.userAgent,
       'browser': browser,
       'version': version,
-      'OS': OS
+      'OS': OS,
+      'window': {
+        'width': document.documentElement.clientWidth,
+        'height': document.documentElement.clientHeight,
+        'pixelRatio': window.devicePixelRatio
+      }
     }
   },
   searchString: function (data) {

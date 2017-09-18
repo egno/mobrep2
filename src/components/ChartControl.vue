@@ -87,9 +87,9 @@ export default {
 
      --------------------
      Браузер:
-     ` + JSON.stringify(BrowserDetect.info(), null, '  ') + `
+` + JSON.stringify(BrowserDetect.info(), null, '  ') + `
      Данные:
-     ` + JSON.stringify(this.$route.path, null, '  '))
+` + JSON.stringify(window.location.href, null, '  '))
     },
     isChanged () {
       let sendData = {graph: this.selected_graph, month: this.selected_month}
