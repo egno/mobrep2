@@ -58,7 +58,7 @@ export const reports = [
       },
       {
         columns: [
-          { name: 'ДЗ,млн.р', total: 'sum' },
+          { name: 'ДЗ,млн.р', total: 'sum', decimals: 0 },
           { name: 'ДЗ,%проср', total: 'avg', decimals: 0 } ]
       },
       {
