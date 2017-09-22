@@ -2,10 +2,15 @@
   <div class="col">
     <div class="row">
       <p><small>
-        Система работает в тестовом режиме.<br>Если обнаружите ошибки, прошу отнестить с пониманием и сообщить о них <a href="mailto:shelemetyev@katren.ru">Александру Шелеметьеву</a>
+  Система работает в тестовом режиме.<br>Если обнаружите ошибки, прошу <a :href="'mailto:help@katren.ru?subject=datazen. Список отчётов&body='+encodeURIComponent(`
+
+  --------------------
+  Браузер:
+  ` + JSON.stringify(info, null, '  ') + `
+  Данные:
+  `+JSON.stringify({'login': form.email}, null, '  '))">сообщить о них в техподдержку</a>
       </small>
       </p>
-
     </div>
     <div class="row">
       <h1>
@@ -45,6 +50,8 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import { BrowserDetect } from '@/services/os'
+
 export default {
   data () {
     return {
@@ -61,7 +68,10 @@ export default {
   computed: {
     ...mapGetters([
       'checkLogIn'
-    ])
+    ]),
+    info () {
+      return BrowserDetect.info()
+    }
   },
   watch: {
     'token': 'checkToken'

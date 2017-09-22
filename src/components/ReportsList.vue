@@ -6,9 +6,7 @@
 
 --------------------
 Браузер:
-` + JSON.stringify(info, null, '  ') + `
-Данные:
-`+JSON.stringify(data, null, '  '))">сообщить о них в техподдержку</a>
+` + JSON.stringify(info, null, '  ') )">сообщить о них в техподдержку</a>
     </small>
     </p>
   </div>
