@@ -36,14 +36,13 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { reports } from '@/reports'
 import { ls } from '@/services/localStore'
 import { BrowserDetect } from '@/services/os'
 
 export default {
   data () {
     return {
-      uri: '',
+      uri: 'reports',
       data: [],
       loaded: false,
       maxWidth: 100,
@@ -57,8 +56,9 @@ export default {
       'appTitle'
     ]),
     reports () {
-      return reports.filter(x => this.data.reduce((r, xx) => r || (xx.name === x.uri), false))
+      return this.data
         .map((x, i) => {
+          x.name = x.code
           x.path = (this.smallScreen) ? 'report' : 'table'
           return x
         }
@@ -68,7 +68,7 @@ export default {
       return BrowserDetect.info()
     },
     noReportsFound () {
-      return (reports.length === 0)
+      return (this.reports.length === 0)
     }
   },
   methods: {

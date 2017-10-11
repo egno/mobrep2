@@ -63,7 +63,7 @@ export default {
       })
     },
     currentTotals () {
-      return this.data.filter((x, i) => this.rowInfo[i].showBar).reduce((r, x, i) => {
+      return this.data.reduce((r, x, i) => {
         return x.map((xx, ii) => {
           r[ii] = r[ii] || {min: 0, max: 0}
           return {

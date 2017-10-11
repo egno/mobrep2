@@ -6,6 +6,9 @@
     :rowHeight="rowHeight"
     :value="value"
     ></table-cell>
+    <table-cell
+    :rowHeight="17">
+    </table-cell>
   </div>
 </template>
 
