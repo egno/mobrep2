@@ -47,7 +47,7 @@ export const reports = [
       },
       {
         columns: [
-          { name: '%РН', total: 'avg' },
+          { name: '%РН', total: 'avg', decimals: 1 },
           { name: 'РН.млн.р', total: 'sum', decimals: 0 }
         ]
       },
@@ -63,7 +63,7 @@ export const reports = [
       },
       {
         columns: [
-          { name: 'Оборот ДЗ', total: 'sum' },
+          { name: 'Оборот ДЗ', total: 'sum', decimals: 0 },
           { name: 'ДЗ,%проср', total: 'avg' } ]
       },
       {
@@ -83,6 +83,9 @@ export const reports = [
       },
       {
         columns: [ { name: 'Фин.цикл,дн', total: 'avg' } ]
+      },
+      {
+        columns: [ { name: 'РН на душу нас.', total: 'avg', decimals: 1 } ]
       },
       {
         columns: [ { name: 'Население,млн.', total: 'sum' }, { name: 'ТС,млн.р', decimals: 0 } ]
@@ -136,6 +139,31 @@ export const reports = [
   },
   {
     caption: 'Экран контроля поставок',
+    path: 'report',
+    name: 'livedeliverystatu',
+    uri: 'livedeliverystatu',
+    fixedColumn: 'Менеджер ОП',
+    screens: [
+      { columns: [
+          { name: 'ТО, млн. руб.', total: 'sum' },
+          { name: '% ЭСП', type: '', total: 'sum' }
+      ]},
+      { columns: [
+          { name: 'Кол-во позиций', total: 'avg' },
+          { name: 'ОТЗ, к.дн.', total: 'avg' }
+      ]},
+      { columns: [
+          { name: 'Дельта ФЦ, к.дн.', total: 'avg' },
+          { name: '% инв.', total: 'avg' }
+      ]},
+      { columns: [
+          { name: '% ККС', total: 'avg' },
+          { name: '% НКС', total: 'avg' }
+      ]}
+    ]
+  },
+  {
+    caption: 'Экран контроля поставок (сравнение)',
     path: 'report',
     name: 'gdlivedeliverystat',
     uri: 'livedeliverystat2',
@@ -229,7 +257,7 @@ export const reports = [
       { caption: '! Факт', // Отображаемый заголовок экрана (необязательный)
         columns: [ // Перечисление столбцов экрана
           {
-            name: 'Факт,млн.р', // Наименование столбца (поле в БД)
+            name: 'Факт,млн.₸', // Наименование столбца (поле в БД)
               // По значению первого столбца всегда строится график
             caption: 'Факт', // Отображаемый заголовок столбца (необязательный)
             total: '', // Что отображать в итогах (необязательный):
@@ -239,7 +267,7 @@ export const reports = [
             decimals: 0 // Количество разрядов после запятой
           },
           {
-            name: 'План,млн.р',
+            name: 'План,млн.₸',
             type: '', // Тип столбца (необязательный)
               // Если указан тип = 'percent' или 'part', то автоматически добавляется третий столбец,
               // в котором отображается:
@@ -267,45 +295,48 @@ export const reports = [
       },
       {
         columns: [
-          { name: '%РН', total: 'avg' },
-          { name: 'РН.млн.р', total: 'sum', decimals: 0 }
+          { name: '%РН', total: 'avg', decimals: 1 },
+          { name: 'РН.млн.₸', total: 'sum', decimals: 0 }
         ]
       },
       {
         columns: [
-          { name: 'РН.млн.р', total: 'sum' }
+          { name: 'РН.млн.₸', total: 'sum' }
         ]
       },
       {
         columns: [
-          { name: 'ДЗ,млн.р', total: 'sum' },
+          { name: 'ДЗ,млн.₸', total: 'sum' },
           { name: 'ДЗ,%проср', total: 'avg', decimals: 0 } ]
       },
       {
         columns: [
-          { name: 'Оборот ДЗ', total: 'sum' },
+          { name: 'Оборот ДЗ', total: 'sum', decimals: 0 },
           { name: 'ДЗ,%проср', total: 'avg' } ]
       },
       {
         columns: [ { name: '%ЭСП', total: 'avg' } ]
       },
       {
-        columns: [ { name: 'Скл.наимен.', total: 'avg' }, { name: 'На скл,млн.р', total: 'sum' } ]
+        columns: [ { name: 'Скл.наимен.', total: 'avg' }, { name: 'На скл,млн.₸', total: 'sum' } ]
       },
       {
-        columns: [ { name: 'В пути,мл.р', total: 'sum' }, { name: 'В пути,дн', decimals: 0 } ]
+        columns: [ { name: 'В пути,мл.₸', total: 'sum' }, { name: 'В пути,дн', decimals: 0 } ]
       },
       {
         columns: [ { name: 'Резерв,дн', decimals: 1 }, { name: 'В пути,дн', total: 'avg' } ]
       },
       {
-        columns: [ { name: 'На скл,млн.р', total: 'sum' }, { name: 'На скл,дн', total: 'avg', decimals: 0 } ]
+        columns: [ { name: 'На скл,млн.₸', total: 'sum' }, { name: 'На скл,дн', total: 'avg', decimals: 0 } ]
       },
       {
-        columns: [ { name: 'Фин.цикл,дн', total: 'avg' } ]
+        columns: [ { name: 'Фин.цикл,дн', total: 'avg', decimals: 0 } ]
       },
       {
-        columns: [ { name: 'Население,млн.', total: 'sum' }, { name: 'ТС,млн.р', decimals: 0 } ]
+        columns: [ { name: 'РН на душу нас.', total: 'avg', decimals: 1 } ]
+      },
+      {
+        columns: [ { name: 'Население,млн.', total: 'sum', decimals: 1 }, { name: 'ТС,млн.₸', decimals: 0 } ]
       },
       {
         columns: [ { name: 'УП(1000ч.)' }, { name: 'Доля филиала', decimals: 0 } ]
@@ -331,21 +362,21 @@ export const reports = [
       },
       { columns: [
           { name: 'Поз.в заявке, шт', total: 'avg' },
-          { name: 'Цена поз.,р', total: 'avg' }
+          { name: 'Цена поз.,₸', total: 'avg' }
       ]},
       { columns: [
-          { name: 'затр. на поз,р', total: 'avg' },
+          { name: 'затр. на поз,₸', total: 'avg' },
           { name: 'Глуб.поз.', total: 'avg' }
       ]},
       { columns: [
-          { name: 'Стоим.упак,р', total: 'avg' }
+          { name: 'Стоим.упак,₸', total: 'avg' }
       ]},
       { columns: [
           { name: 'Кол-во наимен.,шт', total: 'avg' },
           { name: 'Уров.претен.%', total: 'avg' }
       ]},
       { columns: [
-          { name: 'Стоим.кубом.,р', total: 'avg' },
+          { name: 'Стоим.кубом.,₸', total: 'avg' },
           { name: 'Объем загруз.%', total: 'avg' }
       ]},
       { columns: [
@@ -362,7 +393,7 @@ export const reports = [
     fixedColumn: 'Менеджер ОП',
     screens: [
       { columns: [
-          { name: 'ТО, млн. руб.', total: 'sum' },
+          { name: 'ТО, млн.₸', total: 'sum' },
           { name: '% ЭСП', type: '', total: 'sum' }
       ]},
       { columns: [
@@ -387,11 +418,11 @@ export const reports = [
     fixedColumn: 'Филиал',
     screens: [
       { columns: [
-        { name: 'Апт.с заказ', total: 'sum' },
-        { name: 'Подкл.апт', type: 'percent', total: 'sum' }
+        { name: 'Апт.с заказ', total: 'sum', decimals: 0 },
+        { name: 'Подкл.апт', type: 'percent', total: 'sum', decimals: 0 }
       ]},
       { columns: [
-        { name: 'Заказов', type: 'percent', total: 'sum' }
+        { name: 'Заказов', type: 'percent', total: 'sum', decimals: 0 }
       ]},
       { columns: [
         { name: '%Возвраты', total: 'avg' }
@@ -406,24 +437,24 @@ export const reports = [
         { name: 'Аптек/млн.насел', total: 'avg' }
       ]},
       { columns: [
-        { name: 'Заказов на апт. в день', total: 'avg' },
-        { name: 'Заказов', total: 'sum' }
+        { name: 'Заказов на апт. в день', total: 'avg', decimals: 3 },
+        { name: 'Заказов', total: 'sum', decimals: 0 }
       ]},
       { columns: [
-        { name: 'Повторн.заказ', total: 'sum' },
+        { name: 'Повторн.заказ', total: 'sum', decimals: 0 },
         { name: 'Заказов', type: 'percent', total: 'sum' }
       ]},
       { columns: [
         { name: 'Сред.чек', total: 'avg' },
-        { name: 'Продаж,тыс.р.', total: 'sum' }
+        { name: 'Продаж,тыс.₸', total: 'sum' }
       ]},
       { columns: [
-        { name: 'РН,тыс.р.', total: 'sum' },
+        { name: 'РН,тыс.₸', total: 'sum' },
         { name: '%РН', total: 'avg' }
       ]},
       { columns: [
-        { name: 'Приб.апт,тыс.р.', total: 'sum' },
-        { name: 'Продаж,тыс.р.', type: 'percent', total: 'sum' }
+        { name: 'Приб.апт,тыс.₸', total: 'sum' },
+        { name: 'Продаж,тыс.₸', type: 'percent', total: 'sum' }
       ]},
       { columns: [
         { name: 'Заказов', total: 'sum' },
@@ -434,8 +465,8 @@ export const reports = [
         { name: 'Насел.млн.ч.', type: 'part', total: 'sum' }
       ]},
       { columns: [
-        { name: 'РН,тыс.р.', total: 'sum' },
-        { name: 'РН на душу насел.', type: 'part', total: 'sum', decimals: 2 }
+        { name: 'РН,тыс.₸', total: 'sum' },
+        { name: 'РН на душу насел.', type: 'part', total: 'sum', decimals: 3 }
       ]}
     ]
   }

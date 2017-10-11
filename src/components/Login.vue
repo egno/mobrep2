@@ -1,8 +1,7 @@
 <template>
   <div class="col">
     <div class="row">
-      <p><small>
-  Система работает в тестовом режиме.<br>Если обнаружите ошибки, прошу <a :href="'mailto:help@katren.ru?subject=datazen. Список отчётов&body='+encodeURIComponent(`
+      <p><small>Если обнаружите ошибки, прошу <a :href="'mailto:help@katren.ru?subject=datazen. Список отчётов&body='+encodeURIComponent(`
 
   --------------------
   Браузер:

@@ -103,7 +103,7 @@ export default {
       columnWidth: 100,
       showInPercent: [],
       minRowHeight: 24,
-      rowHeight: 24
+      rowHeight: 36
     }
   },
   props: {
@@ -216,12 +216,13 @@ export default {
     },
     setHeight () {
       if (this.$refs.mainrow) {
-        this.$refs.mainrow.style.height = (this.$el.offsetHeight - this.$refs.header.offsetHeight - this.$refs.foother.offsetHeight) + 'px'
+        const calcRowsHeight = this.rowHeight * this.data.length + 17
+        this.$refs.mainrow.style.height = Math.min(calcRowsHeight, this.$el.offsetHeight - this.$refs.header.offsetHeight - this.$refs.foother.offsetHeight) + 'px'
         this.$refs.mainarea.style.width = (this.$el.offsetWidth - this.$refs.colheader.offsetWidth) + 'px'
         this.$refs.header.style.width = (this.$el.offsetWidth - this.$refs.colheader.offsetWidth) + 'px'
         this.$refs.foother.style.width = (this.$el.offsetWidth - this.$refs.colheader.offsetWidth) + 'px'
-        const calcRowHeight = (this.$refs.mainarea.offsetHeight - 17) / (this.data.length)
-        this.rowHeight = (calcRowHeight > this.minRowHeight) ? calcRowHeight : this.minRowHeight
+        // const calcRowHeight = (this.$refs.mainarea.offsetHeight - 17) / (this.data.length)
+        // this.rowHeight = (calcRowHeight > this.minRowHeight) ? calcRowHeight : this.minRowHeight
       }
     }
   },

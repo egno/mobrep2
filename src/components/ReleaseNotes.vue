@@ -1,8 +1,7 @@
 <template>
   <div class="">
     <div class="">
-      <p><small>
-  Система работает в тестовом режиме.<br>Если обнаружите ошибки, прошу <a :href="'mailto:help@katren.ru?subject=datazen. Release notes'">сообщить о них в техподдержку</a>
+      <p><small>Если обнаружите ошибки, прошу <a :href="'mailto:help@katren.ru?subject=datazen. Release notes'">сообщить о них в техподдержку</a>
       </small>
       </p>
 
