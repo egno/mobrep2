@@ -37,6 +37,8 @@
 </template>
 
 <script>
+/* eslint no-eval: 0 */
+
 import { mapState, mapGetters, mapActions } from 'vuex'
 import { ls } from '@/services/localStore'
 import ChartControl from '@/components/ChartControl'
@@ -119,7 +121,7 @@ export default {
         return this.data[this.current_month].regbodys.map((x) => {
           return {
             caption: x.name,
-            values: this.columns.map(h => x.indicators[h.name])
+            values: this.columns.map((h, hi) => x.indicators[h.name] || this.calcDataValue(this.columns[hi].formula, x.indicators))
           }
         })
         .sort((a, b) =>
@@ -172,24 +174,19 @@ export default {
           : undefined
     },
     totals () {
-      if (this.data && this.data[this.current_month]) {
-        if (this.data[this.current_month].regbodys.filter(x => !(x.name))) {
-          return this.columns.map((h) => this.data[this.current_month].regbodys.filter(x => !(x.name))[0].indicators[h.name])
-        } else {
-          if (this.report.screens) {
-            const totalFunc = this.headers.map((h) => this.report.screens.reduce((r, x) => r || x.columns.filter((fx) => fx.name === h)[0], ''))
-            return totalFunc.map((t, i) => {
-              const sum = this.currentData.filter((x) => x.caption.indexOf('-опт') === -1).reduce((r, x) => (r || 0) + (+x.values[i] || 0), 0)
-              switch (t.total) {
-                case 'sum': return sum
-                case 'avg': return sum / this.currentData.filter((x) => x.caption.indexOf('-опт') === -1).length
-                default: return ''
-              }
-            })
-          } else {
-            return {}
-          }
+      function calcTotal (func, i, data) {
+        const sum = data.reduce((r, x) => (r || 0) + (+x.values[i] || 0), 0)
+        switch (func) {
+          case 'sum': return sum
+          case 'avg': return sum / data.length
+          default: return ''
         }
+      }
+
+      if (this.data && this.data[this.current_month] && this.report && this.currentData) {
+        const totalsRow = this.data[this.current_month].regbodys.filter(x => !(x.name))[0]
+        const totalFunc = this.columns.map((h) => this.report.indicators.filter(x => x.name === h.name)[0].totals)
+        return this.columns.map((h, i) => totalsRow.indicators[h.name] || calcTotal(totalFunc[i], i, this.currentData.filter((x) => x.caption && x.caption.indexOf('-опт') === -1)))
       }
     },
     uri () {
@@ -211,6 +208,12 @@ export default {
           case 'part':
             return a / b
         }
+      }
+    },
+    calcDataValue (formula, row) {
+      if (formula) {
+        let val = eval(formula.replace(/\[([^\]]*)\]/g, 'row["$1"]'))
+        return val
       }
     },
     calcHeight () {

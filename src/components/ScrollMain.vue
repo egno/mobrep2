@@ -48,7 +48,8 @@ export default {
   },
   computed: {
     currentData () {
-      return this.data.map((x, i) => {
+      return this.data
+      .map((x, i) => {
         x = x.map((xx, ii) => {
           return {
             value: xx,
@@ -63,7 +64,7 @@ export default {
       })
     },
     currentTotals () {
-      return this.data.reduce((r, x, i) => {
+      return this.data.filter((x, i) => this.rowInfo[i].showBar).reduce((r, x, i) => {
         return x.map((xx, ii) => {
           r[ii] = r[ii] || {min: 0, max: 0}
           return {

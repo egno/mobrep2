@@ -126,8 +126,8 @@ export default {
   },
   computed: {
     rowHeaders () {
-      if (this.data) {
-        return this.data.map((x) => x.caption).filter(x => (x))
+      if (this.rowInfo) {
+        return this.rowInfo.filter(x => x.show).map(x => x.caption)
       }
     },
     colPercent () {
@@ -152,20 +152,21 @@ export default {
       }
     },
     mainData () {
-      if (this.data) {
-        return this.data.filter(x => (x.caption))
+      if (this.data && this.rowInfo) {
+        return this.data.filter((x, i) => (x.caption && this.rowInfo[i].show))
           .map((x) => x.values.map((xx, ii) => (this.showInPercent && this.showInPercent[ii] && this.showInPercent[ii].percent) ? ((Array.isArray(xx) ? xx[0] : xx) * 100.0 / ((Array.isArray(this.totals[ii])) ? this.totals[ii][0] : this.totals[ii])).toFixed(1) + '%' : xx))
       }
     },
     rowCount () {
-      return this.rowHeaders.length || 1
+      return this.rowInfo.filter(x => x.show).length || 1
     },
     rowInfo () {
-      if (this.rowHeaders) {
-        return this.rowHeaders.map((x) => {
+      if (this.data) {
+        return this.data.map((x, i) => {
           return {
-            caption: x,
-            showBar: x.indexOf('-опт') === -1
+            caption: x.caption,
+            showBar: x.caption && x.caption.indexOf('-опт') === -1,
+            show: x.values.reduce((rr, xx) => rr || (!!(xx) && (x.caption)), false)
           }
         })
       }
@@ -225,7 +226,7 @@ export default {
     },
     setHeight () {
       if (this.$refs.mainrow && this.mainData) {
-        const calcRowsHeight = this.rowHeight * this.mainData.length + 17
+        const calcRowsHeight = this.rowHeight * this.rowCount + 17
         this.$refs.mainrow.style.height = Math.min(calcRowsHeight, this.$el.offsetHeight - this.$refs.header.offsetHeight - this.$refs.foother.offsetHeight) + 'px'
         this.$refs.mainarea.style.width = (this.$el.offsetWidth - this.$refs.colheader.offsetWidth) + 'px'
         this.$refs.header.style.width = (this.$el.offsetWidth - this.$refs.colheader.offsetWidth) + 'px'
