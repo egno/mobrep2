@@ -28,6 +28,14 @@
         <h2>Отчёт не найден</h2>
       </div>
       <div class="row">
+        <a :href="'mailto:help@katren.ru?subject=datazen. Ошибка доступа к данным &body=' + encodeURIComponent(`
+
+  --------------------
+  Информация:
+    ` + JSON.stringify(error, null, '  ') )
+    ">сообщить в техподдержку</a>
+      </div>
+      <div class="row">
         <button type="submit" class="btn btn-primary" @click="goHome">К списку отчётов</button>
       </div>
     </div>
@@ -40,6 +48,7 @@ import { ls } from '@/services/localStore'
 import { reports } from '@/reports'
 import ChartControl from '@/components/ChartControl'
 import ScrollTable from '@/components/ScrollTable'
+import { BrowserDetect } from '@/services/os'
 
 export default {
   props: [
@@ -58,7 +67,10 @@ export default {
       current_month: 0,
       chart_height: 0,
       currentOrder: 0,
-      mainHeight: 0
+      mainHeight: 0,
+      message: '',
+      error: '',
+      info: ''
     }
   },
   watch: {
@@ -217,6 +229,9 @@ export default {
       return this.currentOrder
     },
     fetchData (force) {
+      if (!this.name) {
+        return
+      }
       this.report = reports.filter(x => x.name === this.name)[0]
       if (this.report) {
         const options = {
@@ -233,7 +248,13 @@ export default {
                 return response.json()
               },
               (response) => {
-                this.logOut()
+                console.log(response)
+                if (response.status === 500) {
+                  this.name = ''
+                  this.message = 'Ошибка базы данных'
+                  this.error = response
+                }
+                // this.logOut()
               }
             )
             .then((data) => {
@@ -255,6 +276,9 @@ export default {
     },
     goHome () {
       this.$router.push('/')
+    },
+    getInfo () {
+      this.info = BrowserDetect.info()
     },
     isChanged (event) {
       this.current_graph = (typeof (event.graph) !== 'undefined') ? event.graph : this.current_graph
@@ -278,6 +302,7 @@ export default {
       window.addEventListener('resize', this.getWindowHeight)
       this.getWindowHeight()
     })
+    this.getInfo()
   },
   updated () {
     this.calcHeight()
