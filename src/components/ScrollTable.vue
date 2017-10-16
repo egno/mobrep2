@@ -51,7 +51,7 @@
            :rowHeight="rowHeight"
            :totals="totalsData"
            :width="columnWidth"
-           :rowInfo="rowInfo"
+           :rowInfo="rowInfoDiasplayed"
            @percentSwitch="percentSwitch"
            >
            </scroll-main>
@@ -169,6 +169,11 @@ export default {
             show: x.values.reduce((rr, xx) => rr || (!!(xx) && (x.caption)), false)
           }
         })
+      }
+    },
+    rowInfoDiasplayed () {
+      if (this.rowInfo) {
+        return this.rowInfo.filter(x => x.show)
       }
     },
     totalsData () {

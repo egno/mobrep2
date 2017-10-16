@@ -174,8 +174,8 @@ export default {
           : undefined
     },
     totals () {
-      function calcTotal (func, i, data) {
-        const sum = data.reduce((r, x) => (r || 0) + (+x.values[i] || 0), 0)
+      function calcTotal (func, data) {
+        const sum = data.reduce((r, x) => (r || 0) + (+x || 0), 0)
         switch (func) {
           case 'sum': return sum
           case 'avg': return sum / data.length
@@ -183,10 +183,24 @@ export default {
         }
       }
 
-      if (this.data && this.data[this.current_month] && this.report && this.currentData) {
-        const totalsRow = this.data[this.current_month].regbodys.filter(x => !(x.name))[0]
-        const totalFunc = this.columns.map((h) => this.report.indicators.filter(x => x.name === h.name)[0].totals)
-        return this.columns.map((h, i) => totalsRow.indicators[h.name] || calcTotal(totalFunc[i], i, this.currentData.filter((x) => x.caption && x.caption.indexOf('-опт') === -1)))
+      if (this.data && this.data[this.current_month] && this.columns) {
+        const totalsRow = this.data[this.current_month].regbodys.filter(x => !(x.name))[0].indicators
+        let calcColumns = this.columns.filter(h => h.formula)
+        let regbodys = this.data[this.current_month].regbodys.filter(x => (x.name))
+        for (let key of calcColumns) {
+          for (let regbody of regbodys) {
+            regbody.indicators[key.name] = regbody.indicators[key.name] || this.calcDataValue(key.formula, regbody.indicators)
+          }
+        }
+        let totals = totalsRow || {}
+        for (let key in this.data[this.current_month].regbodys.filter(x => (x.name))[0].indicators) {
+          totals[key] = totals[key] ||
+          calcTotal(
+            'sum',
+            this.data[this.current_month].regbodys.filter(x => x.name && x.name.indexOf('-опт') === -1).map(x => x.indicators[key])
+          )
+        }
+        return this.columns.map((h, i) => totals[h.name] || this.calcDataValue(h.formula, totals))
       }
     },
     uri () {
@@ -211,8 +225,15 @@ export default {
       }
     },
     calcDataValue (formula, row) {
-      if (formula) {
-        let val = eval(formula.replace(/\[([^\]]*)\]/g, 'row["$1"]'))
+      if (formula && row) {
+        let period = new Date(this.data[this.current_month].period)
+        let lastDayInPeriod = new Date(period.getFullYear(), period.getMonth(), 32)
+        let days = (
+          (period.getFullYear() === this.modDate.getFullYear()) &&
+          (period.getMonth() === this.modDate.getMonth())
+        ) ? this.modDate.getDate() : lastDayInPeriod.getDate()
+        row['_days'] = days
+        let val = eval(formula.replace(/{([^}]*)}/g, 'row["$1"]'))
         return val
       }
     },
