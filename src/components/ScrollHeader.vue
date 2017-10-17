@@ -2,7 +2,7 @@
   <div
     ref="main"
     class="scrollarea"
-    v-if="(data)">
+    >
     <div class="row ">
       <table-cell
       v-for="(value, i) in headers"
@@ -53,7 +53,7 @@ export default {
       this.$emit('reorder', event)
     },
     setWidth () {
-      if (this.data && this.width) {
+      if (this.data && this.width && this.data.length) {
         this.$refs.main.style.width = (this.width * this.data.length) + 'px'
       }
     }

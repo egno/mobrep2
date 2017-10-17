@@ -68,8 +68,8 @@ export default {
         return x.map((xx, ii) => {
           r[ii] = r[ii] || {min: 0, max: 0}
           return {
-            max: Math.max(r[ii].max || 0, (Array.isArray(xx)) ? xx[0] : xx),
-            min: Math.min(r[ii].min || 0, (Array.isArray(xx)) ? xx[0] : xx)
+            max: Math.max(r[ii].max || 0, ((Array.isArray(xx)) ? xx[0] : xx) || 0),
+            min: Math.min(r[ii].min || 0, ((Array.isArray(xx)) ? xx[0] : xx) || 0)
           }
         })
       }, [])
@@ -96,7 +96,7 @@ export default {
       this.$emit('percentSwitch', event)
     },
     setSize () {
-      if (this.data && this.width) {
+      if (this.data && this.width && this.data[0]) {
         this.$refs.main.style.width = (this.width * Object.keys(this.data[0]).length) + 'px'
         this.$refs.main.style.height = (this.height * this.data.length) + 'px'
       }

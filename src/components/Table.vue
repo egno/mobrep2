@@ -62,7 +62,8 @@ export default {
       current_month: 0,
       chart_height: 0,
       currentOrder: 0,
-      mainHeight: 0
+      mainHeight: 0,
+      defaultRegBodyType: 'Филиал'
     }
   },
   watch: {
@@ -96,12 +97,12 @@ export default {
     },
     caption () {
       if (this.data && this.data[0]) {
-        return this.data[0].regbodytype
+        return this.data[0].regbodytype || this.defaultRegbodyType
       }
     },
     colDefDecimals () {
       if (this.columns) {
-        return this.columns.map(x => x.decimals)
+        return this.columns.filter(x => x.show).map(x => x.decimals)
       }
     },
     checkDB () {
@@ -121,7 +122,7 @@ export default {
         return this.data[this.current_month].regbodys.map((x) => {
           return {
             caption: x.name,
-            values: this.columns.map((h, hi) => x.indicators[h.name] || this.calcDataValue(this.columns[hi].formula, x.indicators))
+            values: this.columns.filter(x => x.show).map((h, hi) => x.indicators[h.name] || this.calcDataValue(this.columns[hi].formula, x.indicators))
           }
         })
         .sort((a, b) =>
@@ -137,7 +138,7 @@ export default {
     },
     headers () {
       if (this.columns) {
-        return this.columns.map(x => x.caption)
+        return this.columns.filter(x => x.show).map(x => x.caption)
       }
     },
     columns () {
@@ -145,6 +146,7 @@ export default {
         const currency = this.data[0].currency || 'р'
         return this.report.indicators.map(x => {
           x.caption = x.caption.replace('$', currency)
+          x.show = !!(x.order)
           return x
         })
           .sort((a, b) => (a.order < b.order) ? -1 : 1)
@@ -200,7 +202,7 @@ export default {
             this.data[this.current_month].regbodys.filter(x => x.name && x.name.indexOf('-опт') === -1).map(x => x.indicators[key])
           )
         }
-        return this.columns.map((h, i) => totals[h.name] || this.calcDataValue(h.formula, totals))
+        return this.columns.filter(x => x.show).map((h, i) => totals[h.name] || this.calcDataValue(h.formula, totals))
       }
     },
     uri () {
@@ -274,8 +276,8 @@ export default {
                 ts: currentdate,
                 data: data
               }
-              this.setDataCache(newDataCache)
-              this.data = data
+              this.data = data.filter(x => (x.regbodytype || this.defaultRegBodyType) === (this.report.regbodytype || this.defaultRegBodyType))
+              // this.setDataCache(newDataCache)
             }
           )
         }
