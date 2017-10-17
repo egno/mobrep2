@@ -260,7 +260,7 @@ export default {
           if ((this.checkLogIn) && ls.get(this.tokenName) !== null) {
             options.headers.Authorization = 'Bearer ' + ls.get(this.tokenName)
           }
-          this.$http.get('gdlivedata', options)
+          this.$http.get('gdlivedata?regbodytype=eq.' + (this.report.regbodytype || this.defaultRegBodyType), options)
             .then(
               (response) => {
                 return response.json()
@@ -276,7 +276,7 @@ export default {
                 ts: currentdate,
                 data: data
               }
-              this.data = data.filter(x => (x.regbodytype || this.defaultRegBodyType) === (this.report.regbodytype || this.defaultRegBodyType))
+              this.data = data
               // this.setDataCache(newDataCache)
             }
           )
