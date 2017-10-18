@@ -32,7 +32,7 @@
       <div class="row">
         {{ message }}
       </div>
-      <div class="row">
+      <div class="row">Если ошибка повторяется, 
         <a :href="'mailto:help@katren.ru?subject=datazen. Ошибка доступа к данным &body=' + encodeURIComponent(`
 
   --------------------
@@ -309,7 +309,7 @@ export default {
               }
               if (data.length === 0) {
                 this.name = ''
-                this.message = 'Данные для отчёта отсутствуют.'
+                this.message = 'Данные для отчёта не получены. Попробуйте обновить страницу.'
                 this.error = {'data': data}
               }
               this.data = data
