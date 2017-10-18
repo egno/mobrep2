@@ -18,7 +18,9 @@
     <div class="columns">
       <ul class="list-group">
         <li v-for="report in reports" class="list-group-item">
-          <router-link :to="{ name: report.path, params: { name: report.name }}">{{ report.caption }}</router-link>
+          <router-link :to="{ name: report.path, params: { name: report.name, company: (report.companyname || 'main') }}">
+            {{ (report.companyname) ? '<' + report.companyname + '> ' : '' }} {{ report.caption }}
+          </router-link>
         </li>
       </ul>
     </div>

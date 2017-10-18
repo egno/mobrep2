@@ -24,6 +24,12 @@ export default new Router({
       component: ReleaseNotes
     },
     {
+      path: '/table/:name/:company',
+      name: 'table',
+      component: Table,
+      props: true
+    },
+    {
       path: '/table/:name',
       name: 'table',
       component: Table,

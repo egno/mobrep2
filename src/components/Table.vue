@@ -25,10 +25,21 @@
       @reload="reload"
       ></chart-control>
     </div>
-    <div v-if="!name" class="container">
+    <div v-if="!(name)" class="container">
       <div class="row">
         <h2>Отчёт не найден</h2>
       </div>
+      <div class="row">
+        {{ message }}
+      </div>
+      <div class="row">
+  <a :href="'mailto:help@katren.ru?subject=datazen. Ошибка доступа к данным &body=' + encodeURIComponent(`
+
+--------------------
+Информация:
+` + JSON.stringify(error, null, '  ') )
+">сообщить в техподдержку</a>
+  </div>
       <div class="row">
         <button type="submit" class="btn btn-primary" @click="goHome">К списку отчётов</button>
       </div>
@@ -46,7 +57,8 @@ import ScrollTable from '@/components/ScrollTable'
 
 export default {
   props: [
-    'name'
+    'name',
+    'company'
   ],
   components: {
     ChartControl,
@@ -63,7 +75,9 @@ export default {
       chart_height: 0,
       currentOrder: 0,
       mainHeight: 0,
-      defaultRegBodyType: 'Филиал'
+      defaultRegBodyType: 'Филиал',
+      message: '',
+      error: ''
     }
   },
   watch: {
@@ -104,6 +118,9 @@ export default {
       if (this.columns) {
         return this.columns.filter(x => x.show).map(x => x.decimals)
       }
+    },
+    companyId () {
+      return ((this.company || 'main') === 'main') ? '' : this.company
     },
     checkDB () {
       return true
@@ -187,20 +204,23 @@ export default {
 
       if (this.data && this.data[this.current_month] && this.columns) {
         const totalsRow = this.data[this.current_month].regbodys.filter(x => !(x.name))[0].indicators
-        let calcColumns = this.columns.filter(h => h.formula)
-        let regbodys = this.data[this.current_month].regbodys.filter(x => (x.name))
-        for (let key of calcColumns) {
-          for (let regbody of regbodys) {
-            regbody.indicators[key.name] = regbody.indicators[key.name] || this.calcDataValue(key.formula, regbody.indicators)
-          }
-        }
+        // let calcColumns = this.columns.filter(h => h.formula)
+        // let regbodys = this.data[this.current_month].regbodys.filter(x => (x.name))
+        // for (let key of calcColumns) {
+        //   for (let regbody of regbodys) {
+        //     regbody.indicators[key.name] = regbody.indicators[key.name] || this.calcDataValue(key.formula, regbody.indicators)
+        //   }
+        // }
         let totals = totalsRow || {}
         for (let key in this.data[this.current_month].regbodys.filter(x => (x.name))[0].indicators) {
-          totals[key] = totals[key] ||
-          calcTotal(
-            'sum',
-            this.data[this.current_month].regbodys.filter(x => x.name && x.name.indexOf('-опт') === -1).map(x => x.indicators[key])
-          )
+          let column = this.columns.filter(h => h.name === key)
+          if (column.length) {
+            totals[key] = totals[key] ||
+            calcTotal(
+              this.columns.filter(h => h.name === key)[0].totals,
+              this.data[this.current_month].regbodys.filter(x => x.name && x.name.indexOf('-опт') === -1).map(x => x.indicators[key])
+            )
+          }
         }
         return this.columns.filter(x => x.show).map((h, i) => totals[h.name] || this.calcDataValue(h.formula, totals))
       }
@@ -250,6 +270,9 @@ export default {
       return this.currentOrder
     },
     fetchData (force) {
+      if (this.error) {
+        return
+      }
       this.report = this.reports.filter(x => x.code === this.name)[0]
       if (this.report) {
         const options = {
@@ -260,13 +283,20 @@ export default {
           if ((this.checkLogIn) && ls.get(this.tokenName) !== null) {
             options.headers.Authorization = 'Bearer ' + ls.get(this.tokenName)
           }
-          this.$http.get('gdlivedata?regbodytype=eq.' + (this.report.regbodytype || this.defaultRegBodyType), options)
+          this.$http.get('gdlivedata?regbodytype=eq.' + (this.report.regbodytype || this.defaultRegBodyType) +
+          '&companyname=' + ((!this.companyId) ? 'is.null' : 'eq.' + this.company), options)
             .then(
               (response) => {
                 return response.json()
               },
               (response) => {
-                this.logOut()
+                console.log(response)
+                if (response.status === 500) {
+                  this.name = ''
+                  this.message = 'Ошибка доступа к данным. Попробуйте обновить страницу.'
+                  this.error = response
+                }
+                // this.logOut()
               }
             )
             .then((data) => {
@@ -275,6 +305,11 @@ export default {
               newDataCache[this.report.name] = {
                 ts: currentdate,
                 data: data
+              }
+              if (data.length === 0) {
+                this.name = ''
+                this.message = 'Данные для отчёта отсутствуют.'
+                this.error = {'data': data}
               }
               this.data = data
               // this.setDataCache(newDataCache)
@@ -295,7 +330,13 @@ export default {
             return response.json()
           },
           (response) => {
-            this.logOut()
+            console.log(response)
+            if (response.status === 500) {
+              this.name = ''
+              this.message = 'Ошибка доступа к данным. Попробуйте обновить страницу.'
+              this.error = response
+            }
+            // this.logOut()
           }
         )
         .then(
@@ -333,6 +374,9 @@ export default {
       this.currentOrder = (Math.abs(this.currentOrder) === event) ? -this.currentOrder : event
     },
     updateTitle () {
+      if (this.error) {
+        return
+      }
       if (this.name && this.report) {
         window.document.title = this.report.caption
       }
