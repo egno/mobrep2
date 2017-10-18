@@ -28,6 +28,9 @@
         <h2>Отчёт не найден</h2>
       </div>
       <div class="row">
+        {{ message }}
+      </div>
+      <div class="row">
         <a :href="'mailto:help@katren.ru?subject=datazen. Ошибка доступа к данным &body=' + encodeURIComponent(`
 
   --------------------
@@ -251,7 +254,7 @@ export default {
                 console.log(response)
                 if (response.status === 500) {
                   this.name = ''
-                  this.message = 'Ошибка базы данных'
+                  this.message = 'Ошибка доступа к данным. Попробуйте обновить страницу.'
                   this.error = response
                 }
                 // this.logOut()
