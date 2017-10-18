@@ -15,7 +15,7 @@ Vue.use(VueScroll)
 // Vue.use(VueTouch)
 
 if (process.env.NODE_ENV !== 'production') {
-  Vue.http.options.root = 'http://172.16.202.42:3004'
+  Vue.http.options.root = 'http://nsk-test-docker:3009'
 } else {
   Vue.http.options.root = '/api/v2'
 }

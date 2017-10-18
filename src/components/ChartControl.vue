@@ -17,6 +17,11 @@
         <option v-for="(month, i) in months.list" v-bind:value="i">{{ month }}</option>
       </select>
       <div class="btn-group btn-group-sm">
+        <button class="btn btn-secondary btn-sm " @click="reload" :title="date">
+          <span class="fa fa-refresh fa-lg" aria-hidden="true"></span>
+        </button>
+      </div>
+      <div class="btn-group btn-group-sm">
         <button class="btn btn-secondary btn-sm " @click="help" title="Написать в техподдержку">
           <span class="fa fa-exclamation-triangle fa-lg" aria-hidden="true"></span>
         </button>
@@ -36,7 +41,8 @@ export default {
     'graphs',
     'months',
     'small',
-    'report'
+    'report',
+    'modDate'
   ],
   data () {
     return {
@@ -48,6 +54,11 @@ export default {
     ...mapGetters([
       'dataCache'
     ]),
+    date () {
+      if (this.modDate) {
+        return this.modDate.toLocaleString('ru')
+      }
+    },
     haveGraphs () {
       return (this.graphs && this.graphs.list && this.graphs.list.length > 0 && this.graphs.list[0] && this.graphs.list[0] !== undefined)
     },
@@ -94,6 +105,9 @@ export default {
     isChanged () {
       let sendData = {graph: this.selected_graph, month: this.selected_month}
       this.$emit('isChanged', sendData)
+    },
+    reload () {
+      this.$emit('reload')
     },
     updateSelected () {
       if (this.graphs) {

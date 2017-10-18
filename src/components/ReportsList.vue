@@ -18,7 +18,9 @@
     <div class="columns">
       <ul class="list-group">
         <li v-for="report in reports" class="list-group-item">
-          <router-link :to="{ name: report.path, params: { name: report.name }}">{{ report.caption }}</router-link>
+          <router-link :to="{ name: report.path, params: { name: report.name, company: (report.companyname || 'main') }}">
+            {{ (report.companyname) ? '<' + report.companyname + '> ' : '' }} {{ report.caption }}
+          </router-link>
         </li>
       </ul>
     </div>
@@ -36,14 +38,13 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { reports } from '@/reports'
 import { ls } from '@/services/localStore'
 import { BrowserDetect } from '@/services/os'
 
 export default {
   data () {
     return {
-      uri: '',
+      uri: 'reports',
       data: [],
       loaded: false,
       maxWidth: 100,
@@ -57,8 +58,9 @@ export default {
       'appTitle'
     ]),
     reports () {
-      return reports.filter(x => this.data.reduce((r, xx) => r || (xx.name === x.uri), false))
+      return this.data
         .map((x, i) => {
+          x.name = x.code
           x.path = (this.smallScreen) ? 'report' : 'table'
           return x
         }
@@ -68,7 +70,7 @@ export default {
       return BrowserDetect.info()
     },
     noReportsFound () {
-      return (reports.length === 0)
+      return (this.reports.length === 0)
     }
   },
   methods: {

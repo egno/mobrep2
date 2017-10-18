@@ -35,7 +35,7 @@
           class="max header colheader fixed-column"
           v-scroll="onScroll">
           <scroll-colheader
-          :data="colHeaders"
+          :data="rowHeaders"
           :rowHeight="rowHeight">
           </scroll-colheader>
         </div>
@@ -51,7 +51,7 @@
            :rowHeight="rowHeight"
            :totals="totalsData"
            :width="columnWidth"
-           :rowInfo="rowInfo"
+           :rowInfo="rowInfoDiasplayed"
            @percentSwitch="percentSwitch"
            >
            </scroll-main>
@@ -125,16 +125,16 @@ export default {
     TableCell
   },
   computed: {
-    colHeaders () {
-      if (this.data) {
-        return this.data.map((x) => x.caption)
+    rowHeaders () {
+      if (this.rowInfo) {
+        return this.rowInfo.filter(x => x.show).map(x => x.caption)
       }
     },
     colPercent () {
       return this.showInPercent.map(x => x.percent)
     },
     decimals () {
-      const def = 3
+      const def = 0
       if (this.headers) {
         return this.headers.map((h, i) =>
           this.data.map(x => x.values[i])
@@ -152,20 +152,29 @@ export default {
       }
     },
     mainData () {
-      if (this.data) {
-        return this.data.map((x) => x.values.map((xx, ii) => (this.showInPercent && this.showInPercent[ii] && this.showInPercent[ii].percent) ? ((Array.isArray(xx) ? xx[0] : xx) * 100.0 / ((Array.isArray(this.totals[ii])) ? this.totals[ii][0] : this.totals[ii])).toFixed(1) + '%' : xx))
+      if (this.data && this.rowInfo) {
+        return this.data.filter((x, i) => (x.caption && this.rowInfo[i].show))
+          .map((x) => x.values.map((xx, ii) => (this.showInPercent && this.showInPercent[ii] && this.showInPercent[ii].percent) ? ((Array.isArray(xx) ? xx[0] : xx) * 100.0 / ((Array.isArray(this.totals[ii])) ? this.totals[ii][0] : this.totals[ii])).toFixed(1) + '%' : xx))
       }
     },
     rowCount () {
-      return this.colHeaders.length || 1
+      return this.rowInfo.filter(x => x.show).length || 1
     },
     rowInfo () {
-      return this.colHeaders.map((x) => {
-        return {
-          caption: x,
-          showBar: x.indexOf('-опт') === -1
-        }
-      })
+      if (this.data) {
+        return this.data.map((x, i) => {
+          return {
+            caption: x.caption,
+            showBar: x.caption && x.caption.indexOf('-опт') === -1,
+            show: x.values.reduce((rr, xx) => rr || (!!(xx) && (x.caption)), false)
+          }
+        })
+      }
+    },
+    rowInfoDiasplayed () {
+      if (this.rowInfo) {
+        return this.rowInfo.filter(x => x.show)
+      }
     },
     totalsData () {
       if (this.totals && this.totals[0]) {
@@ -201,7 +210,7 @@ export default {
       if (!e) {
         position = this.$refs.mainarea
       }
-      if (!e || e.target.id === 'mainarea') {
+      if ((!e || e.target.id === 'mainarea') && this.$refs.colheader) {
         this.$refs.colheader.scrollTop = position.scrollTop
         this.$refs.header.scrollLeft = position.scrollLeft
         this.$refs.foother.scrollLeft = position.scrollLeft
@@ -211,12 +220,18 @@ export default {
       this.$emit('reorder', event)
     },
     percentSwitch (event) {
-      const newVal = (this.totals && this.totals[event] && !isNaN(+(Array.isArray(this.totals[event]) ? this.totals[event][0] : this.totals[event]))) && (this.headers[event].search('%') === -1) && !(this.showInPercent[event] && this.showInPercent[event].percent)
+      const newVal = (
+          this.totals &&
+          this.totals[event] &&
+          !isNaN(+(Array.isArray(this.totals[event]) ? this.totals[event][0] : this.totals[event]))
+        ) &&
+        (this.headers[event].search('%') === -1) &&
+        !(this.showInPercent[event] && this.showInPercent[event].percent)
       this.showInPercent[event].percent = newVal
     },
     setHeight () {
-      if (this.$refs.mainrow) {
-        const calcRowsHeight = this.rowHeight * this.data.length + 17
+      if (this.$refs.mainrow && this.mainData) {
+        const calcRowsHeight = this.rowHeight * this.rowCount + 17
         this.$refs.mainrow.style.height = Math.min(calcRowsHeight, this.$el.offsetHeight - this.$refs.header.offsetHeight - this.$refs.foother.offsetHeight) + 'px'
         this.$refs.mainarea.style.width = (this.$el.offsetWidth - this.$refs.colheader.offsetWidth) + 'px'
         this.$refs.header.style.width = (this.$el.offsetWidth - this.$refs.colheader.offsetWidth) + 'px'

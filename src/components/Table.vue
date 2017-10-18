@@ -20,10 +20,12 @@
       :cache="cacheAgo"
       :enableDB="checkDB"
       :report="report.name"
+      :modDate="modDate"
       @isChanged="isChanged"
+      @reload="reload"
       ></chart-control>
     </div>
-    <div v-if="!name" class="container">
+    <div v-if="!(name)" class="container">
       <div class="row">
         <h2>Отчёт не найден</h2>
       </div>
@@ -46,16 +48,18 @@
 </template>
 
 <script>
+/* eslint no-eval: 0 */
+
 import { mapState, mapGetters, mapActions } from 'vuex'
 import { ls } from '@/services/localStore'
-import { reports } from '@/reports'
 import ChartControl from '@/components/ChartControl'
 import ScrollTable from '@/components/ScrollTable'
 import { BrowserDetect } from '@/services/os'
 
 export default {
   props: [
-    'name'
+    'name',
+    'company'
   ],
   components: {
     ChartControl,
@@ -64,6 +68,7 @@ export default {
   data () {
     return {
       data: {},
+      reports: {},
       report: {},
       totlalCaption: 'ИТОГО',
       current_graph: 0,
@@ -71,9 +76,9 @@ export default {
       chart_height: 0,
       currentOrder: 0,
       mainHeight: 0,
+      defaultRegBodyType: 'Филиал',
       message: '',
-      error: '',
-      info: ''
+      error: ''
     }
   },
   watch: {
@@ -106,21 +111,17 @@ export default {
       }
     },
     caption () {
-      if (this.report) {
-        return this.report.fixedColumn
-      }
-    },
-    colDefs () {
-      if (this.data && this.data[this.current_month]) {
-        if (this.report.screens) {
-          return this.headers.map((h) => this.report.screens.reduce((r, x) => r || x.columns.filter((fx) => fx.name === h)[0], ''))
-        }
+      if (this.data && this.data[0]) {
+        return this.data[0].regbodytype || this.defaultRegbodyType
       }
     },
     colDefDecimals () {
-      if (this.colDefs) {
-        return this.colDefs.map(x => x.decimals)
+      if (this.columns) {
+        return this.columns.filter(x => x.show).map(x => x.decimals)
       }
+    },
+    companyId () {
+      return ((this.company || 'main') === 'main') ? '' : this.company
     },
     checkDB () {
       return true
@@ -132,14 +133,14 @@ export default {
         if (typeof (a) !== 'string') {
           return ((a || 0) - (b || 0)) * ((desc) ? -1 : 1)
         } else {
-          return ((a > b) ? 1 : -1) * ((desc) ? -1 : 1)
+          return ((a < b) ? -1 : 1) * ((desc) ? -1 : 1)
         }
       }
       if (this.data && (Object.keys(this.data).length > 0) && this.data[this.current_month]) {
-        return this.data[this.current_month].data.map((x) => {
+        return this.data[this.current_month].regbodys.map((x) => {
           return {
-            caption: x[this.caption],
-            values: this.headers.map((h) => x[h])
+            caption: x.name,
+            values: this.columns.filter(x => x.show).map((h, hi) => x.indicators[h.name] || this.calcDataValue(this.columns[hi].formula, x.indicators))
           }
         })
         .sort((a, b) =>
@@ -154,18 +155,31 @@ export default {
       }
     },
     headers () {
-      if (this.data && this.data[0]) {
-        let result = Object.keys(this.data[0].data[0])
-          .filter((x) => this.graphs.reduce((r, xx) => r || xx.columns.reduce((cr, cx) => cr || cx.name === x, false), false))
-        if (this.data[0].fields) {
-          result = result.sort((a, b) => parseInt(this.data[0].fields[a]) - parseInt(this.data[0].fields[b]))
-        }
-        return result
+      if (this.columns) {
+        return this.columns.filter(x => x.show).map(x => x.caption)
+      }
+    },
+    columns () {
+      if (this.report && this.report.indicators && this.data[0]) {
+        const currency = this.data[0].currency || 'р'
+        return this.report.indicators.map(x => {
+          x.caption = x.caption.replace('$', currency)
+          x.show = !!(x.order)
+          return x
+        })
+          .sort((a, b) => (a.order < b.order) ? -1 : 1)
+      }
+    },
+    modDate () {
+      if (this.data[this.current_month]) {
+        const dt = new Date(this.data[this.current_month].modificationdate)
+        return dt
       }
     },
     month_list () {
+      var options = {year: 'numeric', month: 'long'}
       return {
-        list: (this.data && this.data.length > 0) ? this.data.map(x => x.month.name) : {},
+        list: (this.data && this.data.length > 0) ? this.data.map(x => new Date(x.period).toLocaleDateString('ru', options)) : {},
         selected: this.current_month
       }
     },
@@ -180,24 +194,36 @@ export default {
           : undefined
     },
     totals () {
-      if (this.data && this.data[this.current_month]) {
-        if (this.data[this.current_month].totals) {
-          return this.headers.map((h) => this.data[this.current_month].totals[h])
-        } else {
-          if (this.report.screens) {
-            const totalFunc = this.headers.map((h) => this.report.screens.reduce((r, x) => r || x.columns.filter((fx) => fx.name === h)[0], ''))
-            return totalFunc.map((t, i) => {
-              const sum = this.currentData.filter((x) => x.caption.indexOf('-опт') === -1).reduce((r, x) => (r || 0) + (+x.values[i] || 0), 0)
-              switch (t.total) {
-                case 'sum': return sum
-                case 'avg': return sum / this.currentData.filter((x) => x.caption.indexOf('-опт') === -1).length
-                default: return ''
-              }
-            })
-          } else {
-            return {}
+      function calcTotal (func, data) {
+        const sum = data.reduce((r, x) => (r || 0) + (+x || 0), 0)
+        switch (func) {
+          case 'sum': return sum
+          case 'avg': return sum / data.length
+          default: return ''
+        }
+      }
+
+      if (this.data && this.data[this.current_month] && this.columns) {
+        const totalsRow = this.data[this.current_month].regbodys.filter(x => !(x.name))[0].indicators
+        // let calcColumns = this.columns.filter(h => h.formula)
+        // let regbodys = this.data[this.current_month].regbodys.filter(x => (x.name))
+        // for (let key of calcColumns) {
+        //   for (let regbody of regbodys) {
+        //     regbody.indicators[key.name] = regbody.indicators[key.name] || this.calcDataValue(key.formula, regbody.indicators)
+        //   }
+        // }
+        let totals = totalsRow || {}
+        for (let key in this.data[this.current_month].regbodys.filter(x => (x.name))[0].indicators) {
+          let column = this.columns.filter(h => h.name === key)
+          if (column.length) {
+            totals[key] = totals[key] ||
+            calcTotal(
+              this.columns.filter(h => h.name === key)[0].totals,
+              this.data[this.current_month].regbodys.filter(x => x.name && x.name.indexOf('-опт') === -1).map(x => x.indicators[key])
+            )
           }
         }
+        return this.columns.filter(x => x.show).map((h, i) => totals[h.name] || this.calcDataValue(h.formula, totals))
       }
     },
     uri () {
@@ -221,6 +247,19 @@ export default {
         }
       }
     },
+    calcDataValue (formula, row) {
+      if (formula && row) {
+        let period = new Date(this.data[this.current_month].period)
+        let lastDayInPeriod = new Date(period.getFullYear(), period.getMonth(), 32)
+        let days = (
+          (period.getFullYear() === this.modDate.getFullYear()) &&
+          (period.getMonth() === this.modDate.getMonth())
+        ) ? this.modDate.getDate() : lastDayInPeriod.getDate()
+        row['_days'] = days
+        let val = eval(formula.replace(/{([^}]*)}/g, 'row["$1"]'))
+        return val
+      }
+    },
     calcHeight () {
       if (this.report && this.$refs && this.$refs.main) {
         this.mainHeight = (document.documentElement.clientHeight - this.$refs.navigation.offsetHeight)
@@ -232,10 +271,10 @@ export default {
       return this.currentOrder
     },
     fetchData (force) {
-      if (!this.name) {
+      if (this.error) {
         return
       }
-      this.report = reports.filter(x => x.name === this.name)[0]
+      this.report = this.reports.filter(x => x.code === this.name)[0]
       if (this.report) {
         const options = {
           headers: {}
@@ -245,7 +284,8 @@ export default {
           if ((this.checkLogIn) && ls.get(this.tokenName) !== null) {
             options.headers.Authorization = 'Bearer ' + ls.get(this.tokenName)
           }
-          this.$http.get(this.uri, options)
+          this.$http.get('gdlivedata?regbodytype=eq.' + (this.report.regbodytype || this.defaultRegBodyType) +
+          '&companyname=' + ((!this.companyId) ? 'is.null' : 'eq.' + this.company), options)
             .then(
               (response) => {
                 return response.json()
@@ -267,11 +307,46 @@ export default {
                 ts: currentdate,
                 data: data
               }
-              this.setDataCache(newDataCache)
+              if (data.length === 0) {
+                this.name = ''
+                this.message = 'Данные для отчёта отсутствуют.'
+                this.error = {'data': data}
+              }
               this.data = data
+              // this.setDataCache(newDataCache)
             }
           )
         }
+      }
+    },
+    fetchReports () {
+      const options = {
+        headers: {}
+      }
+      if ((this.checkLogIn) && ls.get(this.tokenName) !== null) {
+        options.headers.Authorization = 'Bearer ' + ls.get(this.tokenName)
+        this.$http.get('reports', options)
+        .then(
+          (response) => {
+            return response.json()
+          },
+          (response) => {
+            console.log(response)
+            if (response.status === 500) {
+              this.name = ''
+              this.message = 'Ошибка доступа к данным. Попробуйте обновить страницу.'
+              this.error = response
+            }
+            // this.logOut()
+          }
+        )
+        .then(
+          (data) => {
+            this.reports = data
+            this.fetchData(true)
+            this.loaded = true
+          }
+        )
       }
     },
     getWindowHeight (event) {
@@ -288,24 +363,31 @@ export default {
       this.current_month = (typeof (event.month) !== 'undefined') ? event.month : this.current_month
       this.calcHeight()
     },
+    reload (event) {
+      window.removeEventListener('resize', this.getWindowHeight)
+      this.data = {}
+      window.document.title = this.appTitle
+      this.fetchReports()
+      this.$nextTick(function () {
+        this.calcHeight()
+        window.addEventListener('resize', this.getWindowHeight)
+        this.getWindowHeight()
+      })
+    },
     reorder (event) {
       this.currentOrder = (Math.abs(this.currentOrder) === event) ? -this.currentOrder : event
     },
     updateTitle () {
+      if (this.error) {
+        return
+      }
       if (this.name && this.report) {
         window.document.title = this.report.caption
       }
     }
   },
   mounted () {
-    window.document.title = this.appTitle
-    this.fetchData(true)
-    this.calcHeight()
-    this.$nextTick(function () {
-      window.addEventListener('resize', this.getWindowHeight)
-      this.getWindowHeight()
-    })
-    this.getInfo()
+    this.reload()
   },
   updated () {
     this.calcHeight()
