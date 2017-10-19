@@ -8,7 +8,8 @@
       <text class="curr" v-if="isArray && value.length > 0" :x="x" :y="rowHeight/2 + 4" >{{ value[0] | beautyNumber(decimal) }}</text>
       <text :class="['prev', {incr: isGrowing(value)}, {decr: isFalling(value)}]" v-if="isArray && value.length > 1" x="100" :y="9" >{{ percent(value) }}</text>
       <text :class="['prev']" v-if="isArray && value.length > 1" x="100" :y="rowHeight/2 + 14" >{{ value[1] | beautyNumber(decimal, nullSign = '') }}</text>
-      <rect v-if="showBar" :width="bar.width + '%'" :fill="color" :x="bar.x" :height="rowHeight"></rect>
+      <rect v-if="showBar" :width="bar.width + '%'" :y="1" :fill="color" :x="bar.x"></rect>
+      <!-- <rect v-if="showGraph" class="minigraph" width="60%" y="20" x="0"></rect> -->
     </svg>
   </div>
 </template>
@@ -41,6 +42,9 @@ export default {
     },
     showBar () {
       return (this.bar)
+    },
+    showGraph () {
+      return (this.isArray)
     },
     x () {
       return (this.align === 'center') ? '50%' : (this.align === 'right') ? '78' : '5'
@@ -100,10 +104,10 @@ svg {
   height: 100%;
   border-style: inset;
   border-width: 0 1px 1px 0;
-  border-color: #f5f5f5;
+  border-color: #eee;
 }
 svg rect {
-  height: 100%;
+  height: 95%;
   fill-opacity: 0.2;
   stroke-opacity: 0.2;
   stroke: #bbb;
@@ -114,6 +118,12 @@ svg line {
   stroke: gray;
 }
 svg text {
+}
+.minigraph {
+  x: 0;
+  y: 50%;
+  width: 50%;
+  height: 50%;
 }
 .cell {
   padding: 0;

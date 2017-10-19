@@ -21,8 +21,10 @@
       :enableDB="checkDB"
       :report="report.name"
       :modDate="modDate"
+      :showHistory="showHistory"
       @isChanged="isChanged"
       @reload="reload"
+      @switchHistory="switchHistory"
       ></chart-control>
     </div>
     <div v-if="!(name)" class="container">
@@ -78,7 +80,8 @@ export default {
       mainHeight: 0,
       defaultRegBodyType: 'Филиал',
       message: '',
-      error: ''
+      error: '',
+      showHistory: true
     }
   },
   watch: {
@@ -140,7 +143,7 @@ export default {
             caption: x.name,
             values: this.columns.filter(x => x.show)
               .map((h, hi) => {
-                if (prevData && prevData.regbodys) {
+                if (prevData && prevData.regbodys && this.showHistory) {
                   let result = []
                   result[0] = x.indicators[h.name] || this.calcDataValue(this.columns[hi].formula, x.indicators)
                   result[1] = prevData.regbodys.filter(px => px.name === x.name)[0].indicators[h.name]
@@ -367,6 +370,9 @@ export default {
     },
     reorder (event) {
       this.currentOrder = (Math.abs(this.currentOrder) === event) ? -this.currentOrder : event
+    },
+    switchHistory (event) {
+      this.showHistory = !this.showHistory
     },
     updateTitle () {
       if (this.error) {

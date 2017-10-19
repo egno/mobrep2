@@ -7,8 +7,12 @@
       </button>
       </div>
       <div  v-if="showArrows" class="btn-group">
-        <button class="btn btn-secondary btn-sm" @click="monthInc(-1)"> < </button>
-        <button class="btn btn-secondary btn-sm" @click="monthInc(1)"> > </button>
+        <button class="btn btn-secondary btn-sm" @click="monthInc(-1)" title="Следующий период">
+          <span class="fa fa-caret-left fa-lg"></span> 
+        </button>
+        <button class="btn btn-secondary btn-sm" @click="monthInc(1)" title="Пердыдущий период">
+          <span class="fa fa-caret-right fa-lg"></span>
+        </button>
       </div>
       <select v-if="haveGraphs" class="custom-select custom-select-sm sm " v-model="selected_graph">
         <option v-for="(graph, i) in graphs.list" v-bind:value="i">{{ graph }}</option>
@@ -16,6 +20,11 @@
       <select v-if="haveMonths" class="custom-select custom-select-sm sm " v-model="selected_month">
         <option v-for="(month, i) in months.list" v-bind:value="i">{{ month }}</option>
       </select>
+      <div class="btn-group btn-group-sm">
+        <button :class="['btn', 'btn-secondary', 'btn-sm', {active: showHistory}]" @click="switchHistory" title="Данные прошлого месяца">
+          <span class="fa fa-history fa-lg" aria-hidden="true"></span>
+        </button>
+      </div>
       <div class="btn-group btn-group-sm">
         <button class="btn btn-secondary btn-sm " @click="reload" :title="date">
           <span class="fa fa-refresh fa-lg" aria-hidden="true"></span>
@@ -42,7 +51,8 @@ export default {
     'months',
     'small',
     'report',
-    'modDate'
+    'modDate',
+    'showHistory'
   ],
   data () {
     return {
@@ -97,6 +107,9 @@ export default {
       if (this.haveMonths) {
         this.selected_month = (this.selected_month + this.months.list.length + payload) % this.months.list.length
       }
+    },
+    switchHistory (payload) {
+      this.$emit('switchHistory')
     },
     help () {
       location.href = 'mailto:help@katren.ru; shelemetyev@katren.ru?subject=datazen. ' + this.report + '&body=' + encodeURIComponent(`
