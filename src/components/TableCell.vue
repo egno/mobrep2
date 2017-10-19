@@ -5,7 +5,7 @@
     <svg
     >
       <text v-if="!isArray" :x="x" :y="rowHeight/2 + 4" >{{ value | beautyNumber(decimal) }}</text>
-      <text class="curr" v-if="isArray && value.length > 0" :x="x" :y="rowHeight/2 + 3" >{{ value[0] | beautyNumber(decimal) }}</text>
+      <text class="curr" v-if="isArray && value.length > 0" :x="x" :y="rowHeight/2 + 4" >{{ value[0] | beautyNumber(decimal) }}</text>
       <text :class="['prev', {incr: isGrowing(value)}, {decr: isFalling(value)}]" v-if="isArray && value.length > 1" x="100" :y="10" >{{ percent(value) }}</text>
       <text :class="['prev']" v-if="isArray && value.length > 1" x="100" :y="rowHeight/2 + 14" >{{ value[1] | beautyNumber(decimal, nullSign = '') }}</text>
       <rect v-if="showBar" :width="bar.width + '%'" :fill="color" :x="bar.x" :height="rowHeight"></rect>
@@ -59,8 +59,12 @@ export default {
       }
     },
     percent (value) {
+      const maxPercent = 999
       if (this.isArray) {
         const percent = (value[0] / value[1] - 1) * 100
+        if (Math.abs(percent) > maxPercent) {
+          return '>' + maxPercent + '%'
+        }
         if (percent && percent !== Infinity) {
           return percent.toFixed(0) + '%'
         }
