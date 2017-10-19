@@ -194,13 +194,6 @@ export default {
     needToRead () {
       return !(this.dataCache[this.report.name] && this.dataCache[this.report.name].ts && this.dataCache[this.report.name].data) || (this.cacheAgo > 0)
     },
-    saturation_caption () {
-      return (this.graphs[this.current_graph].saturation)
-        ? this.graphs[this.current_graph].saturation
-        : (this.graphs[this.current_graph].columns.length > 1)
-          ? '(%)'
-          : undefined
-    },
     totals () {
       function calcTotal (func, data) {
         const sum = data.reduce((r, x) => (r || 0) + (+x || 0), 0)

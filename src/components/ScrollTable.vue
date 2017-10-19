@@ -178,7 +178,7 @@ export default {
           return {
             caption: x.caption,
             showBar: x.caption && x.caption.indexOf('-опт') === -1,
-            show: x.values.reduce((rr, xx) => rr || (!!(xx) && (x.caption)), false)
+            show: x.values.reduce((rr, xx) => rr || (!!((Array.isArray(xx) ? xx[0] : xx) || 0) && !!(x.caption)), false)
           }
         })
       }
