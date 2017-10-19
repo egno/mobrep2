@@ -57,7 +57,10 @@ export default {
             bar: (!Array.isArray(xx)) ? {
               width: (this.rowInfo[i].showBar) ? this.barWidth(xx, this.currentTotals[ii].min, this.currentTotals[ii].max) || 0 : 0,
               x: this.barStart(xx, this.currentTotals[ii].min, this.currentTotals[ii].max) || 0
-            } : ''
+            } : {
+              width: (this.rowInfo[i].showBar) ? this.barWidth(xx[0], this.currentTotals[ii].min, this.currentTotals[ii].max) || 0 : 0,
+              x: this.barStart(xx[0], this.currentTotals[ii].min, this.currentTotals[ii].max) || 0
+            }
           }
         })
         return x

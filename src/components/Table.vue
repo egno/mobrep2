@@ -16,7 +16,7 @@
     <div ref="navigation" v-if="name">
       <chart-control
       :months="month_list"
-      :small="true"
+      :small="false"
       :cache="cacheAgo"
       :enableDB="checkDB"
       :report="report.name"
@@ -32,7 +32,7 @@
       <div class="row">
         {{ message }}
       </div>
-      <div class="row">Если ошибка повторяется, 
+      <div class="row">Если ошибка повторяется,
         <a :href="'mailto:help@katren.ru?subject=datazen. Ошибка доступа к данным &body=' + encodeURIComponent(`
 
   --------------------
@@ -96,9 +96,6 @@ export default {
       'showInPercent',
       'tokenName'
     ]),
-    localShowinPercent () {
-      return this.showInPercent
-    },
     base () {
       return (this.graphs[this.current_graph].columns[1] && this.graphs[this.current_graph].columns[1].type)
     },
@@ -137,10 +134,21 @@ export default {
         }
       }
       if (this.data && (Object.keys(this.data).length > 0) && this.data[this.current_month]) {
-        return this.data[this.current_month].regbodys.map((x) => {
+        const prevData = this.data[this.current_month + 1]
+        return this.data[this.current_month].regbodys.map((x, i) => {
           return {
             caption: x.name,
-            values: this.columns.filter(x => x.show).map((h, hi) => x.indicators[h.name] || this.calcDataValue(this.columns[hi].formula, x.indicators))
+            values: this.columns.filter(x => x.show)
+              .map((h, hi) => {
+                if (prevData && prevData.regbodys) {
+                  let result = []
+                  result[0] = x.indicators[h.name] || this.calcDataValue(this.columns[hi].formula, x.indicators)
+                  result[1] = prevData.regbodys.filter(px => px.name === x.name)[0].indicators[h.name]
+                  return result
+                } else {
+                  return x.indicators[h.name] || this.calcDataValue(this.columns[hi].formula, x.indicators)
+                }
+              })
           }
         })
         .sort((a, b) =>
@@ -237,16 +245,6 @@ export default {
       'logOut',
       'setDataCache'
     ]),
-    calcAutoColumn (a, b, type) {
-      if (type) {
-        switch (type) {
-          case 'percent':
-            return 100 * a / b
-          case 'part':
-            return a / b
-        }
-      }
-    },
     calcDataValue (formula, row) {
       if (formula && row) {
         let period = new Date(this.data[this.current_month].period)

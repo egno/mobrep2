@@ -154,7 +154,19 @@ export default {
     mainData () {
       if (this.data && this.rowInfo) {
         return this.data.filter((x, i) => (x.caption && this.rowInfo[i].show))
-          .map((x) => x.values.map((xx, ii) => (this.showInPercent && this.showInPercent[ii] && this.showInPercent[ii].percent) ? ((Array.isArray(xx) ? xx[0] : xx) * 100.0 / ((Array.isArray(this.totals[ii])) ? this.totals[ii][0] : this.totals[ii])).toFixed(1) + '%' : xx))
+          .map((x) => x.values.map((xx, ii) =>
+            (this.showInPercent && this.showInPercent[ii] && this.showInPercent[ii].percent)
+            ? (
+              ((Array.isArray(xx) ? xx[0] : xx) || 0) * 100.0 /
+              (
+                (Array.isArray(this.totals[ii]))
+                ? this.totals[ii][0]
+                : this.totals[ii]
+              )
+            ).toFixed(1) + '%'
+            : xx
+          )
+        )
       }
     },
     rowCount () {

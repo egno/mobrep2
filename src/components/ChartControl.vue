@@ -7,8 +7,8 @@
       </button>
       </div>
       <div  v-if="showArrows" class="btn-group">
-        <button class="btn btn-secondary btn-sm" @click="graphInc(-1)"> < </button>
-        <button class="btn btn-secondary btn-sm" @click="graphInc(1)"> > </button>
+        <button class="btn btn-secondary btn-sm" @click="monthInc(-1)"> < </button>
+        <button class="btn btn-secondary btn-sm" @click="monthInc(1)"> > </button>
       </div>
       <select v-if="haveGraphs" class="custom-select custom-select-sm sm " v-model="selected_graph">
         <option v-for="(graph, i) in graphs.list" v-bind:value="i">{{ graph }}</option>
@@ -69,7 +69,7 @@ export default {
       return !!('ontouchstart' in window)
     },
     showArrows () {
-      return !this.isTouchDevice && !this.small
+      return !this.small
     }
   },
   watch: {
@@ -91,6 +91,11 @@ export default {
     graphInc (payload) {
       if (this.haveGraphs) {
         this.selected_graph = (this.selected_graph + this.graphs.list.length + payload) % this.graphs.list.length
+      }
+    },
+    monthInc (payload) {
+      if (this.haveMonths) {
+        this.selected_month = (this.selected_month + this.months.list.length + payload) % this.months.list.length
       }
     },
     help () {
