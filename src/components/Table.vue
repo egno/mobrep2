@@ -167,7 +167,7 @@ export default {
     },
     headers () {
       if (this.columns) {
-        return this.columns.filter(x => x.show && (x.order.indexOf('.') === -1)).map(x => x.caption)
+        return this.columns.filter(x => x.show).map(x => x.caption)
       }
     },
     columns () {
@@ -175,7 +175,7 @@ export default {
         const currency = this.data[0].currency || 'р'
         return this.report.indicators.map(x => {
           x.caption = x.caption.replace('$', currency)
-          x.show = !!(x.order)
+          x.show = !!(x.order) && (x.order.indexOf('.') === -1)
           return x
         })
           .sort((a, b) => (a.order < b.order) ? -1 : 1)
