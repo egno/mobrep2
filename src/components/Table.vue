@@ -167,7 +167,7 @@ export default {
     },
     headers () {
       if (this.columns) {
-        return this.columns.filter(x => x.show).map(x => x.caption)
+        return this.columns.filter(x => x.show && (x.order.indexOf('.') === -1)).map(x => x.caption)
       }
     },
     columns () {
