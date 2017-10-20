@@ -232,15 +232,18 @@ export default {
       this.$emit('reorder', event)
     },
     percentSwitch (event) {
-      const newVal = (
-          this.totals &&
-          this.totals[event] &&
-          !isNaN(+(Array.isArray(this.totals[event]) ? this.totals[event][0] : this.totals[event]))
-        ) &&
-        (this.headers[event].search('%') === -1) &&
-        !(this.showInPercent[event] && this.showInPercent[event].percent)
-      this.showInPercent[event].percent = newVal
+      this.$emit('percentSwitch', event)
     },
+    // percentSwitch (event) {
+    //   const newVal = (
+    //       this.totals &&
+    //       this.totals[event] &&
+    //       !isNaN(+(Array.isArray(this.totals[event]) ? this.totals[event][0] : this.totals[event]))
+    //     ) &&
+    //     (this.headers[event].search('%') === -1) &&
+    //     !(this.showInPercent[event] && this.showInPercent[event].percent)
+    //   this.showInPercent[event].percent = newVal
+    // },
     setHeight () {
       if (this.$refs.mainrow && this.mainData) {
         const calcRowsHeight = this.rowHeight * this.rowCount + 17
