@@ -149,4 +149,7 @@ svg text {
 .decr {
   fill: #caa;
 }
+.switched {
+  background-color: #ded;
+}
 </style>

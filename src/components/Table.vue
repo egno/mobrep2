@@ -169,7 +169,7 @@ export default {
     },
     headers () {
       if (this.columns) {
-        return this.columns.filter(x => x.show).map(x => x.caption)
+        return this.columns.filter(x => x.show)
       }
     },
     columns () {
@@ -188,7 +188,9 @@ export default {
           .map((x, i, a) => {
             const columns = a.filter(xx => xx.group.code === x.group.code)
             const currentColumn = columns.filter(xx => (this.currentGroupItems.indexOf(xx) + 1))[0]
-            x.show = !!(x.order) && (x === currentColumn || !(currentColumn))
+            x.show = !!(x.order) && (x === currentColumn || (!(currentColumn) && columns.indexOf(x) === 0))
+            x.group.length = columns.length
+            x.group.seq = columns.indexOf(x)
             return x
           })
       }

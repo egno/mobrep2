@@ -7,9 +7,9 @@
       <table-cell
       v-for="(value, i) in headers"
       :key="i"
-      class="col center fixed-width"
+      :class="['col', 'center', 'fixed-width', {switched: isSwitched(value)}]"
       align="center"
-      :value="value"
+      :value="value.caption || value"
       :decimal="calcDecimals(i)"
       :i="i + 1"
       :rowHeight="rowHeight"
@@ -48,6 +48,11 @@ export default {
   methods: {
     calcDecimals (i) {
       return (this.decimals) ? this.decimals[i] : 0
+    },
+    isSwitched (value) {
+      if (value.group) {
+        return value.group.length > 1
+      }
     },
     reorder (event) {
       this.$emit('reorder', event)
