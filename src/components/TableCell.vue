@@ -52,10 +52,10 @@ export default {
   },
   methods: {
     isFalling (value) {
-      return (this.isArray && ((value[0] || 0) < (value[1] || 0)))
+      return (this.isArray && ((value[2] || 0) < (value[1] || 0)))
     },
     isGrowing (value) {
-      return (this.isArray && ((value[0] || 0) > (value[1] || 0)))
+      return (this.isArray && ((value[2] || 0) > (value[1] || 0)))
     },
     onClick (payload) {
       if (payload === 0 || payload) {
@@ -65,7 +65,7 @@ export default {
     percent (value) {
       const maxPercent = 999
       if (this.isArray) {
-        const percent = (value[0] / value[1] - 1) * 100
+        const percent = (value[2] / value[1] - 1) * 100
         if (Math.abs(percent) > maxPercent) {
           return '>' + maxPercent + '%'
         }

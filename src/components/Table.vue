@@ -147,6 +147,7 @@ export default {
                   let result = []
                   result[0] = x.indicators[h.name] || this.calcDataValue(this.columns[hi].formula, x.indicators)
                   result[1] = prevData.regbodys.filter(px => px.name === x.name)[0].indicators[h.name]
+                  result[2] = this.calcContValue(result, h.cont)
                   return result
                 } else {
                   return x.indicators[h.name] || this.calcDataValue(this.columns[hi].formula, x.indicators)
@@ -159,6 +160,11 @@ export default {
           ? order(a.values[Math.abs(this.currentOrder) - 1], b.values[Math.abs(this.currentOrder) - 1], this.currentOrder < 0)
           : order(a.caption, b.caption))
       }
+    },
+    currentMonthPart () {
+      const date = new Date(this.modDate)
+      date.setDate(32)
+      return this.modDate.getDate() / (32 - date.getDate())
     },
     graphs () {
       if (this.report) {
@@ -252,6 +258,15 @@ export default {
         row['_days'] = days
         let val = eval(formula.replace(/{([^}]*)}/g, 'row["$1"]'))
         return val
+      }
+    },
+    calcContValue (values, cont = false) {
+      if (values[0]) {
+        if (cont && (this.current_month === 0)) {
+          return values[0] / this.currentMonthPart
+        } else {
+          return values[0]
+        }
       }
     },
     calcHeight () {
