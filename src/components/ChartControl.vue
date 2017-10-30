@@ -6,20 +6,20 @@
         <span class="fa fa-home fa-lg" aria-hidden="true"></span>
       </button>
       </div>
-      <div  v-if="showArrows" class="btn-group">
-        <button class="btn btn-secondary btn-sm" @click="monthInc(-1)" title="Следующий период">
-          <span class="fa fa-caret-left fa-lg"></span> 
-        </button>
-        <button class="btn btn-secondary btn-sm" @click="monthInc(1)" title="Пердыдущий период">
-          <span class="fa fa-caret-right fa-lg"></span>
-        </button>
-      </div>
       <select v-if="haveGraphs" class="custom-select custom-select-sm sm " v-model="selected_graph">
         <option v-for="(graph, i) in graphs.list" v-bind:value="i">{{ graph }}</option>
       </select>
       <select v-if="haveMonths" class="custom-select custom-select-sm sm " v-model="selected_month">
         <option v-for="(month, i) in months.list" v-bind:value="i">{{ month }}</option>
       </select>
+      <div  v-if="showArrows" class="btn-group">
+        <button class="btn btn-secondary btn-sm" @click="monthInc(-1)" title="Следующий период">
+          <span class="fa fa-caret-up fa-lg"></span>
+        </button>
+        <button class="btn btn-secondary btn-sm" @click="monthInc(1)" title="Пердыдущий период">
+          <span class="fa fa-caret-down fa-lg"></span>
+        </button>
+      </div>
       <div class="btn-group btn-group-sm">
         <button :class="['btn', 'btn-secondary', 'btn-sm', {active: showHistory}]" @click="switchHistory" title="Данные прошлого месяца">
           <span class="fa fa-history fa-lg" aria-hidden="true"></span>

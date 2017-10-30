@@ -52,6 +52,11 @@ export default {
     calcDecimals (i) {
       return (this.decimals) ? this.decimals[i] : 0
     },
+    isSwitched (value) {
+      if (value.group) {
+        return value.group.length > 1
+      }
+    },
     reorder (event) {
       this.$emit('reorder', event)
     },

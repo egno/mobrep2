@@ -10,6 +10,7 @@
       :totals="totals"
       :percentColumns="showInPercent"
       @reorder="reorder"
+      @percentSwitch="percentSwitch"
       >
       </scroll-table>
     </div>
@@ -75,6 +76,7 @@ export default {
       totlalCaption: 'ИТОГО',
       current_graph: 0,
       current_month: 0,
+      currentGroupItems: [],
       chart_height: 0,
       currentOrder: 0,
       mainHeight: 0,
@@ -173,18 +175,30 @@ export default {
     },
     headers () {
       if (this.columns) {
-        return this.columns.filter(x => x.show).map(x => x.caption)
+        return this.columns.filter(x => x.show)
       }
     },
     columns () {
       if (this.report && this.report.indicators && this.data[0]) {
         const currency = this.data[0].currency || 'р'
-        return this.report.indicators.map(x => {
+        return this.report.indicators.map((x, i) => {
           x.caption = x.caption.replace('$', currency)
-          x.show = !!(x.order) && (x.order.indexOf('.') === -1)
+          x.show = !!(x.order)
+          x.group = {
+            'code': x.order.match(/^([^.]*)+[.]?(.*)$/)[1],
+            'item': x.order.match(/^([^.]*)+[.]?(.*)$/)[2]
+          }
           return x
         })
           .sort((a, b) => (a.order < b.order) ? -1 : 1)
+          .map((x, i, a) => {
+            const columns = a.filter(xx => xx.group.code === x.group.code)
+            const currentColumn = columns.filter(xx => (this.currentGroupItems.indexOf(xx) + 1))[0]
+            x.show = !!(x.order) && (x === currentColumn || (!(currentColumn) && columns.indexOf(x) === 0))
+            x.group.length = columns.length
+            x.group.seq = columns.indexOf(x)
+            return x
+          })
       }
     },
     modDate () {
@@ -389,6 +403,15 @@ export default {
       this.current_graph = (typeof (event.graph) !== 'undefined') ? event.graph : this.current_graph
       this.current_month = (typeof (event.month) !== 'undefined') ? event.month : this.current_month
       this.calcHeight()
+    },
+    percentSwitch (event) {
+      const currentColumn = this.columns.filter(x => x.show)[event]
+      const columns = this.columns.filter(x => x.group.code === currentColumn.group.code)
+      const currentIndex = columns.indexOf(currentColumn)
+      const newIndex = (columns.length + (currentIndex) + 1) % columns.length
+      if (currentIndex !== newIndex) {
+        this.$set(this.currentGroupItems, event, columns[newIndex])
+      }
     },
     reload (event) {
       window.removeEventListener('resize', this.getWindowHeight)
