@@ -16,12 +16,12 @@
         <button class="btn btn-secondary btn-sm" @click="monthInc(-1)" title="Следующий период">
           <span class="fa fa-caret-up fa-lg"></span>
         </button>
-        <button class="btn btn-secondary btn-sm" @click="monthInc(1)" title="Пердыдущий период">
+        <button class="btn btn-secondary btn-sm" @click="monthInc(1)" title="Предыдущий период">
           <span class="fa fa-caret-down fa-lg"></span>
         </button>
       </div>
       <div class="btn-group btn-group-sm">
-        <button :class="['btn', 'btn-secondary', 'btn-sm', {active: showHistory}]" @click="switchHistory" title="Данные прошлого месяца">
+        <button :class="['btn', 'btn-secondary', 'btn-sm', {active: showHistory}]" @click="switchHistory" title="Сравнение с предыдущим периодом">
           <span class="fa fa-history fa-lg" aria-hidden="true"></span>
         </button>
       </div>
