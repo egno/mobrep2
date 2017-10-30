@@ -1,6 +1,6 @@
 <template>
   <div class="cell"
-  :style="{height: rowHeight + 'px'}""
+  :style="{height: rowHeight + 'px'}"
   @click="onClick(i)">
     <svg
     >

@@ -81,7 +81,7 @@ export default {
       defaultRegBodyType: 'Филиал',
       message: '',
       error: '',
-      showHistory: false
+      showHistory: true
     }
   },
   watch: {
@@ -213,27 +213,45 @@ export default {
         }
       }
 
-      if (this.data && this.data[this.current_month] && this.columns) {
-        const totalsRow = this.data[this.current_month].regbodys.filter(x => !(x.name))[0].indicators
-        // let calcColumns = this.columns.filter(h => h.formula)
-        // let regbodys = this.data[this.current_month].regbodys.filter(x => (x.name))
-        // for (let key of calcColumns) {
-        //   for (let regbody of regbodys) {
-        //     regbody.indicators[key.name] = regbody.indicators[key.name] || this.calcDataValue(key.formula, regbody.indicators)
-        //   }
-        // }
-        let totals = totalsRow || {}
+      if (this.data && (Object.keys(this.data).length > 0) && this.data[this.current_month] && this.columns) {
+        const totalsRow = this.data[this.current_month].regbodys.filter(x => !(x.name))[0].indicators || {}
+        let prevTotalsRow = null
+        if (this.data[this.current_month + 1]) {
+          prevTotalsRow = this.data[this.current_month + 1].regbodys.filter(x => !(x.name))[0].indicators
+        }
+        let totals = []
+
         for (let key in this.data[this.current_month].regbodys.filter(x => (x.name))[0].indicators) {
           let column = this.columns.filter(h => h.name === key)
           if (column.length) {
-            totals[key] = totals[key] ||
-            calcTotal(
-              this.columns.filter(h => h.name === key)[0].totals,
-              this.data[this.current_month].regbodys.filter(x => x.name && x.name.indexOf('-опт') === -1).map(x => x.indicators[key])
-            )
+            totals[key] = {}
+            totals[key]['curr'] = totalsRow[key] ||
+              calcTotal(
+                this.columns.filter(h => h.name === key)[0].totals,
+                this.data[this.current_month].regbodys.filter(x => x.name && x.name.indexOf('-опт') === -1).map(x => x.indicators[key])
+              )
+            if (prevTotalsRow) {
+              totals[key]['prev'] = prevTotalsRow[key] ||
+                calcTotal(
+                  this.columns.filter(h => h.name === key)[0].totals,
+                  this.data[this.current_month + 1].regbodys.filter(x => x.name && x.name.indexOf('-опт') === -1).map(x => x.indicators[key])
+                )
+            }
           }
         }
-        return this.columns.filter(x => x.show).map((h, i) => totals[h.name] || this.calcDataValue(h.formula, totals))
+
+        return this.columns.filter(x => x.show)
+          .map((h, hi) => {
+            if (prevTotalsRow && this.showHistory) {
+              let result = []
+              result[0] = ((totals[h.name]) ? totals[h.name]['curr'] : null) || this.calcDataValue(this.columns[hi].formula, totals.map(hx => hx['curr']))
+              result[1] = ((totals[h.name]) ? totals[h.name]['prev'] : null) || this.calcDataValue(this.columns[hi].formula, totals.map(hx => hx['prev']))
+              result[2] = this.calcContValue(result, h.cont)
+              return result
+            } else {
+              return ((totals[h.name]) ? totals[h.name]['curr'] : null) || this.calcDataValue(this.columns[hi].formula, totals.map(hx => hx['curr']))
+            }
+          })
       }
     },
     uri () {

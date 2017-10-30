@@ -7,8 +7,8 @@
       <table-cell
       v-for="(value, i) in headers"
       :key="i"
-      class="col center fixed-width"
-      align="center"
+      :class="['col', 'fixed-width', align]"
+      :align="align"
       :value="value"
       :decimal="calcDecimals(i)"
       :i="i + 1"
@@ -24,6 +24,9 @@ import TableCell from '@/components/TableCell'
 
 export default {
   props: {
+    align: {
+      default: 'center'
+    },
     data: {},
     decimals: {},
     rowHeight: {

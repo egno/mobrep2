@@ -60,7 +60,7 @@
       <div class="row header">
         <div class="fixed-column">
            <table-cell
-           :rowHeight="minRowHeight"
+           :rowHeight="rowHeight"
            :value="'ИТОГО'"
            ></table-cell>
         </div>
@@ -70,9 +70,10 @@
           class="col header foother"
           v-scroll="onScroll">
           <scroll-header
+          align="right"
           :data="totalsData"
           :decimals="decimals"
-          :rowHeight="minRowHeight"
+          :rowHeight="rowHeight"
           :width="columnWidth">
         </scroll-header>
         </div>
