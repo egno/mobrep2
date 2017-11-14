@@ -235,7 +235,7 @@ export default {
         }
         let totals = []
 
-        for (let key in this.data[this.current_month].regbodys.filter(x => (x.name))[0].indicators) {
+        for (let key of this.report.indicators.map(x => x.name)) {
           let column = this.columns.filter(h => h.name === key)
           if (column.length) {
             totals[key] = {}
