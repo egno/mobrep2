@@ -83,7 +83,7 @@ export default {
       defaultRegBodyType: 'Филиал',
       message: '',
       error: '',
-      showHistory: true
+      showHistory: false
     }
   },
   watch: {
