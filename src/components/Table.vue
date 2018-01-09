@@ -22,7 +22,7 @@
       :enableDB="checkDB"
       :report="report.name"
       :modDate="modDate"
-      :showHistory="showHistory"
+      :showHistory="currentShowHistory"
       @isChanged="isChanged"
       @reload="reload"
       @switchHistory="switchHistory"
@@ -82,8 +82,7 @@ export default {
       mainHeight: 0,
       defaultRegBodyType: 'Филиал',
       message: '',
-      error: '',
-      showHistory: false
+      error: ''
     }
   },
   watch: {
@@ -93,6 +92,7 @@ export default {
   },
   computed: {
     ...mapState([
+      'showHistory'
     ]),
     ...mapGetters([
       'appTitle',
@@ -145,7 +145,7 @@ export default {
             caption: x.name,
             values: this.columns.filter(x => x.show)
               .map((h, hi) => {
-                if (prevData && prevData.regbodys && this.showHistory) {
+                if (prevData && prevData.regbodys && this.currentShowHistory) {
                   let result = []
                   result[0] = x.indicators[h.name] || this.calcDataValue(this.columns[hi].formula, x.indicators)
                   result[1] = prevData.regbodys.filter(px => px.name === x.name)[0].indicators[h.name]
@@ -167,6 +167,12 @@ export default {
       const date = new Date(this.modDate)
       date.setDate(32)
       return this.modDate.getDate() / (32 - date.getDate())
+    },
+    currentShowHistory () {
+      if (this.showHistory && this.showHistory[this.name]) {
+        return this.showHistory[this.name] || false
+      }
+      return false
     },
     graphs () {
       if (this.report) {
@@ -256,7 +262,7 @@ export default {
 
         return this.columns.filter(x => x.show)
           .map((h, hi) => {
-            if (prevTotalsRow && this.showHistory) {
+            if (prevTotalsRow && this.currentShowHistory) {
               let result = []
               result[0] = ((totals[h.name]) ? totals[h.name]['curr'] : null) || this.calcDataValue(this.columns[hi].formula, totals.map(hx => hx['curr']))
               result[1] = ((totals[h.name]) ? totals[h.name]['prev'] : null) || this.calcDataValue(this.columns[hi].formula, totals.map(hx => hx['prev']))
@@ -277,7 +283,8 @@ export default {
   methods: {
     ...mapActions([
       'logOut',
-      'setDataCache'
+      'setDataCache',
+      'setShowHistory'
     ]),
     calcDataValue (formula, row) {
       if (formula && row) {
@@ -428,7 +435,12 @@ export default {
       this.currentOrder = (Math.abs(this.currentOrder) === event) ? -this.currentOrder : event
     },
     switchHistory (event) {
-      this.showHistory = !this.showHistory
+      let payload = {}
+      payload.key = this.name
+      payload.value = !(this.currentShowHistory || false)
+      console.log(payload)
+      this.setShowHistory(payload)
+      // this.currentShowHistory = !this.currentShowHistory
     },
     updateTitle () {
       if (this.error) {

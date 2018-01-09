@@ -8,11 +8,13 @@ export const store = new Vuex.Store({
   state: {
     appTitle: 'Живой экран',
     tokenName: 'jwt-token',
+    historyName: 'showHistory',
     dataName: 'data',
     loggedIn: true,
     backRoute: false,
     dataCache: {},
-    showInPercent: {}
+    showInPercent: {},
+    showHistory: {}
   },
   getters: {
     appTitle: (state) => {
@@ -31,6 +33,10 @@ export const store = new Vuex.Store({
     },
     dataName: (state) => state.dataName,
     showInPercent: (state) => state.showInPercent,
+    showHistory: (state) => {
+      state.showHistory = JSON.parse(ls.get(state.historyName)) || {}
+      return state.showHistory
+    },
     tokenName: (state) => {
       return state.tokenName
     }
@@ -53,6 +59,11 @@ export const store = new Vuex.Store({
       state.dataCache = Object.assign(state.dataCache, payload)
       // ls.set(state.dataName, JSON.stringify(state.dataCache))
     },
+    setShowHistory: (state, payload) => {
+      Vue.set(state.showHistory, payload.key, payload.value || false)
+      ls.set(state.historyName, JSON.stringify(state.showHistory))
+      // state.showHistory = Object.assign(state.showHistory, payload)
+    },
     setShowInPercent: (state, payload) => {
       state.showInPercent[payload] = !state.showInPercent[payload]
     }
@@ -69,6 +80,9 @@ export const store = new Vuex.Store({
     },
     setDataCache: ({commit}, payload) => {
       commit('setDataCache', payload)
+    },
+    setShowHistory: ({commit}, payload) => {
+      commit('setShowHistory', payload)
     },
     setShowInPercent: ({commit}, payload) => {
       commit('setShowInPercent', payload)
