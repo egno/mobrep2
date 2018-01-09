@@ -14,7 +14,7 @@ export const store = new Vuex.Store({
     backRoute: false,
     dataCache: {},
     showInPercent: {},
-    showHistory: {}
+    showHistory: null
   },
   getters: {
     appTitle: (state) => {
@@ -34,7 +34,9 @@ export const store = new Vuex.Store({
     dataName: (state) => state.dataName,
     showInPercent: (state) => state.showInPercent,
     showHistory: (state) => {
-      state.showHistory = JSON.parse(ls.get(state.historyName)) || {}
+      if (!state.showHistory) {
+        state.showHistory = JSON.parse(ls.get(state.historyName, JSON.stringify({})))
+      }
       return state.showHistory
     },
     tokenName: (state) => {
@@ -60,6 +62,7 @@ export const store = new Vuex.Store({
       // ls.set(state.dataName, JSON.stringify(state.dataCache))
     },
     setShowHistory: (state, payload) => {
+      state.showHistory = state.showHistory || {}
       Vue.set(state.showHistory, payload.key, payload.value || false)
       ls.set(state.historyName, JSON.stringify(state.showHistory))
       // state.showHistory = Object.assign(state.showHistory, payload)

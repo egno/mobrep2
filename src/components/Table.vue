@@ -77,6 +77,7 @@ export default {
       current_graph: 0,
       current_month: 0,
       currentGroupItems: [],
+      currentShowHistory: false,
       chart_height: 0,
       currentOrder: 0,
       mainHeight: 0,
@@ -88,17 +89,22 @@ export default {
   watch: {
     'name': 'fetchData, updateTitle',
     'dataCache': 'fetchData',
-    'report': 'updateTitle'
+    'report': 'updateTitle',
+    showHistory: {
+      handler: function () { this.getShowHistory() },
+      deep: true,
+      immediate: true
+    }
   },
   computed: {
     ...mapState([
-      'showHistory'
     ]),
     ...mapGetters([
       'appTitle',
       'checkLogIn',
       'dataCache',
       'showInPercent',
+      'showHistory',
       'tokenName'
     ]),
     base () {
@@ -167,12 +173,6 @@ export default {
       const date = new Date(this.modDate)
       date.setDate(32)
       return this.modDate.getDate() / (32 - date.getDate())
-    },
-    currentShowHistory () {
-      if (this.showHistory && this.showHistory[this.name]) {
-        return this.showHistory[this.name] || false
-      }
-      return false
     },
     graphs () {
       if (this.report) {
@@ -397,6 +397,11 @@ export default {
         )
       }
     },
+    getShowHistory () {
+      this.currentShowHistory = (this.showHistory && this.showHistory[this.name])
+            ? this.showHistory[this.name] || false
+            : false
+    },
     getWindowHeight (event) {
       this.calcHeight()
     },
@@ -436,9 +441,9 @@ export default {
     },
     switchHistory (event) {
       let payload = {}
+      this.currentShowHistory = !(this.currentShowHistory || false)
       payload.key = this.name
-      payload.value = !(this.currentShowHistory || false)
-      console.log(payload)
+      payload.value = this.currentShowHistory
       this.setShowHistory(payload)
       // this.currentShowHistory = !this.currentShowHistory
     },
